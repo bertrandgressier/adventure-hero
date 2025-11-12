@@ -86,51 +86,76 @@ export default function CharactersPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             {characters.map((character) => (
-              <Link
+              <div
                 key={character.id}
-                href={`/characters/${character.id}`}
-                className="bg-[#2a1e17] glow-border rounded-lg p-6 hover:scale-[1.02] transition-transform"
+                className="bg-[#2a1e17] glow-border rounded-lg p-6 hover:bg-[#2a1e17]/80 transition-all"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-1">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <h3 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light mb-2">
                       {character.name}
                     </h3>
-                    <p className="font-[var(--font-merriweather)] text-sm text-primary">
-                      {character.talent}
-                    </p>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="font-[var(--font-merriweather)] text-light font-semibold">
+                        Talent : <span className="text-primary">{character.talent}</span>
+                      </span>
+                      <span className="text-muted-light">•</span>
+                      <span className="text-muted-light">
+                        La Harpe des Quatre Saisons
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-2xl">⚔️</div>
+                  <Link
+                    href={`/characters/${character.id}`}
+                    className="text-3xl hover:scale-110 transition-transform"
+                  >
+                    ⚔️
+                  </Link>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  <div className="bg-[#1a140f] rounded p-2 text-center">
-                    <div className="text-xs text-muted-light mb-1">DEX</div>
-                    <div className="font-[var(--font-geist-mono)] text-lg font-bold text-light">
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
+                    <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
+                      DEXTÉRITÉ
+                    </div>
+                    <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
                       {character.stats.dexterite}
                     </div>
                   </div>
-                  <div className="bg-[#1a140f] rounded p-2 text-center">
-                    <div className="text-xs text-muted-light mb-1">CHC</div>
-                    <div className="font-[var(--font-geist-mono)] text-lg font-bold text-light">
+                  <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
+                    <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
+                      CHANCE
+                    </div>
+                    <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
                       {character.stats.chance}
                     </div>
                   </div>
-                  <div className="bg-[#1a140f] rounded p-2 text-center">
-                    <div className="text-xs text-muted-light mb-1">PV</div>
-                    <div className="font-[var(--font-geist-mono)] text-lg font-bold text-light">
-                      {character.stats.pointsDeVieActuels}/{character.stats.pointsDeVieMax}
+                  <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
+                    <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
+                      POINTS DE VIE
+                    </div>
+                    <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
+                      {character.stats.pointsDeVieActuels}<span className="text-xl text-muted-light">/{character.stats.pointsDeVieMax}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-muted-light">
-                  <span>§{character.progress.currentParagraph}</span>
-                  <span>{new Date(character.createdAt).toLocaleDateString('fr-FR')}</span>
+                <div className="flex items-center justify-between pt-4 border-t border-primary/20">
+                  <div className="flex items-center gap-2 text-sm text-muted-light">
+                    <span className="font-[var(--font-geist-mono)]">§{character.progress.currentParagraph}</span>
+                    <span>•</span>
+                    <span>{new Date(character.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  </div>
+                  <Link
+                    href={`/characters/${character.id}`}
+                    className="font-[var(--font-merriweather)] text-sm text-light hover:text-primary transition-colors font-semibold"
+                  >
+                    Voir la fiche →
+                  </Link>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

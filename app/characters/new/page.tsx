@@ -60,7 +60,7 @@ export default function NewCharacterPage() {
 
   const handleCreateCharacter = async () => {
     const character: Character = {
-      id: crypto.randomUUID(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name,
       book: 'La Harpe des Quatre Saisons',
       talent: selectedTalent,
