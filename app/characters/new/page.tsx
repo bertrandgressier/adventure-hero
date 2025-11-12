@@ -68,11 +68,7 @@ export default function NewCharacterPage() {
       },
       pointsDeVieMaximum: stats.endurance,
       inventory: {
-        items: [
-          { name: 'Sac à dos', possessed: true, type: 'item' },
-          { name: 'Provisions (10)', possessed: true, type: 'item' },
-          { name: 'Or (30 pièces)', possessed: true, type: 'item' },
-        ],
+        items: [],
       },
       progress: {
         currentParagraph: 1,
@@ -229,20 +225,6 @@ export default function NewCharacterPage() {
                 )}
               </div>
             </div>
-
-            {/* Équipement de départ */}
-            {stats.habilete > 0 && (
-              <div className="bg-[#2a1e17]/60 border border-primary/30 rounded-lg p-6">
-                <h3 className="font-[var(--font-uncial)] text-lg tracking-wide text-light mb-3">
-                  🎒 Équipement de départ
-                </h3>
-                <ul className="font-[var(--font-merriweather)] text-sm text-muted-light space-y-1">
-                  <li>• Sac à dos</li>
-                  <li>• 10 Provisions</li>
-                  <li>• 30 pièces d'or</li>
-                </ul>
-              </div>
-            )}
           </div>
         )}
       </div>
