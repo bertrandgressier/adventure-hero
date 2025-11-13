@@ -9,25 +9,18 @@ interface CombatRoundDisplayProps {
 }
 
 export default function CombatRoundDisplay({ round, playerName, enemyName }: CombatRoundDisplayProps) {
-  const getWinnerColor = (winner: 'player' | 'enemy' | 'draw') => {
-    if (winner === 'player') return 'text-green-400';
-    if (winner === 'enemy') return 'text-red-400';
-    return 'text-yellow-400';
-  };
+  const attackerName = round.attacker === 'player' ? playerName : enemyName;
+  const defenderName = round.attacker === 'player' ? enemyName : playerName;
+  const attackerColor = round.attacker === 'player' ? 'green' : 'red';
 
-  const getWinnerText = (winner: 'player' | 'enemy' | 'draw') => {
-    if (winner === 'player') return `${playerName} gagne l'assaut !`;
-    if (winner === 'enemy') return `${enemyName} gagne l'assaut !`;
-    return 'Égalité - aucun dégât';
-  };
-
-  const getDamageText = () => {
-    if (round.winner === 'draw') return null;
+  const getDamageBreakdown = () => {
+    if (!round.hitSuccess || !round.totalDamage) return null;
     
-    const damage = round.damageDealt;
-    const target = round.winner === 'player' ? enemyName : playerName;
-    
-    return `${target} perd ${damage} point${damage > 1 ? 's' : ''} d'ENDURANCE`;
+    return (
+      <div className="text-xs font-[var(--font-geist-mono)] text-muted-light mt-1">
+        Dégâts: 1 (base) + {round.damageDiceRoll} (dé) + {round.weaponDamage} (arme) = {round.totalDamage}
+      </div>
+    );
   };
 
   return (
@@ -35,68 +28,89 @@ export default function CombatRoundDisplay({ round, playerName, enemyName }: Com
       {/* En-tête du round */}
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-[var(--font-uncial)] text-lg text-primary">
-          Assaut #{round.roundNumber}
+          Round #{round.roundNumber}
         </h4>
-        <span className={`font-[var(--font-uncial)] text-sm ${getWinnerColor(round.winner)}`}>
-          {getWinnerText(round.winner)}
+        <span className={`font-[var(--font-uncial)] text-sm text-${attackerColor}-400`}>
+          {attackerName} attaque
         </span>
       </div>
 
-      {/* Détails des lancers */}
-      <div className="grid grid-cols-2 gap-4 mb-3">
-        {/* Joueur */}
-        <div className="bg-[#2a1e17] rounded p-3 border-l-4 border-green-500/50">
+      {/* Détails de l'attaque */}
+      <div className={`bg-[#2a1e17] rounded p-3 border-l-4 border-${attackerColor}-500/50`}>
+        {/* Test pour toucher */}
+        <div className="mb-2">
           <div className="text-xs font-[var(--font-merriweather)] text-muted-light mb-1">
-            {playerName}
+            Test pour toucher
           </div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2">
             <span className="text-2xl">🎲</span>
             <span className="font-[var(--font-geist-mono)] text-xl text-light">
-              {round.playerDiceRoll}
+              {round.hitDiceRoll}
             </span>
-          </div>
-          <div className="text-xs font-[var(--font-geist-mono)] text-muted-light">
-            {round.playerDiceRoll} + DEX + Arme ({round.playerWeaponPoints})
-          </div>
-          <div className="font-[var(--font-geist-mono)] text-2xl text-primary mt-1">
-            FA: {round.playerAttackStrength}
-          </div>
-          <div className="text-xs font-[var(--font-merriweather)] text-muted-light mt-1">
-            END: {round.playerEnduranceAfter}
+            {round.hitSuccess ? (
+              <span className="text-green-400 font-[var(--font-uncial)] text-sm ml-2">
+                ✓ Touché !
+              </span>
+            ) : (
+              <span className="text-red-400 font-[var(--font-uncial)] text-sm ml-2">
+                ✗ Raté
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Ennemi */}
-        <div className="bg-[#2a1e17] rounded p-3 border-l-4 border-red-500/50">
-          <div className="text-xs font-[var(--font-merriweather)] text-muted-light mb-1">
+        {/* Dégâts (si touché) */}
+        {round.hitSuccess && round.totalDamage !== undefined && (
+          <div>
+            <div className="text-xs font-[var(--font-merriweather)] text-muted-light mb-1">
+              Dégâts infligés
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">💥</span>
+              <span className="font-[var(--font-geist-mono)] text-2xl text-primary">
+                {round.totalDamage}
+              </span>
+            </div>
+            {getDamageBreakdown()}
+          </div>
+        )}
+      </div>
+
+      {/* Endurance après le round */}
+      <div className="grid grid-cols-2 gap-3 mt-3">
+        <div className="text-center">
+          <div className="text-xs font-[var(--font-merriweather)] text-muted-light">
+            {playerName}
+          </div>
+          <div className={`font-[var(--font-geist-mono)] text-lg ${
+            round.playerEnduranceAfter <= 3 ? 'text-red-400' : 'text-green-400'
+          }`}>
+            END: {round.playerEnduranceAfter}
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-xs font-[var(--font-merriweather)] text-muted-light">
             {enemyName}
           </div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-2xl">🎲</span>
-            <span className="font-[var(--font-geist-mono)] text-xl text-light">
-              {round.enemyDiceRoll}
-            </span>
-          </div>
-          <div className="text-xs font-[var(--font-geist-mono)] text-muted-light">
-            {round.enemyDiceRoll} + DEX
-          </div>
-          <div className="font-[var(--font-geist-mono)] text-2xl text-primary mt-1">
-            FA: {round.enemyAttackStrength}
-          </div>
-          <div className="text-xs font-[var(--font-merriweather)] text-muted-light mt-1">
+          <div className={`font-[var(--font-geist-mono)] text-lg ${
+            round.enemyEnduranceAfter <= 3 ? 'text-red-400' : 'text-green-400'
+          }`}>
             END: {round.enemyEnduranceAfter}
           </div>
         </div>
       </div>
 
-      {/* Résultat des dégâts */}
-      {getDamageText() && (
-        <div className={`text-sm font-[var(--font-merriweather)] text-center py-2 rounded ${
-          round.winner === 'player' ? 'bg-green-900/20 text-green-400' : 'bg-red-900/20 text-red-400'
+      {/* Message de résultat */}
+      {round.hitSuccess && round.totalDamage !== undefined && (
+        <div className={`text-sm font-[var(--font-merriweather)] text-center py-2 rounded mt-3 ${
+          round.attacker === 'player' 
+            ? 'bg-green-900/20 text-green-400' 
+            : 'bg-red-900/20 text-red-400'
         }`}>
-          {getDamageText()}
+          {defenderName} perd {round.totalDamage} point{round.totalDamage > 1 ? 's' : ''} d'ENDURANCE
         </div>
       )}
     </div>
   );
 }
+

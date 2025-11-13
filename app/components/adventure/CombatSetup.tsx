@@ -4,38 +4,42 @@ import { useState } from 'react';
 import type { Enemy } from '@/lib/types/combat';
 
 interface CombatSetupProps {
-  onStartCombat: (enemy: Enemy, mode: 'auto' | 'manual') => void;
+  onStartCombat: (enemy: Enemy, mode: 'auto' | 'manual', firstAttacker: 'player' | 'enemy') => void;
   onCancel: () => void;
 }
 
 export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProps) {
-  const [enemyName, setEnemyName] = useState('');
-  const [dexterite, setDexterite] = useState('');
-  const [endurance, setEndurance] = useState('');
+  const [formData, setFormData] = useState<Partial<Enemy>>({
+    dexterite: 6,
+    endurance: 6,
+    enduranceMax: 6,
+    attackPoints: 0
+  });
   const [mode, setMode] = useState<'auto' | 'manual'>('auto');
+  const [firstAttacker, setFirstAttacker] = useState<'player' | 'enemy'>('player');
 
   const handleStart = () => {
-    const dex = parseInt(dexterite);
-    const end = parseInt(endurance);
+    const { dexterite, endurance, enduranceMax, attackPoints } = formData;
 
-    if (!enemyName.trim() || isNaN(dex) || isNaN(end)) {
+    if (!dexterite || !endurance || !enduranceMax || attackPoints === undefined) {
       alert('Veuillez remplir tous les champs correctement');
       return;
     }
 
-    if (dex < 1 || end < 1) {
-      alert('Les valeurs doivent être positives');
+    if (dexterite < 1 || endurance < 1 || attackPoints < 0) {
+      alert('Les valeurs doivent être valides (dextérité et endurance >= 1, points d\'attaque >= 0)');
       return;
     }
 
     const enemy: Enemy = {
-      name: enemyName.trim(),
-      dexterite: dex,
-      endurance: end,
-      enduranceMax: end
+      name: 'Adversaire',
+      dexterite,
+      endurance,
+      enduranceMax,
+      attackPoints
     };
 
-    onStartCombat(enemy, mode);
+    onStartCombat(enemy, mode, firstAttacker);
   };
 
   return (
@@ -48,21 +52,6 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
         </h3>
 
         <div className="space-y-4 mb-6">
-          {/* Nom de l'adversaire */}
-          <div>
-            <label className="font-[var(--font-merriweather)] text-muted-light text-sm mb-2 block">
-              Nom de l'adversaire
-            </label>
-            <input
-              type="text"
-              value={enemyName}
-              onChange={(e) => setEnemyName(e.target.value)}
-              placeholder="Ex: Gobelin, Orc, Dragon..."
-              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-merriweather)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
-              autoFocus
-            />
-          </div>
-
           {/* Dextérité */}
           <div>
             <label className="font-[var(--font-merriweather)] text-muted-light text-sm mb-2 block">
@@ -70,11 +59,12 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
             </label>
             <input
               type="number"
-              value={dexterite}
-              onChange={(e) => setDexterite(e.target.value)}
+              value={formData.dexterite || ''}
+              onChange={(e) => setFormData({ ...formData, dexterite: parseInt(e.target.value) || 0 })}
               placeholder="Score de combat"
               min="1"
               className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+              autoFocus
             />
           </div>
 
@@ -85,12 +75,59 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
             </label>
             <input
               type="number"
-              value={endurance}
-              onChange={(e) => setEndurance(e.target.value)}
+              value={formData.endurance || ''}
+              onChange={(e) => {
+                const val = parseInt(e.target.value) || 0;
+                setFormData({ ...formData, endurance: val, enduranceMax: val });
+              }}
               placeholder="Points de vie"
               min="1"
               className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
             />
+          </div>
+
+          {/* Points d'attaque (arme) */}
+          <div>
+            <label className="font-[var(--font-merriweather)] text-muted-light text-sm mb-2 block">
+              Points d'attaque (arme)
+            </label>
+            <input
+              type="number"
+              value={formData.attackPoints ?? ''}
+              onChange={(e) => setFormData({ ...formData, attackPoints: parseInt(e.target.value) || 0 })}
+              placeholder="Bonus de dommages"
+              min="0"
+              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          {/* Qui commence */}
+          <div>
+            <label className="font-[var(--font-merriweather)] text-muted-light text-sm mb-2 block">
+              Qui attaque en premier ?
+            </label>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setFirstAttacker('player')}
+                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
+                  firstAttacker === 'player'
+                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
+                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
+                }`}
+              >
+                🛡️ Vous
+              </button>
+              <button
+                onClick={() => setFirstAttacker('enemy')}
+                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
+                  firstAttacker === 'enemy'
+                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
+                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
+                }`}
+              >
+                ⚔️ Ennemi
+              </button>
+            </div>
           </div>
 
           {/* Mode de combat */}
@@ -101,20 +138,20 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
             <div className="flex gap-3">
               <button
                 onClick={() => setMode('auto')}
-                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-colors ${
+                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
                   mode === 'auto'
-                    ? 'bg-primary text-[#1a140f]'
-                    : 'bg-[#1a140f] border border-primary/20 text-muted-light hover:border-primary/40'
+                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
+                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
                 }`}
               >
                 ⚡ Auto
               </button>
               <button
                 onClick={() => setMode('manual')}
-                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-colors ${
+                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
                   mode === 'manual'
-                    ? 'bg-primary text-[#1a140f]'
-                    : 'bg-[#1a140f] border border-primary/20 text-muted-light hover:border-primary/40'
+                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
+                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
                 }`}
               >
                 🎲 Manuel
@@ -122,8 +159,8 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
             </div>
             <p className="text-xs text-muted-light mt-2 font-[var(--font-merriweather)]">
               {mode === 'auto' 
-                ? 'Les dés sont lancés automatiquement à chaque assaut' 
-                : 'Vous lancez les dés manuellement pour chaque assaut'}
+                ? 'Les dés sont lancés automatiquement à chaque round' 
+                : 'Vous lancez les dés manuellement pour chaque round'}
             </p>
           </div>
         </div>
@@ -137,7 +174,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
           </button>
           <button
             onClick={handleStart}
-            className="flex-1 bg-primary hover:bg-yellow-400 text-[#1a140f] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-colors"
+            className="flex-1 bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98]"
           >
             Commencer
           </button>
@@ -146,3 +183,4 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
     </div>
   );
 }
+

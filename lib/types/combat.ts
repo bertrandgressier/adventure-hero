@@ -3,17 +3,22 @@ export interface Enemy {
   dexterite: number;
   endurance: number;
   enduranceMax: number;
+  attackPoints: number; // Points de dommage de l'arme
 }
 
 export interface CombatRound {
   roundNumber: number;
-  playerDiceRoll: number;
-  playerAttackStrength: number;
-  playerWeaponPoints: number;
-  enemyDiceRoll: number;
-  enemyAttackStrength: number;
-  winner: 'player' | 'enemy' | 'draw';
-  damageDealt: number;
+  attacker: 'player' | 'enemy';
+  
+  // Lancer pour toucher
+  hitDiceRoll: number;
+  hitSuccess: boolean;
+  
+  // Si touché, calcul des dégâts
+  damageDiceRoll?: number;
+  weaponDamage?: number;
+  totalDamage?: number;
+  
   playerEnduranceAfter: number;
   enemyEnduranceAfter: number;
 }
@@ -24,6 +29,7 @@ export interface CombatState {
   playerEndurance: number;
   enemyEndurance: number;
   status: 'setup' | 'ongoing' | 'victory' | 'defeat';
+  nextAttacker: 'player' | 'enemy';
 }
 
 export type CombatMode = 'auto' | 'manual';

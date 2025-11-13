@@ -10,65 +10,85 @@ export function rollTwoDice(): number {
 }
 
 /**
- * Calcule la Force d'Attaque
- * Formule: 2d6 + DEXTÉRITÉ + Points d'attaque de l'arme
+ * Lance 1 dé à 6 faces
  */
-export function calculateAttackStrength(
-  diceRoll: number,
-  dexterite: number,
-  weaponPoints: number
-): number {
-  return diceRoll + dexterite + weaponPoints;
+export function rollOneDie(): number {
+  return Math.floor(Math.random() * 6) + 1;
 }
 
 /**
- * Résout un assaut de combat
+ * Vérifie si l'attaque touche
+ * Règle : 2d6 <= DEXTÉRITÉ = touché
+ */
+export function checkHit(dexterite: number, diceRoll?: number): { hit: boolean; roll: number } {
+  const roll = diceRoll ?? rollTwoDice();
+  return {
+    hit: roll <= dexterite,
+    roll
+  };
+}
+
+/**
+ * Calcule les dégâts infligés
+ * Règle : 1 (base) + 1d6 + Points de dommage de l'arme
+ */
+export function calculateDamage(weaponDamage: number, damageDiceRoll?: number): { damage: number; diceRoll: number } {
+  const diceRoll = damageDiceRoll ?? rollOneDie();
+  const damage = 1 + diceRoll + weaponDamage;
+  return {
+    damage,
+    diceRoll
+  };
+}
+
+/**
+ * Résout un round de combat (une attaque)
  */
 export function resolveCombatRound(
   roundNumber: number,
+  attacker: 'player' | 'enemy',
   playerDexterite: number,
   playerEndurance: number,
-  playerWeaponPoints: number,
+  playerWeaponDamage: number,
   enemy: Enemy,
-  playerDiceRoll?: number,
-  enemyDiceRoll?: number
+  enemyEndurance: number,
+  hitDiceRoll?: number,
+  damageDiceRoll?: number
 ): CombatRound {
-  // 1. Lancer les dés (ou utiliser les valeurs fournies en mode manuel)
-  const playerRoll = playerDiceRoll ?? rollTwoDice();
-  const enemyRoll = enemyDiceRoll ?? rollTwoDice();
+  const isPlayerAttacking = attacker === 'player';
+  const attackerDex = isPlayerAttacking ? playerDexterite : enemy.dexterite;
+  const attackerWeapon = isPlayerAttacking ? playerWeaponDamage : enemy.attackPoints;
   
-  // 2. Calculer Forces d'Attaque
-  const playerAS = calculateAttackStrength(playerRoll, playerDexterite, playerWeaponPoints);
-  const enemyAS = calculateAttackStrength(enemyRoll, enemy.dexterite, 0); // Pas d'arme pour l'ennemi
+  // 1. Test pour toucher
+  const hitCheck = checkHit(attackerDex, hitDiceRoll);
   
-  // 3. Déterminer le gagnant et les dégâts
-  let winner: 'player' | 'enemy' | 'draw';
-  let damageDealt = 0;
   let playerEnduranceAfter = playerEndurance;
-  let enemyEnduranceAfter = enemy.endurance;
+  let enemyEnduranceAfter = enemyEndurance;
+  let totalDamage: number | undefined;
+  let dmgDiceRoll: number | undefined;
   
-  if (playerAS > enemyAS) {
-    winner = 'player';
-    damageDealt = 2;
-    enemyEnduranceAfter = Math.max(0, enemy.endurance - damageDealt);
-  } else if (enemyAS > playerAS) {
-    winner = 'enemy';
-    damageDealt = 2;
-    playerEnduranceAfter = Math.max(0, playerEndurance - damageDealt);
-  } else {
-    winner = 'draw';
-    damageDealt = 0;
+  // 2. Si touché, calculer les dégâts
+  if (hitCheck.hit) {
+    const damageCalc = calculateDamage(attackerWeapon, damageDiceRoll);
+    totalDamage = damageCalc.damage;
+    dmgDiceRoll = damageCalc.diceRoll;
+    
+    // Appliquer les dégâts
+    if (isPlayerAttacking) {
+      enemyEnduranceAfter = Math.max(0, enemyEndurance - totalDamage);
+    } else {
+      playerEnduranceAfter = Math.max(0, playerEndurance - totalDamage);
+    }
   }
   
   return {
     roundNumber,
-    playerDiceRoll: playerRoll,
-    playerAttackStrength: playerAS,
-    playerWeaponPoints,
-    enemyDiceRoll: enemyRoll,
-    enemyAttackStrength: enemyAS,
-    winner,
-    damageDealt,
+    attacker,
+    hitDiceRoll: hitCheck.roll,
+    hitSuccess: hitCheck.hit,
+    damageDiceRoll: dmgDiceRoll,
+    weaponDamage: hitCheck.hit ? attackerWeapon : undefined,
+    totalDamage,
     playerEnduranceAfter,
     enemyEnduranceAfter
   };
