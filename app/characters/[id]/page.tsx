@@ -195,33 +195,6 @@ export default function CharacterDetail() {
     }
   };
 
-  const handleAddItem = async () => {
-    if (!character || !newItemName.trim()) return;
-
-    try {
-      const updatedCharacter = {
-        ...character,
-        inventory: {
-          ...character.inventory,
-          items: [
-            ...character.inventory.items,
-            {
-              name: newItemName.trim(),
-              possessed: true,
-              type: 'item' as const
-            }
-          ]
-        },
-        updatedAt: new Date().toISOString()
-      };
-      await updateCharacter(updatedCharacter);
-      setCharacter(updatedCharacter);
-      setNewItemName('');
-    } catch (error) {
-      console.error('Error adding item:', error);
-    }
-  };
-
   const handleAddItemWithModal = async () => {
     if (!character || !newItemName.trim()) return;
 
@@ -291,43 +264,6 @@ export default function CharacterDetail() {
       setDiceTotal(results.reduce((sum, val) => sum + val, 0));
       setIsRolling(false);
     }, 1500);
-  };
-
-  const handleAddItemWithModal = async () => {
-    if (!character || !newItemName.trim()) return;
-
-    try {
-      const updatedCharacter = {
-        ...character,
-        inventory: {
-          ...character.inventory,
-          items: [
-            ...character.inventory.items,
-            {
-              name: newItemName.trim(),
-              possessed: true,
-              type: 'item' as const
-            }
-          ]
-        },
-        updatedAt: new Date().toISOString()
-      };
-      await updateCharacter(updatedCharacter);
-      setCharacter(updatedCharacter);
-      setNewItemName('');
-      setShowItemModal(false);
-    } catch (error) {
-      console.error('Error adding item:', error);
-    }
-  };
-
-  const rollDice = (count: 1 | 2) => {
-    const results: number[] = [];
-    for (let i = 0; i < count; i++) {
-      results.push(Math.floor(Math.random() * 6) + 1);
-    }
-    setDiceResult(results);
-    setDiceTotal(results.reduce((sum, val) => sum + val, 0));
   };
 
   const handleUpdateWeaponName = async () => {
