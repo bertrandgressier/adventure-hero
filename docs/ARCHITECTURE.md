@@ -117,30 +117,30 @@ interface Character {
   id: string;
   name: string;
   book: string;
-  createdAt: Date;
-  updatedAt: Date;
+  talent: string;  // Artisan, Explorateur, Guerrier, Magicien, Négociant, Voleur
+  createdAt: string;
+  updatedAt: string;
   
-  // Attributs de base (selon fiche officielle)
+  // Caractéristiques
   stats: {
-    habilete: number;
-    habileteInitiale: number;
-    endurance: number;
-    enduranceInitiale: number;
-    chance: number;
-    chanceInitiale: number;
-    dexterite: number;  // Score fixe
+    dexterite: number;         // Score fixe (7 par défaut)
+    chance: number;            // Score actuel
+    chanceInitiale: number;    // Score de départ
+    pointsDeVieMax: number;    // Maximum de PV (2d6 × 4)
+    pointsDeVieActuels: number;// PV actuels
   };
   
-  // Points de vie
-  pointsDeVieMaximum: number;
-  
-  // Inventaire (cases à cocher)
+  // Inventaire
   inventory: {
-    items: Array<{
+    boulons: number;           // Monnaie
+    weapon?: {                 // Arme équipée (une seule)
+      name: string;
+      attackPoints: number;    // Points de dommage
+    };
+    items: Array<{             // Objets (hors armes)
       name: string;
       possessed: boolean;
-      attackPoints?: number;  // Points d'attaque pour les armes
-      type?: 'weapon' | 'item' | 'special';
+      type?: 'item' | 'special';
     }>;
   };
   
@@ -159,30 +159,41 @@ interface Character {
 ### Combat
 
 ```typescript
-interface Combat {
-  id: string;
-  characterId: string;
-  opponent: {
-    name: string;
-    habilete: number;
-    endurance: number;
-  };
-  rounds: CombatRound[];
-  isActive: boolean;
-  result?: 'victory' | 'defeat' | 'flee';
+interface Enemy {
+  name: string;
+  dexterite: number;
+  endurance: number;
+  enduranceMax: number;
+  attackPoints: number; // Points de dommage de l'arme
 }
 
 interface CombatRound {
   roundNumber: number;
-  playerRoll: number;
-  opponentRoll: number;
-  playerAttack: number;
-  opponentAttack: number;
-  damage?: {
-    toPlayer?: number;
-    toOpponent?: number;
-  };
+  attacker: 'player' | 'enemy';
+  
+  // Test pour toucher
+  hitDiceRoll: number;           // 2d6
+  hitSuccess: boolean;           // hitDiceRoll ≤ DEXTÉRITÉ
+  
+  // Si touché, calcul des dégâts
+  damageDiceRoll?: number;       // 1d6
+  weaponDamage?: number;         // Points de dommage de l'arme
+  totalDamage?: number;          // 1 + 1d6 + weaponDamage
+  
+  playerEnduranceAfter: number;
+  enemyEnduranceAfter: number;
 }
+
+interface CombatState {
+  enemy: Enemy;
+  rounds: CombatRound[];
+  playerEndurance: number;
+  enemyEndurance: number;
+  status: 'setup' | 'ongoing' | 'victory' | 'defeat';
+  nextAttacker: 'player' | 'enemy';
+}
+
+type CombatMode = 'auto' | 'manual';
 ```
 
 ## Flux de données
@@ -196,15 +207,19 @@ User Action → Component → Storage Lib → IndexedDB/LocalStorage
 
 ### Combat
 ```
-Start Combat → Initialize Combat State
+Start Combat → Initialize Combat State (mode, first attacker)
     ↓
-Roll Dice → Calculate Attack Scores
+Roll to Hit (2d6) → Check if ≤ DEXTÉRITÉ
     ↓
-Compare Scores → Apply Damage
+If Hit → Roll Damage (1d6) → Calculate Total (1 + 1d6 + weapon)
     ↓
-Update Character Stats → Save to Storage
+Apply Damage → Update Endurance
     ↓
-Check Victory Condition → End or Continue
+Alternate Attacker → Next Round
+    ↓
+Check Victory/Defeat (PV = 0) → End or Continue
+    ↓
+Save Updated Character → Show End Modal
 ```
 
 ## Gestion d'état

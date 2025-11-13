@@ -20,31 +20,35 @@ Basé sur le premier livre de la collection [La Saga Dadga](https://www.lasagade
 
 Selon la fiche officielle du livre :
 
-#### HABILETÉ
-- Score de combat
-- Valeur initiale et valeur actuelle
-
-#### ENDURANCE  
-- Points de vie
-- Valeur initiale et valeur actuelle
-
-#### CHANCE
-- Score de chance
-- Valeur initiale et valeur actuelle
+#### TALENT
+- Choix parmi : Artisan, Explorateur, Guerrier, Magicien, Négociant, Voleur
+- Défini au moment de la création du personnage
 
 #### DEXTÉRITÉ
-- Compétence d'adresse
-- Score fixe
+- Compétence d'adresse et de toucher en combat
+- Score fixe : 7
+
+#### CHANCE
+- Score de chance (valeur actuelle et initiale)
+- Générée avec 1d6 à la création
+- Se réduit à chaque utilisation
+
+#### POINTS DE VIE
+- Maximum : 2d6 × 4 (générés à la création)
+- Actuels : valeur courante (réduits par les combats)
 
 ### 3. Possessions
 
-#### POINTS DE VIE MAXIMUM
-- Total de points de vie obtenus
+#### BOULONS
+- Monnaie utilisée dans le jeu
+
+#### ARME ÉQUIPÉE
+- Une seule arme peut être équipée à la fois
+- **Points de dommage** : Chaque arme possède un score de points de dommage
 
 #### INVENTAIRE
-- Liste des objets transportés
+- Liste des objets transportés (hors armes)
 - Cases à cocher pour les objets possédés
-- **Points d'attaque des armes** : Chaque arme possède un score de points d'attaque à utiliser en combat
 
 ## Format de stockage
 
@@ -54,30 +58,30 @@ interface Character {
   id: string;
   name: string;
   book: string;
+  talent: string;              // Talent choisi (Artisan, Explorateur, Guerrier, Magicien, Négociant, Voleur)
   createdAt: string;
   updatedAt: string;
   
   // Caractéristiques (selon fiche officielle)
   stats: {
-    habilete: number;
-    habileteInitiale: number;
-    endurance: number;
-    enduranceInitiale: number;
-    chance: number;
-    chanceInitiale: number;
-    dexterite: number;  // Score fixe
+    dexterite: number;         // Score fixe (7 par défaut)
+    chance: number;            // Score actuel de chance
+    chanceInitiale: number;    // Score initial de chance
+    pointsDeVieMax: number;    // Points de vie maximum (2d6 × 4)
+    pointsDeVieActuels: number;// Points de vie actuels
   };
   
-  // Points de vie
-  pointsDeVieMaximum: number;
-  
-  // Inventaire (cases à cocher)
+  // Inventaire
   inventory: {
-    items: Array<{
+    boulons: number;           // Monnaie du jeu
+    weapon?: {                 // Arme équipée (une seule)
+      name: string;
+      attackPoints: number;    // Points de dommage de l'arme
+    };
+    items: Array<{             // Objets (hors armes)
       name: string;
       possessed: boolean;
-      attackPoints?: number;  // Points d'attaque pour les armes
-      type?: 'weapon' | 'item' | 'special';
+      type?: 'item' | 'special';
     }>;
   };
   
@@ -93,33 +97,29 @@ interface Character {
 
 ### Création du personnage
 
-⚠️ **Important** : Ces règles doivent être vérifiées dans le livre "La Harpe des Quatre Saisons" car elles varient selon les livres de la collection.
+Règles pour "La Harpe des Quatre Saisons" :
 
-Les règles générales de création sont :
+1. **Nom** : Choisir le nom de votre héros
+2. **Talent** : Choisir parmi Artisan, Explorateur, Guerrier, Magicien, Négociant, Voleur
+3. **DEXTÉRITÉ** : 7 (valeur fixe)
+4. **CHANCE** : Lancer 1d6
+5. **POINTS DE VIE MAXIMUM** : Lancer 2d6 et multiplier par 4
 
-1. **Habileté** : Méthode à définir selon le livre
-2. **Endurance** : Méthode à définir selon le livre
-3. **Chance** : Méthode à définir selon le livre
-4. **Dextérité** : Méthode à définir selon le livre
-5. **Points de Vie Maximum** : À calculer selon le livre
-
-**Équipement de départ** : Selon les instructions spécifiques du livre
-   - Sac à dos
-   - Provisions (quantité selon le livre)
-   - Or (montant selon le livre)
-   - Équipement spécial selon les instructions du livre
+**Équipement de départ** : À définir en début d'aventure
+   - Boulons (monnaie)
+   - Arme de départ avec ses points de dommage
+   - Objets de départ selon les instructions du livre
 
 ### Combat
 
 Voir le document [COMBAT.md](./COMBAT.md) pour les règles détaillées de combat.
 
 **Résumé** :
-1. Lancer 2 dés pour votre personnage + votre Habileté = Force d'Attaque
-2. Lancer 2 dés pour l'adversaire + son Habileté = Force d'Attaque
-3. Comparer les Forces d'Attaque :
-   - La plus haute inflige 2 points de dégâts à l'autre
-   - En cas d'égalité, aucun dégât
-4. Recommencer jusqu'à ce que l'un des combattants tombe (Endurance = 0)
+1. L'attaquant lance 2d6 pour toucher (≤ DEXTÉRITÉ = touché)
+2. Si touché : Lancer 1d6 pour les dégâts
+3. Dégâts = 1 (base) + 1d6 + Points de dommage de l'arme
+4. Alterner les attaquants à chaque round
+5. Recommencer jusqu'à ce que l'un des combattants tombe (Points de Vie = 0)
 
 ### Tenter sa Chance
 
@@ -228,28 +228,29 @@ const validation = {
 {
   "version": "1.0",
   "character": {
-    "id": "uuid-v4",
+    "id": "1731412345678-abc123",
     "name": "Eldric le Brave",
     "book": "La Harpe des Quatre Saisons",
+    "talent": "Guerrier",
     "createdAt": "2025-11-12T10:00:00Z",
     "updatedAt": "2025-11-12T14:32:00Z",
     "stats": {
-      "habilete": 12,
-      "habileteInitiale": 12,
-      "endurance": 18,
-      "enduranceInitiale": 20,
-      "chance": 10,
-      "chanceInitiale": 11,
-      "dexterite": 8
+      "dexterite": 7,
+      "chance": 5,
+      "chanceInitiale": 6,
+      "pointsDeVieMax": 32,
+      "pointsDeVieActuels": 28
+    },
     "inventory": {
+      "boulons": 15,
+      "weapon": {
+        "name": "Épée longue",
+        "attackPoints": 5
+      },
       "items": [
-        { "name": "Épée", "possessed": true, "type": "weapon", "attackPoints": 5 },
         { "name": "Bouclier", "possessed": true, "type": "item" },
         { "name": "Potion de guérison", "possessed": true, "type": "special" },
-        { "name": "Dague", "possessed": false, "type": "weapon", "attackPoints": 3 },
         { "name": "Clé rouillée", "possessed": true, "type": "item" }
-      ]
-    },  { "name": "Clé rouillée", "possessed": true }
       ]
     },
     "progress": {

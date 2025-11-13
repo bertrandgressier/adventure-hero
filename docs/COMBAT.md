@@ -15,76 +15,41 @@ Chaque combattant (personnage ou adversaire) possède deux caractéristiques pri
 
 ### 2. Déroulement d'un combat
 
-#### Phase 1 : Calcul des Forces d'Attaque
+#### Phase 1 : Test pour toucher
 
-**Pour votre personnage :**
+**L'attaquant** (tour par tour) :
 1. Lancez 2 dés (résultat entre 2 et 12)
-2. Ajoutez votre score d'HABILETÉ actuel
-3. **Ajoutez les points d'attaque de votre arme équipée**
-4. **Total = FORCE D'ATTAQUE du personnage**
+2. Comparez avec votre score de **DEXTÉRITÉ**
+3. **Si 2d6 ≤ DEXTÉRITÉ** : **L'attaque touche** → Passer à la Phase 2
+4. **Si 2d6 > DEXTÉRITÉ** : **L'attaque rate** → Passer au prochain round
 
-**Pour l'adversaire :**
-1. Lancez 2 dés (résultat entre 2 et 12)
-2. Ajoutez son score d'HABILETÉ (indiqué dans le livre)
-3. Ajoutez ses points d'attaque (si indiqué)
-4. **Total = FORCE D'ATTAQUE de l'adversaire**
+#### Phase 2 : Calcul des dégâts (si touché)
 
-#### Phase 2 : Comparaison et résolution
+1. Lancez 1 dé (résultat entre 1 et 6)
+2. **Dégâts = 1 (base) + 1d6 + Points de dommage de l'arme**
+3. Exemple : 1 + 4 (dé) + 5 (arme) = **10 points de dégâts**
 
-1. Comparez les deux Forces d'Attaque
+#### Phase 3 : Application des dégâts
 
-2. **Détermination du vainqueur de l'assaut :**
-   - Si votre Force d'Attaque > Force d'Attaque adverse : **VOUS gagnez l'assaut**
-   - Si Force d'Attaque adverse > votre Force d'Attaque : **L'ADVERSAIRE gagne l'assaut**
-   - Si les Forces d'Attaque sont **égales** : **AUCUN dégât** (vous esquivez tous les deux)
+1. **Déduisez les dégâts** des Points de Vie du défenseur
+2. Si les Points de Vie tombent à **0 ou moins** : le combattant est **vaincu**
 
-3. **Application des dégâts :**
-   - Le perdant de l'assaut perd **2 points d'ENDURANCE**
-   - Déduisez immédiatement ces points du total d'Endurance
+#### Phase 4 : Nouvel assaut
 
-#### Phase 3 : Nouvel assaut
-
-1. Recommencez les phases 1 et 2
-2. Continuez ainsi jusqu'à ce que :
-   - L'ENDURANCE de l'adversaire tombe à **0 ou moins** → **VICTOIRE**
-   - Votre ENDURANCE tombe à **0 ou moins** → **DÉFAITE** (généralement mort)
+1. **Alternez l'attaquant** : si c'était vous, c'est maintenant l'adversaire (et inversement)
+2. Recommencez les phases 1, 2 et 3 avec le nouvel attaquant
+3. Continuez ainsi jusqu'à ce que :
+   - Les **Points de Vie** de l'adversaire tombent à **0 ou moins** → **VICTOIRE**
+   - Vos **Points de Vie** tombent à **0 ou moins** → **DÉFAITE** (généralement mort)
    - Le livre vous offre une option de **FUITE** (selon le paragraphe)
 
 ## Options de combat avancées
 
-### Tentez votre Chance en combat
-
-Vous pouvez **Tenter votre Chance** pour influencer le résultat d'un assaut :
-
-#### Quand l'utiliser ?
-
-1. **Après avoir blessé un adversaire** (pour infliger plus de dégâts)
-2. **Après avoir été blessé** (pour réduire les dégâts subis)
-
-#### Comment ça marche ?
-
-**Si vous blessez l'adversaire :**
-- Lancez 2 dés
-- Si résultat ≤ votre CHANCE actuelle → **Chanceux**
-  - Dégâts infligés : **3 points** au lieu de 2 (dégât supplémentaire)
-- Si résultat > votre CHANCE actuelle → **Malchanceux**
-  - Dégâts infligés : **1 point** seulement au lieu de 2 (coup moins efficace)
-
-**Si vous êtes blessé :**
-- Lancez 2 dés
-- Si résultat ≤ votre CHANCE actuelle → **Chanceux**
-  - Dégâts subis : **1 point** au lieu de 2 (vous parez partiellement)
-- Si résultat > votre CHANCE actuelle → **Malchanceux**
-  - Dégâts subis : **3 points** au lieu de 2 (le coup est plus grave)
-
-⚠️ **Important :** Après chaque Tentez votre Chance, réduisez votre score de CHANCE de **1 point**.
-
 ### Fuite
 
-Certains combats permettent de **fuir** après un certain nombre d'assauts :
+Certains combats permettent de **fuir** :
 - Le livre vous indiquera si la fuite est possible
-- Généralement, vous pouvez fuir après le premier assaut
-- L'adversaire vous inflige automatiquement **2 points de dégâts** dans le dos
+- Vous perdez automatiquement **2 Points de Vie** en fuyant
 - Rendez-vous au paragraphe indiqué pour fuir
 
 ## Combats multiples
@@ -127,33 +92,26 @@ Certaines situations peuvent **modifier temporairement** votre Force d'Attaque :
 
 ### Bonus et malus
 ### Situation
-Vous (HABILETÉ 10, ENDURANCE 20, CHANCE 9) avec une **Épée (5 points d'attaque)** affrontez un **GOBELIN** (HABILETÉ 6, ENDURANCE 5, Points d'attaque 2).
+Vous (DEXTÉRITÉ 7, PV 32/32, CHANCE 5) avec une **Épée longue (5 points de dommage)** affrontez un **GOBELIN** (DEXTÉRITÉ 6, PV 15/15, Arme 2 pts).
 
-### Assaut 1
-1. **Votre lancer** : 🎲🎲 = 7 + 10 (HAB) + 5 (Épée) = **22** (Force d'Attaque)
-2. **Lancer du Gobelin** : 🎲🎲 = 5 + 6 (HAB) + 2 (Arme) = **13** (Force d'Attaque)
-3. **Résultat** : 22 > 13 → **Vous gagnez l'assaut**
-4. Le Gobelin perd 2 points → ENDURANCE : 5 - 2 = **3**
+### Round 1 - Vous attaquez
+1. **Lancer pour toucher** : 🎲🎲 = 5 ≤ 7 (DEX) → **Touché !**
+2. **Lancer de dégâts** : 🎲 = 4
+3. **Dégâts** : 1 + 4 + 5 (Épée) = **10 points**
+4. Le Gobelin perd 10 PV → PV : 15 - 10 = **5**
 
-### Assaut 2
-1. **Votre lancer** : 🎲🎲 = 4 + 10 + 5 = **19**
-2. **Lancer du Gobelin** : 🎲🎲 = 9 + 6 + 2 = **17**
-3. **Résultat** : 19 > 17 → **Vous gagnez l'assaut**
-4. Le Gobelin perd 2 points → ENDURANCE : 3 - 2 = **1**
+### Round 2 - Le Gobelin attaque
+1. **Lancer pour toucher** : 🎲🎲 = 8 > 6 (DEX) → **Raté !**
+2. Aucun dégât
 
-### Assaut 3
-1. **Votre lancer** : 🎲🎲 = 3 + 10 + 5 = **18**
-2. **Lancer du Gobelin** : 🎲🎲 = 10 + 6 + 2 = **18**
-3. **Résultat** : 18 = 18 → **Égalité, aucun dégât**
-
-### Assaut 4
-1. **Votre lancer** : 🎲🎲 = 6 + 10 + 5 = **21**
-2. **Lancer du Gobelin** : 🎲🎲 = 4 + 6 + 2 = **12**
-3. **Résultat** : 21 > 12 → **Vous gagnez l'assaut**
-4. Le Gobelin perd 2 points → ENDURANCE : 1 - 2 = **-1** (mort)
+### Round 3 - Vous attaquez
+1. **Lancer pour toucher** : 🎲🎲 = 6 ≤ 7 (DEX) → **Touché !**
+2. **Lancer de dégâts** : 🎲 = 2
+3. **Dégâts** : 1 + 2 + 5 (Épée) = **8 points**
+4. Le Gobelin perd 8 PV → PV : 5 - 8 = **-3** (mort)
 
 ### 🎉 VICTOIRE !
-- Votre état final : HABILETÉ 10, ENDURANCE 20, CHANCE 9, Épée (5 pts)
+- Votre état final : DEXTÉRITÉ 7, PV 32/32, CHANCE 5, Épée longue (5 pts)
 - Vous pouvez continuer votre aventure au paragraphe indiqué
 ### Assaut 4
 1. **Votre lancer** : 🎲🎲 = 6 + 10 = **16**
@@ -179,24 +137,23 @@ Vous (HABILETÉ 10, ENDURANCE 20, CHANCE 9) avec une **Épée (5 points d'attaqu
 ├─────────────────────────────────────┤
 │                                     │
 │  VOUS                    GOBELIN    │
-│  HAB: 10                 HAB: 6     │
-│  END: 20/20             END: 5/5    │
+│  DEX: 7                  DEX: 6     │
+│  PV: 32/32              PV: 15/15   │
 │  Arme: Épée (5 pts)     Arme: 2 pts │
 │                                     │
 ├─────────────────────────────────────┤
-│           ASSAUT N°1                │
+│           ROUND N°1                 │
+│         Attaquant: VOUS             │
 ├─────────────────────────────────────┤
 │                                     │
-│  Votre lancer:     [LANCER DÉS]    │
-│  Force d'Attaque:  --               │
-│  (2d6 + HAB 10 + Arme 5)           │
+│  Test toucher:    [LANCER DÉS]     │
+│  (2d6 ≤ DEX 7)                     │
 │                                     │
-│  Adversaire:       (auto)           │
-│  Force d'Attaque:  --               │
-│  (2d6 + HAB 6 + Arme 2)            │
+│  Si touché:                         │
+│  Dégâts: 1 + 1d6 + 5 (Arme)       │
 │                                     │
 ├─────────────────────────────────────┤
-│  [TENTEZ VOTRE CHANCE]  [FUIR]     │
+│  [FUIR (-2 PV)]                    │
 └─────────────────────────────────────┘
 ```**Affichage en temps réel** :
    - Statistiques des deux combattants
@@ -232,62 +189,66 @@ Vous (HABILETÉ 10, ENDURANCE 20, CHANCE 9) avec une **Épée (5 points d'attaqu
 ```typescript
 interface CombatRound {
   roundNumber: number;
-  playerDiceRoll: number;
-  playerAttackStrength: number;
-  playerWeaponPoints: number;  // Points d'attaque de l'arme
-  enemyDiceRoll: number;
-  enemyAttackStrength: number;
-  enemyWeaponPoints: number;
-  winner: 'player' | 'enemy' | 'draw';
-  damageDealt: number;
-  luckUsed: boolean;
-  luckResult?: 'lucky' | 'unlucky';
-  adjustedDamage?: number;
+  attacker: 'player' | 'enemy';
+  
+  // Test pour toucher
+  hitDiceRoll: number;           // 2d6
+  hitSuccess: boolean;           // hitDiceRoll ≤ DEXTÉRITÉ
+  
+  // Si touché, calcul des dégâts
+  damageDiceRoll?: number;       // 1d6
+  weaponDamage?: number;         // Points de dommage de l'arme
+  totalDamage?: number;          // 1 + 1d6 + weaponDamage
+  
+  playerEnduranceAfter: number;
+  enemyEnduranceAfter: number;
 }
 
 function resolveCombatRound(
-  playerSkill: number,
-  playerStamina: number,
-  playerWeaponPoints: number,  // Nouveau paramètre
-  enemySkill: number,
-  enemyStamina: number,
-  enemyWeaponPoints: number    // Nouveau paramètre
+  roundNumber: number,
+  attacker: 'player' | 'enemy',
+  playerDexterite: number,
+  playerEndurance: number,
+  playerWeaponDamage: number,
+  enemy: Enemy,
+  enemyEndurance: number
 ): CombatRound {
-  // 1. Lancer les dés
-  const playerRoll = rollTwoDice(); // 2d6
-  const enemyRoll = rollTwoDice();
+  const isPlayerAttacking = attacker === 'player';
+  const attackerDex = isPlayerAttacking ? playerDexterite : enemy.dexterite;
+  const attackerWeapon = isPlayerAttacking ? playerWeaponDamage : enemy.attackPoints;
   
-  // 2. Calculer Forces d'Attaque (avec armes)
-  const playerAS = playerRoll + playerSkill + playerWeaponPoints;
-  const enemyAS = enemyRoll + enemySkill + enemyWeaponPoints;
+  // 1. Test pour toucher (2d6 ≤ DEXTÉRITÉ)
+  const hitRoll = rollTwoDice();
+  const hitSuccess = hitRoll <= attackerDex;
   
-  // 3. Déterminer le gagnant
-  let winner: 'player' | 'enemy' | 'draw';
-  let damageDealt = 0;
+  let playerEnduranceAfter = playerEndurance;
+  let enemyEnduranceAfter = enemyEndurance;
+  let totalDamage: number | undefined;
+  let damageRoll: number | undefined;
   
-  if (playerAS > enemyAS) {
-    winner = 'player';
-    damageDealt = 2;
-    enemyStamina -= damageDealt;
-  } else if (enemyAS > playerAS) {
-    winner = 'enemy';
-    damageDealt = 2;
-    playerStamina -= damageDealt;
-  } else {
-    winner = 'draw';
+  // 2. Si touché, calculer les dégâts (1 + 1d6 + arme)
+  if (hitSuccess) {
+    damageRoll = rollOneDie();
+    totalDamage = 1 + damageRoll + attackerWeapon;
+    
+    // Appliquer les dégâts
+    if (isPlayerAttacking) {
+      enemyEnduranceAfter = Math.max(0, enemyEndurance - totalDamage);
+    } else {
+      playerEnduranceAfter = Math.max(0, playerEndurance - totalDamage);
+    }
   }
   
   return {
     roundNumber,
-    playerDiceRoll: playerRoll,
-    playerAttackStrength: playerAS,
-    playerWeaponPoints,
-    enemyDiceRoll: enemyRoll,
-    enemyAttackStrength: enemyAS,
-    enemyWeaponPoints,
-    winner,
-    damageDealt,
-    luckUsed: false
+    attacker,
+    hitDiceRoll: hitRoll,
+    hitSuccess,
+    damageDiceRoll: damageRoll,
+    weaponDamage: hitSuccess ? attackerWeapon : undefined,
+    totalDamage,
+    playerEnduranceAfter,
+    enemyEnduranceAfter
   };
 }
 function testLuck(currentLuck: number): boolean {
@@ -322,13 +283,12 @@ Certaines créatures ne peuvent être blessées que par des armes magiques ou de
 
 ## Conseils stratégiques
 
-1. **Choisissez la bonne arme** : Équipez l'arme avec le plus de points d'attaque
-2. **Évaluez avant de combattre** : Comparez votre Force d'Attaque totale (HAB + Arme) avec celle de l'adversaire
-3. **Gérez votre Chance** : Ne l'utilisez pas trop vite, gardez-en pour les moments critiques
-4. **Fuyez si nécessaire** : Si l'adversaire a beaucoup plus de points d'attaque, parfois fuir est la meilleure option
-5. **Surveillez votre Endurance** : Récupérez selon les règles du livre avant d'atteindre un niveau critique
-6. **Objets magiques** : Certaines armes magiques ont des points d'attaque très élevés
-7. **Arme cassée** : Ayez toujours une arme de secours dans votre inventaire
+1. **Choisissez la bonne arme** : Équipez l'arme avec le plus de points de dommage
+2. **Évaluez la DEXTÉRITÉ** : Plus elle est élevée, plus vous avez de chances de toucher
+3. **Armes puissantes** : Les points de dommage augmentent les dégâts, pas la chance de toucher
+4. **Fuyez si nécessaire** : Si l'adversaire a trop de Points de Vie ou une DEXTÉRITÉ élevée, parfois fuir (-2 PV) est la meilleure option
+5. **Surveillez vos Points de Vie** : Utilisez les boulons pour acheter des objets de soin
+6. **Premier attaquant** : Choisissez bien qui attaque en premier, cela peut faire la différence
 
 1. **Évaluez avant de combattre** : Vérifiez si l'adversaire a une Habileté très élevée
 2. **Gérez votre Chance** : Ne l'utilisez pas trop vite, gardez-en pour les moments critiques

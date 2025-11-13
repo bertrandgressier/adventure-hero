@@ -13,7 +13,17 @@ Première implémentation : **La Harpe des Quatre Saisons**
 - Accueil avec navigation principale
 - Logo et branding de l'application
 
-### 2. Gestion des personnages
+### 2. Choix du talent
+
+Lors de la création du personnage, choix parmi 6 talents :
+- **Artisan** : Compétences artisanales
+- **Explorateur** : Connaissance du terrain
+- **Guerrier** : Maîtrise des armes
+- **Magicien** : Pouvoir magique
+- **Négociant** : Sens du commerce
+- **Voleur** : Agilité et discrétion
+
+### 3. Gestion des personnages
 
 #### Liste des personnages
 - Affichage de tous les personnages sauvegardés
@@ -33,36 +43,45 @@ Première implémentation : **La Harpe des Quatre Saisons**
   - Notes spéciales
 
 #### Modifier un personnage
-- Édition de toutes les statistiques
-- Mise à jour de l'inventaire
-- Modification des points de vie/endurance
+- **Édition inline du nom** : clic sur le nom pour l'éditer directement
+- **Édition inline des stats** : clic sur DEXTÉRITÉ, CHANCE, PV MAX, PV ACTUELS pour éditer
+- **Édition inline du paragraphe et des boulons** : clic direct sur les valeurs
+- Mise à jour de l'arme équipée
+- Ajout/suppression d'objets dans l'inventaire
+- Modification des notes
 
-#### Supprimer un personnage
+#### Dupliquer/Supprimer un personnage
+- **Bouton dupliquer** (📋) directement dans la liste des personnages
+- **Bouton supprimer** (🗑️) directement dans la liste des personnages
 - Confirmation avant suppression
 - Suppression définitive du stockage local
 
-### 3. Gestion de la progression
+### 4. Gestion de la progression
 
 #### Sauvegarde de position
 - Enregistrer le numéro de paragraphe actuel
 - Historique des dernières positions
 - Horodatage des sauvegardes
 
-### 4. Système de combat
+### 5. Système de combat
 
 #### Phase de combat
+- Configuration de l'adversaire (nom, DEXTÉRITÉ, PV, points de dommage)
+- Choix du mode : **Automatique** (dés lancés automatiquement) ou **Manuel** (contrôle total)
+- Choix du premier attaquant (joueur ou ennemi)
 - Interface dédiée au combat
-- Calcul automatique des Forces d'Attaque
-- Lancer de dés pour chaque assaut
-- Gestion des points d'endurance en temps réel
-- Affichage des adversaires avec leurs stats
-- Option "Tentez votre Chance" après chaque assaut
-- Possibilité de fuir (si autorisé)
-- Historique des assauts
-- Animations visuelles des dégâts
-- Résolution automatique jusqu'à victoire ou défaite
+- **Test pour toucher** : 2d6 ≤ DEXTÉRITÉ
+- **Calcul automatique des dégâts** : 1 + 1d6 + Points de dommage de l'arme
+- Alternance automatique des attaquants
+- Gestion des Points de Vie en temps réel
+- Affichage côte à côte : vous vs adversaire
+- Possibilité de fuir (-2 PV)
+- Historique des rounds avec auto-scroll
+- Détection automatique de la victoire ou de la défaite
+- Modal de fin de combat (victoire ou défaite)
+- Option de résurrection (PV à 0) en cas de défaite
 
-### 5. Lancer de dés
+### 6. Lancer de dés
 
 #### Dés à 6 faces
 - Lancer 1 dé
@@ -70,7 +89,15 @@ Première implémentation : **La Harpe des Quatre Saisons**
 - Affichage animé des résultats
 - Historique des lancers récents
 
-### 6. Bloc-notes
+### 7. Musique d'ambiance
+
+#### Lecteur audio
+- Musique de fond automatique au lancement
+- Bouton de contrôle (🔊/🔇) en haut à droite
+- Arrêt complet du média (pas de ressource active dans le navigateur)
+- Préférence sauvegardée dans le navigateur (localStorage)
+
+### 8. Bloc-notes
 
 #### Notes personnelles
 - Prise de notes libre
@@ -78,7 +105,7 @@ Première implémentation : **La Harpe des Quatre Saisons**
 - Indices et rappels
 - Sauvegarde automatique
 
-### 7. Import/Export
+### 9. Import/Export
 
 #### Sauvegarde des données
 - Export du personnage au format JSON
