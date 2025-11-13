@@ -2,37 +2,37 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Adventure Hero',
-    short_name: 'AdventureHero',
-    description: 'Une Progressive Web App mobile construite avec Next.js',
+    name: 'Adventure Hero - La Saga de Dagda',
+    short_name: 'Adventure Hero',
+    description: 'Gérez vos héros dans les livres dont vous êtes le héros',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#000000',
+    background_color: '#1a140f',
+    theme_color: '#1a140f',
     orientation: 'portrait',
     icons: [
       {
-        src: '/icon-192x192.svg',
+        src: '/icon-192x192.png',
         sizes: '192x192',
-        type: 'image/svg+xml',
+        type: 'image/png',
         purpose: 'any'
       },
       {
-        src: '/icon-512x512.svg',
+        src: '/icon-512x512.png',
         sizes: '512x512',
-        type: 'image/svg+xml',
+        type: 'image/png',
         purpose: 'any'
       },
       {
-        src: '/icon-192x192.svg',
+        src: '/icon-192x192.png',
         sizes: '192x192',
-        type: 'image/svg+xml',
+        type: 'image/png',
         purpose: 'maskable'
       },
       {
-        src: '/icon-512x512.svg',
+        src: '/icon-512x512.png',
         sizes: '512x512',
-        type: 'image/svg+xml',
+        type: 'image/png',
         purpose: 'maskable'
       }
     ]
