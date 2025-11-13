@@ -74,6 +74,7 @@ export default function NewCharacterPage() {
         pointsDeVieActuels: stats.pointsDeVieMax,
       },
       inventory: {
+        boulons: 0,
         items: [],
       },
       progress: {

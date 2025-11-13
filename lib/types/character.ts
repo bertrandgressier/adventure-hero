@@ -15,6 +15,7 @@ export interface Character {
   };
   
   inventory: {
+    boulons: number;
     items: Array<{
       name: string;
       possessed: boolean;
