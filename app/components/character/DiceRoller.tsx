@@ -6,15 +6,18 @@ interface DiceRollerProps {
   onClose: () => void;
 }
 
+const getDiceFace = (value: number) => {
+  const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  return faces[value - 1];
+};
+
 export default function DiceRoller({ onClose }: DiceRollerProps) {
-  const [diceResult, setDiceResult] = useState<number[]>([]);
-  const [diceTotal, setDiceTotal] = useState(0);
+  const [diceResult, setDiceResult] = useState<number[]>([6, 6]);
+  const [diceTotal, setDiceTotal] = useState(12);
   const [isRolling, setIsRolling] = useState(false);
 
   const rollDice = (count: number) => {
     setIsRolling(true);
-    setDiceResult([]);
-    setDiceTotal(0);
 
     const results: number[] = [];
     let total = 0;
@@ -23,6 +26,11 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
       const roll = Math.floor(Math.random() * 6) + 1;
       results.push(roll);
       total += roll;
+    }
+
+    // Si on lance 1 dé, on garde le deuxième à 0
+    if (count === 1) {
+      results.push(0);
     }
 
     setTimeout(() => {
@@ -34,59 +42,70 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div 
-        className="bg-[#2a1e17] border-2 border-primary/50 rounded-lg p-6 max-w-md w-full"
+        className="bg-[#2a1e17] border-2 border-[#FFBF00] rounded-lg p-6 max-w-md w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
+        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-[#FFBF00] mb-6 text-center">
           🎲 Lancer de dés
         </h3>
 
-        {diceResult.length > 0 && (
-          <div className="mb-6 text-center">
-            <div className="flex justify-center gap-3 mb-4">
-              {diceResult.map((die, index) => (
-                <div
-                  key={index}
-                  className="w-16 h-16 bg-[#1a140f] border-2 border-primary rounded-lg flex items-center justify-center font-[var(--font-geist-mono)] text-3xl text-primary animate-[bounce_0.5s_ease-in-out]"
-                >
-                  {die}
-                </div>
-              ))}
-            </div>
-            <div className="font-[var(--font-uncial)] text-2xl text-light">
-              Total: <span className="text-primary">{diceTotal}</span>
-            </div>
+        {/* Affichage des dés - toujours visible */}
+        <div className="mb-6">
+          <div className="flex justify-center gap-4 mb-4">
+            {diceResult[0] > 0 && (
+              <div
+                className={`w-24 h-24 bg-[#FFBF00] border-2 border-[#000000] rounded-xl flex items-center justify-center text-7xl text-[#000000] shadow-lg shadow-[#FFBF00]/50 ${
+                  isRolling ? 'animate-[spin_0.5s_ease-in-out]' : 'animate-[bounce_0.5s_ease-in-out]'
+                }`}
+              >
+                {getDiceFace(diceResult[0])}
+              </div>
+            )}
+            {diceResult[1] > 0 && (
+              <div
+                className={`w-24 h-24 bg-[#FFBF00] border-2 border-[#000000] rounded-xl flex items-center justify-center text-7xl text-[#000000] shadow-lg shadow-[#FFBF00]/50 ${
+                  isRolling ? 'animate-[spin_0.5s_ease-in-out]' : 'animate-[bounce_0.5s_ease-in-out]'
+                }`}
+              >
+                {getDiceFace(diceResult[1])}
+              </div>
+            )}
           </div>
-        )}
+          {diceTotal > 0 && (
+            <div className="font-[var(--font-uncial)] text-3xl text-center">
+              Total: <span className="text-[#FFBF00] text-4xl font-bold">{diceTotal}</span>
+            </div>
+          )}
+        </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <button
             onClick={() => rollDice(1)}
             disabled={isRolling}
-            className="w-full bg-primary hover:bg-yellow-400 text-[#1a140f] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
           >
-            {isRolling ? '⏳ Lancer...' : '1d6'}
+            {isRolling ? '⏳' : '1 dé'}
           </button>
           <button
             onClick={() => rollDice(2)}
             disabled={isRolling}
-            className="w-full bg-primary hover:bg-yellow-400 text-[#1a140f] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
           >
-            {isRolling ? '⏳ Lancer...' : '2d6'}
-          </button>
-          <button
-            onClick={onClose}
-            className="w-full bg-muted hover:bg-muted/80 text-light font-[var(--font-merriweather)] font-bold px-6 py-3 rounded-lg transition-colors"
-          >
-            Fermer
+            {isRolling ? '⏳' : '2 dés'}
           </button>
         </div>
+        <button
+          onClick={onClose}
+          className="w-full bg-[#1a140f] border border-muted-light/30 hover:border-[#FFBF00] text-light font-[var(--font-merriweather)] px-6 py-3 rounded-lg transition-colors"
+        >
+          Fermer
+        </button>
       </div>
     </div>
   );

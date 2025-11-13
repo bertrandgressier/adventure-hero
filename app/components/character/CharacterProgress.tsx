@@ -85,9 +85,14 @@ export default function CharacterProgress({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Paragraphe actuel */}
-      <div className="bg-[#1a140f] glow-border rounded-lg p-4">
-        <div className="font-[var(--font-merriweather)] text-sm text-muted-light mb-2">
-          Paragraphe actuel
+            <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light">
+            PARAGRAPHE
+          </div>
+          <div className="text-xs font-[var(--font-merriweather)] text-muted-light">
+            {new Date(character.updatedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          </div>
         </div>
         {editingParagraph ? (
           <div className="flex items-center gap-2">

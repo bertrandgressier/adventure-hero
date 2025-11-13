@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAllCharacters } from '@/lib/storage/characters';
+import { useRouter } from 'next/navigation';
+import { getAllCharacters, deleteCharacter, saveCharacter } from '@/lib/storage/characters';
 import { Character } from '@/lib/types/character';
 
 export default function CharactersPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     loadCharacters();
@@ -21,6 +23,35 @@ export default function CharactersPage() {
       console.error('Error loading characters:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
+      try {
+        await deleteCharacter(id);
+        await loadCharacters();
+      } catch (error) {
+        console.error('Error deleting character:', error);
+        alert('Erreur lors de la suppression du personnage');
+      }
+    }
+  };
+
+  const handleDuplicate = async (character: Character) => {
+    try {
+      const duplicatedCharacter: Character = {
+        ...character,
+        id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        name: `${character.name} (Copie)`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      await saveCharacter(duplicatedCharacter);
+      await loadCharacters();
+    } catch (error) {
+      console.error('Error duplicating character:', error);
+      alert('Erreur lors de la duplication du personnage');
     }
   };
 
@@ -107,12 +138,29 @@ export default function CharactersPage() {
                       </span>
                     </div>
                   </div>
-                  <Link
-                    href={`/characters/${character.id}`}
-                    className="text-3xl hover:scale-110 transition-transform"
-                  >
-                    ⚔️
-                  </Link>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleDuplicate(character)}
+                      className="text-xl hover:scale-110 transition-transform text-muted-light hover:text-primary"
+                      title="Dupliquer le personnage"
+                    >
+                      📋
+                    </button>
+                    <button
+                      onClick={() => handleDelete(character.id, character.name)}
+                      className="text-xl hover:scale-110 transition-transform text-muted-light hover:text-destructive"
+                      title="Supprimer le personnage"
+                    >
+                      🗑️
+                    </button>
+                    <Link
+                      href={`/characters/${character.id}`}
+                      className="text-3xl hover:scale-110 transition-transform"
+                      title="Voir la fiche"
+                    >
+                      ⚔️
+                    </Link>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 mb-6">
@@ -146,7 +194,7 @@ export default function CharactersPage() {
                   <div className="flex items-center gap-2 text-sm text-muted-light">
                     <span className="font-[var(--font-geist-mono)]">§{character.progress.currentParagraph}</span>
                     <span>•</span>
-                    <span>{new Date(character.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <span>{new Date(character.updatedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                   <Link
                     href={`/characters/${character.id}`}

@@ -22,6 +22,8 @@ export default function CharacterDetail() {
   const id = params.id as string;
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editingName, setEditingName] = useState(false);
+  const [tempName, setTempName] = useState('');
   
   // Modal states
   const [showWeaponModal, setShowWeaponModal] = useState(false);
@@ -167,6 +169,37 @@ export default function CharacterDetail() {
     setCombatEndStatus(null);
   };
 
+  const handleNameClick = () => {
+    if (!character) return;
+    setTempName(character.name);
+    setEditingName(true);
+  };
+
+  const handleNameSave = async () => {
+    if (!character || !tempName.trim()) return;
+    
+    const updatedCharacter = {
+      ...character,
+      name: tempName.trim(),
+      updatedAt: new Date().toISOString()
+    };
+    await handleUpdateCharacter(updatedCharacter);
+    setEditingName(false);
+  };
+
+  const handleNameCancel = () => {
+    setEditingName(false);
+    setTempName('');
+  };
+
+  const handleNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleNameSave();
+    } else if (e.key === 'Escape') {
+      handleNameCancel();
+    }
+  };
+
   if (loading) {
     return (
       <main className="min-h-screen bg-[#1a140f] p-4">
@@ -187,41 +220,68 @@ export default function CharacterDetail() {
         {/* En-tête */}
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-2">
-              {character.name}
-            </h1>
+            {editingName ? (
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  onKeyDown={handleNameKeyDown}
+                  autoFocus
+                  onFocus={(e) => e.target.select()}
+                  className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] bg-[#1a140f] border-2 border-primary rounded px-2 py-1 focus:outline-none focus:border-yellow-400"
+                />
+                <button
+                  onClick={handleNameSave}
+                  className="text-green-400 hover:text-green-300 text-2xl"
+                >
+                  ✓
+                </button>
+                <button
+                  onClick={handleNameCancel}
+                  className="text-red-400 hover:text-red-300 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <h1 
+                onClick={handleNameClick}
+                className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-2 cursor-pointer hover:text-yellow-400 transition-colors"
+              >
+                {character.name}
+              </h1>
+            )}
             <p className="font-[var(--font-merriweather)] text-muted-light">
               Talent : <span className="text-primary">{character.talent}</span>
             </p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowCombatSetup(true)}
-              className="text-2xl hover:scale-110 transition-transform"
-              title="Lancer un combat"
-            >
-              ⚔️
-            </button>
-            <button
-              onClick={() => setShowDiceModal(true)}
-              className="text-2xl hover:scale-110 transition-transform"
-              title="Lancer les dés"
-            >
-              🎲
-            </button>
-            <button
-              onClick={() => router.push('/characters')}
-              className="text-muted-light hover:text-primary transition-colors text-2xl"
-            >
-              ←
-            </button>
-            <button
-              onClick={handleDelete}
-              className="text-muted-light hover:text-destructive transition-colors text-2xl"
-            >
-              🗑️
-            </button>
-          </div>
+          <button
+            onClick={() => router.push('/characters')}
+            className="text-muted-light hover:text-primary transition-colors text-2xl"
+          >
+            ←
+          </button>
+        </div>
+
+        {/* Actions principales */}
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={() => setShowCombatSetup(true)}
+            className="bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            title="Lancer un combat"
+          >
+            <span className="text-2xl">⚔️</span>
+            <span>Combat</span>
+          </button>
+          <button
+            onClick={() => setShowDiceModal(true)}
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            title="Lancer les dés"
+          >
+            <span className="text-2xl">🎲</span>
+            <span>Lancer les dés</span>
+          </button>
         </div>
 
         {/* Stats Section */}
