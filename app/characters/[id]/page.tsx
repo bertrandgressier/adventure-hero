@@ -24,10 +24,22 @@ export default function CharacterDetail() {
   const [weaponNameValue, setWeaponNameValue] = useState('');
   const [editingWeaponAttack, setEditingWeaponAttack] = useState(false);
   const [weaponAttackValue, setWeaponAttackValue] = useState('');
+  const [editingDexterite, setEditingDexterite] = useState(false);
+  const [dexteriteValue, setDexteriteValue] = useState('');
+  const [editingChance, setEditingChance] = useState(false);
+  const [chanceValue, setChanceValue] = useState('');
+  const [editingPvMax, setEditingPvMax] = useState(false);
+  const [pvMaxValue, setPvMaxValue] = useState('');
+  const [editingPvActuels, setEditingPvActuels] = useState(false);
+  const [pvActuelsValue, setPvActuelsValue] = useState('');
   const paragraphInputRef = useRef<HTMLInputElement>(null);
   const boulonsInputRef = useRef<HTMLInputElement>(null);
   const weaponNameInputRef = useRef<HTMLInputElement>(null);
   const weaponAttackInputRef = useRef<HTMLInputElement>(null);
+  const dexteriteInputRef = useRef<HTMLInputElement>(null);
+  const chanceInputRef = useRef<HTMLInputElement>(null);
+  const pvMaxInputRef = useRef<HTMLInputElement>(null);
+  const pvActuelsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadCharacter();
@@ -61,6 +73,34 @@ export default function CharacterDetail() {
       weaponAttackInputRef.current.select();
     }
   }, [editingWeaponAttack]);
+
+  useEffect(() => {
+    if (editingDexterite && dexteriteInputRef.current) {
+      dexteriteInputRef.current.focus();
+      dexteriteInputRef.current.select();
+    }
+  }, [editingDexterite]);
+
+  useEffect(() => {
+    if (editingChance && chanceInputRef.current) {
+      chanceInputRef.current.focus();
+      chanceInputRef.current.select();
+    }
+  }, [editingChance]);
+
+  useEffect(() => {
+    if (editingPvMax && pvMaxInputRef.current) {
+      pvMaxInputRef.current.focus();
+      pvMaxInputRef.current.select();
+    }
+  }, [editingPvMax]);
+
+  useEffect(() => {
+    if (editingPvActuels && pvActuelsInputRef.current) {
+      pvActuelsInputRef.current.focus();
+      pvActuelsInputRef.current.select();
+    }
+  }, [editingPvActuels]);
 
   const loadCharacter = async () => {
     try {
@@ -315,6 +355,122 @@ export default function CharacterDetail() {
     }
   };
 
+  const handleUpdateDexterite = async () => {
+    if (!character) return;
+
+    const newValue = parseInt(dexteriteValue);
+    if (isNaN(newValue) || newValue < 1) {
+      setEditingDexterite(false);
+      setDexteriteValue('');
+      return;
+    }
+
+    try {
+      const updatedCharacter = {
+        ...character,
+        stats: {
+          ...character.stats,
+          dexterite: newValue
+        },
+        updatedAt: new Date().toISOString()
+      };
+
+      await updateCharacter(updatedCharacter);
+      setCharacter(updatedCharacter);
+      setEditingDexterite(false);
+      setDexteriteValue('');
+    } catch (error) {
+      console.error('Error updating dexterite:', error);
+    }
+  };
+
+  const handleUpdateChance = async () => {
+    if (!character) return;
+
+    const newValue = parseInt(chanceValue);
+    if (isNaN(newValue) || newValue < 0) {
+      setEditingChance(false);
+      setChanceValue('');
+      return;
+    }
+
+    try {
+      const updatedCharacter = {
+        ...character,
+        stats: {
+          ...character.stats,
+          chance: newValue
+        },
+        updatedAt: new Date().toISOString()
+      };
+
+      await updateCharacter(updatedCharacter);
+      setCharacter(updatedCharacter);
+      setEditingChance(false);
+      setChanceValue('');
+    } catch (error) {
+      console.error('Error updating chance:', error);
+    }
+  };
+
+  const handleUpdatePvMax = async () => {
+    if (!character) return;
+
+    const newValue = parseInt(pvMaxValue);
+    if (isNaN(newValue) || newValue < 1) {
+      setEditingPvMax(false);
+      setPvMaxValue('');
+      return;
+    }
+
+    try {
+      const updatedCharacter = {
+        ...character,
+        stats: {
+          ...character.stats,
+          pointsDeVieMax: newValue
+        },
+        updatedAt: new Date().toISOString()
+      };
+
+      await updateCharacter(updatedCharacter);
+      setCharacter(updatedCharacter);
+      setEditingPvMax(false);
+      setPvMaxValue('');
+    } catch (error) {
+      console.error('Error updating PV max:', error);
+    }
+  };
+
+  const handleUpdatePvActuels = async () => {
+    if (!character) return;
+
+    const newValue = parseInt(pvActuelsValue);
+    if (isNaN(newValue) || newValue < 0) {
+      setEditingPvActuels(false);
+      setPvActuelsValue('');
+      return;
+    }
+
+    try {
+      const updatedCharacter = {
+        ...character,
+        stats: {
+          ...character.stats,
+          pointsDeVieActuels: newValue
+        },
+        updatedAt: new Date().toISOString()
+      };
+
+      await updateCharacter(updatedCharacter);
+      setCharacter(updatedCharacter);
+      setEditingPvActuels(false);
+      setPvActuelsValue('');
+    } catch (error) {
+      console.error('Error updating PV actuels:', error);
+    }
+  };
+
   const handleToggleItem = async (index: number) => {
     if (!character) return;
 
@@ -412,22 +568,192 @@ export default function CharacterDetail() {
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
               <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">DEXTÉRITÉ</div>
-              <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">{character.stats.dexterite}</div>
+              {editingDexterite ? (
+                <div className="flex items-center justify-center gap-2">
+                  <input
+                    ref={dexteriteInputRef}
+                    type="number"
+                    value={dexteriteValue}
+                    onChange={(e) => setDexteriteValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUpdateDexterite();
+                      } else if (e.key === 'Escape') {
+                        setEditingDexterite(false);
+                        setDexteriteValue('');
+                      }
+                    }}
+                    className="w-20 bg-[#2a1e17] border border-primary/20 rounded px-2 py-1 font-[var(--font-geist-mono)] text-2xl text-center text-light focus:outline-none focus:border-primary"
+                  />
+                  <button
+                    onClick={handleUpdateDexterite}
+                    className="bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingDexterite(false);
+                      setDexteriteValue('');
+                    }}
+                    className="bg-muted hover:bg-muted/80 text-light font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditingDexterite(true);
+                    setDexteriteValue(character.stats.dexterite.toString());
+                  }}
+                  className="font-[var(--font-geist-mono)] text-3xl font-bold text-light hover:text-primary transition-colors cursor-pointer"
+                >
+                  {character.stats.dexterite}
+                </button>
+              )}
             </div>
             <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
               <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">CHANCE</div>
-              <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
-                {character.stats.chance}
-                <span className="text-sm text-muted-light ml-2">(init: {character.stats.chanceInitiale})</span>
-              </div>
+              {editingChance ? (
+                <div className="flex items-center justify-center gap-2">
+                  <input
+                    ref={chanceInputRef}
+                    type="number"
+                    value={chanceValue}
+                    onChange={(e) => setChanceValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUpdateChance();
+                      } else if (e.key === 'Escape') {
+                        setEditingChance(false);
+                        setChanceValue('');
+                      }
+                    }}
+                    className="w-20 bg-[#2a1e17] border border-primary/20 rounded px-2 py-1 font-[var(--font-geist-mono)] text-2xl text-center text-light focus:outline-none focus:border-primary"
+                  />
+                  <button
+                    onClick={handleUpdateChance}
+                    className="bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingChance(false);
+                      setChanceValue('');
+                    }}
+                    className="bg-muted hover:bg-muted/80 text-light font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditingChance(true);
+                    setChanceValue(character.stats.chance.toString());
+                  }}
+                  className="font-[var(--font-geist-mono)] text-3xl font-bold text-light hover:text-primary transition-colors cursor-pointer"
+                >
+                  {character.stats.chance}
+                  <span className="text-sm text-muted-light ml-2">(init: {character.stats.chanceInitiale})</span>
+                </button>
+              )}
             </div>
             <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
               <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">PV MAX</div>
-              <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">{character.stats.pointsDeVieMax}</div>
+              {editingPvMax ? (
+                <div className="flex items-center justify-center gap-2">
+                  <input
+                    ref={pvMaxInputRef}
+                    type="number"
+                    value={pvMaxValue}
+                    onChange={(e) => setPvMaxValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUpdatePvMax();
+                      } else if (e.key === 'Escape') {
+                        setEditingPvMax(false);
+                        setPvMaxValue('');
+                      }
+                    }}
+                    className="w-20 bg-[#2a1e17] border border-primary/20 rounded px-2 py-1 font-[var(--font-geist-mono)] text-2xl text-center text-light focus:outline-none focus:border-primary"
+                  />
+                  <button
+                    onClick={handleUpdatePvMax}
+                    className="bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingPvMax(false);
+                      setPvMaxValue('');
+                    }}
+                    className="bg-muted hover:bg-muted/80 text-light font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditingPvMax(true);
+                    setPvMaxValue(character.stats.pointsDeVieMax.toString());
+                  }}
+                  className="font-[var(--font-geist-mono)] text-3xl font-bold text-light hover:text-primary transition-colors cursor-pointer"
+                >
+                  {character.stats.pointsDeVieMax}
+                </button>
+              )}
             </div>
             <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
               <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">PV ACTUELS</div>
-              <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">{character.stats.pointsDeVieActuels}</div>
+              {editingPvActuels ? (
+                <div className="flex items-center justify-center gap-2">
+                  <input
+                    ref={pvActuelsInputRef}
+                    type="number"
+                    value={pvActuelsValue}
+                    onChange={(e) => setPvActuelsValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleUpdatePvActuels();
+                      } else if (e.key === 'Escape') {
+                        setEditingPvActuels(false);
+                        setPvActuelsValue('');
+                      }
+                    }}
+                    className="w-20 bg-[#2a1e17] border border-primary/20 rounded px-2 py-1 font-[var(--font-geist-mono)] text-2xl text-center text-light focus:outline-none focus:border-primary"
+                  />
+                  <button
+                    onClick={handleUpdatePvActuels}
+                    className="bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingPvActuels(false);
+                      setPvActuelsValue('');
+                    }}
+                    className="bg-muted hover:bg-muted/80 text-light font-bold px-2 py-1 rounded transition-all text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditingPvActuels(true);
+                    setPvActuelsValue(character.stats.pointsDeVieActuels.toString());
+                  }}
+                  className="font-[var(--font-geist-mono)] text-3xl font-bold text-light hover:text-primary transition-colors cursor-pointer"
+                >
+                  {character.stats.pointsDeVieActuels}
+                </button>
+              )}
             </div>
           </div>
         </div>
