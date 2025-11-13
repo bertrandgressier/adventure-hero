@@ -113,6 +113,36 @@
   50% { transform: translateY(-10px); }
 }
 
+@keyframes dice-roll {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) scale(0.5);
+    opacity: 0;
+  }
+  25% {
+    transform: rotateX(180deg) rotateY(180deg) scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    transform: rotateX(360deg) rotateY(360deg) scale(0.9);
+  }
+  75% {
+    transform: rotateX(540deg) rotateY(540deg) scale(1.1);
+  }
+  100% {
+    transform: rotateX(720deg) rotateY(720deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes dice-bounce {
+  0%, 100% { 
+    transform: translateY(0px) scale(1);
+  }
+  50% { 
+    transform: translateY(-15px) scale(1.05);
+  }
+}
+
 .animate-magic {
   animation: magic-pulse 2s ease-in-out infinite;
 }

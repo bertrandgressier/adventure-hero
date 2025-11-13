@@ -20,6 +20,10 @@ export default function CharacterDetail() {
   const [newWeaponAttack, setNewWeaponAttack] = useState('');
   const [showWeaponModal, setShowWeaponModal] = useState(false);
   const [showItemModal, setShowItemModal] = useState(false);
+  const [showDiceModal, setShowDiceModal] = useState(false);
+  const [diceResult, setDiceResult] = useState<number[]>([]);
+  const [diceTotal, setDiceTotal] = useState(0);
+  const [isRolling, setIsRolling] = useState(false);
   const [editingWeaponName, setEditingWeaponName] = useState(false);
   const [weaponNameValue, setWeaponNameValue] = useState('');
   const [editingWeaponAttack, setEditingWeaponAttack] = useState(false);
@@ -218,6 +222,34 @@ export default function CharacterDetail() {
     }
   };
 
+  const handleAddItemWithModal = async () => {
+    if (!character || !newItemName.trim()) return;
+
+    try {
+      const updatedCharacter = {
+        ...character,
+        inventory: {
+          ...character.inventory,
+          items: [
+            ...character.inventory.items,
+            {
+              name: newItemName.trim(),
+              possessed: true,
+              type: 'item' as const
+            }
+          ]
+        },
+        updatedAt: new Date().toISOString()
+      };
+      await updateCharacter(updatedCharacter);
+      setCharacter(updatedCharacter);
+      setNewItemName('');
+      setShowItemModal(false);
+    } catch (error) {
+      console.error('Error adding item:', error);
+    }
+  };
+
   const handleAddWeapon = async () => {
     if (!character || !newWeaponName.trim()) return;
 
@@ -242,6 +274,23 @@ export default function CharacterDetail() {
     } catch (error) {
       console.error('Error adding weapon:', error);
     }
+  };
+
+  const rollDice = (count: 1 | 2) => {
+    setIsRolling(true);
+    setDiceResult([]);
+    setDiceTotal(0);
+
+    // Animation de lancer pendant 1.5 secondes
+    setTimeout(() => {
+      const results: number[] = [];
+      for (let i = 0; i < count; i++) {
+        results.push(Math.floor(Math.random() * 6) + 1);
+      }
+      setDiceResult(results);
+      setDiceTotal(results.reduce((sum, val) => sum + val, 0));
+      setIsRolling(false);
+    }, 1500);
   };
 
   const handleAddItemWithModal = async () => {
@@ -270,6 +319,15 @@ export default function CharacterDetail() {
     } catch (error) {
       console.error('Error adding item:', error);
     }
+  };
+
+  const rollDice = (count: 1 | 2) => {
+    const results: number[] = [];
+    for (let i = 0; i < count; i++) {
+      results.push(Math.floor(Math.random() * 6) + 1);
+    }
+    setDiceResult(results);
+    setDiceTotal(results.reduce((sum, val) => sum + val, 0));
   };
 
   const handleUpdateWeaponName = async () => {
@@ -547,6 +605,13 @@ export default function CharacterDetail() {
             </p>
           </div>
           <div className="flex gap-3">
+            <button
+              onClick={() => setShowDiceModal(true)}
+              className="text-2xl hover:scale-110 transition-transform"
+              title="Lancer les dés"
+            >
+              🎲
+            </button>
             <button
               onClick={() => router.push('/characters')}
               className="text-muted-light hover:text-primary transition-colors text-2xl"
@@ -1110,6 +1175,80 @@ export default function CharacterDetail() {
                     Ajouter
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Lancer de dés */}
+        {showDiceModal && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={() => setShowDiceModal(false)}>
+            <div className="bg-[#2a1e17] border-2 border-primary/50 rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+              <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">🎲 Lancer de dés</h3>
+              
+              <div className="mb-6 min-h-[200px] flex flex-col items-center justify-center">
+                {isRolling ? (
+                  <div className="flex justify-center gap-4">
+                    {[1, 2].slice(0, diceResult.length === 0 ? 2 : diceResult.length).map((_, index) => (
+                      <div
+                        key={index}
+                        className="w-20 h-20 bg-primary rounded-lg flex items-center justify-center text-5xl font-bold text-[#1a140f] shadow-lg animate-[dice-roll_1.5s_ease-in-out]"
+                        style={{ 
+                          animationDelay: `${index * 0.1}s`,
+                          transformStyle: 'preserve-3d',
+                          perspective: '1000px'
+                        }}
+                      >
+                        🎲
+                      </div>
+                    ))}
+                  </div>
+                ) : diceResult.length > 0 ? (
+                  <div>
+                    <div className="flex justify-center gap-4 mb-4">
+                      {diceResult.map((value, index) => (
+                        <div
+                          key={index}
+                          className="w-20 h-20 bg-primary rounded-lg flex items-center justify-center text-5xl font-bold text-[#1a140f] shadow-lg animate-[dice-bounce_0.6s_ease-in-out]"
+                          style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                          {value}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <p className="font-[var(--font-merriweather)] text-muted-light text-lg mb-2">Total :</p>
+                      <p className="font-[var(--font-uncial)] text-primary text-5xl font-bold animate-[gold-shimmer_2s_ease-in-out]">{diceTotal}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="font-[var(--font-merriweather)] text-muted-light text-center">
+                    Cliquez sur un bouton pour lancer les dés
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => rollDice(1)}
+                  disabled={isRolling}
+                  className="w-full bg-primary hover:bg-yellow-400 text-[#1a140f] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Lancer 1 dé
+                </button>
+                <button
+                  onClick={() => rollDice(2)}
+                  disabled={isRolling}
+                  className="w-full bg-primary hover:bg-yellow-400 text-[#1a140f] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Lancer 2 dés
+                </button>
+                <button
+                  onClick={() => setShowDiceModal(false)}
+                  className="w-full bg-muted hover:bg-muted/80 text-light font-[var(--font-merriweather)] font-bold px-6 py-3 rounded-lg transition-colors"
+                >
+                  Fermer
+                </button>
               </div>
             </div>
           </div>
