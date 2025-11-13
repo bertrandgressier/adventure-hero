@@ -131,6 +131,9 @@ export default function Home() {
                 La Saga de Dagda
               </a>
             </p>
+            <p className="text-[10px] text-muted-light/50 mt-2">
+              v{process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0'}
+            </p>
           </div>
         </div>
       </main>
