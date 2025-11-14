@@ -1,3 +1,20 @@
+# [1.4.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.3.1...v1.4.0) (2025-11-14)
+
+
+### Bug Fixes
+
+* **ci:** setup pnpm before setup-node cache ([f49cce2](https://github.com/bertrandgressier/adventure-tome/commit/f49cce271c359704e100ed15113951425cee4476))
+
+
+### Features
+
+* **ci:** add manual trigger for release workflow ([7587813](https://github.com/bertrandgressier/adventure-tome/commit/75878137bda74a49f7acfe8f47dd10504255845f))
+
+
+### Performance Improvements
+
+* optimize CI build caching ([b00b80d](https://github.com/bertrandgressier/adventure-tome/commit/b00b80deff82b3e2106bcebeaebfaa4a915a8cad))
+
 ## [1.3.1](https://github.com/bertrandgressier/adventure-tome/compare/v1.3.0...v1.3.1) (2025-11-14)
 
 
