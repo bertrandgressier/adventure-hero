@@ -3,38 +3,36 @@
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import * as gtag from '@/lib/gtag';
 
 function GoogleAnalyticsInner({ gaId }: { gaId: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!gaId) return;
+    if (!gaId || typeof window === 'undefined' || !window.gtag) return;
     
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
-    gtag.pageview(url);
+    
+    // Track page view
+    window.gtag('config', gaId, {
+      page_path: url,
+    });
   }, [pathname, searchParams, gaId]);
-
-  if (!gaId) return null;
 
   return (
     <>
       <Script
-        strategy="afterInteractive"
+        async
         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
       />
       <Script
         id="google-analytics"
-        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${gaId}', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', '${gaId}');
           `,
         }}
       />

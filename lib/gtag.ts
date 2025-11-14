@@ -30,9 +30,10 @@ export const event = ({ action, category, label, value }: GTagEvent) => {
 declare global {
   interface Window {
     gtag: (
-      command: 'config' | 'event',
-      targetId: string,
+      command: 'config' | 'event' | 'js',
+      targetId: string | Date,
       config?: Record<string, unknown>
     ) => void;
+    dataLayer: unknown[];
   }
 }
