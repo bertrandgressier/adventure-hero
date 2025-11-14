@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import * as gtag from '@/lib/gtag';
 
-export default function GoogleAnalytics({ gaId }: { gaId: string }) {
+function GoogleAnalyticsInner({ gaId }: { gaId: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -39,5 +39,14 @@ export default function GoogleAnalytics({ gaId }: { gaId: string }) {
         }}
       />
     </>
+  );
+}
+
+// Wrapper avec Suspense pour éviter l'erreur useSearchParams
+export default function GoogleAnalytics({ gaId }: { gaId: string }) {
+  if (!gaId) return null;
+
+  return (
+    <GoogleAnalyticsInner gaId={gaId} />
   );
 }

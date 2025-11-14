@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Uncial_Antiqua, Merriweather, Inter, JetBrains_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import MusicPlayer from "./components/MusicPlayer";
 import GoogleAnalytics from "./components/GoogleAnalytics";
@@ -78,7 +79,11 @@ export default function RootLayout({
         className={`${uncialAntiqua.variable} ${merriweather.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        {gaId && <GoogleAnalytics gaId={gaId} />}
+        {gaId && (
+          <Suspense fallback={null}>
+            <GoogleAnalytics gaId={gaId} />
+          </Suspense>
+        )}
         {gaId && <WebVitals />}
         <MusicPlayer />
         {children}
