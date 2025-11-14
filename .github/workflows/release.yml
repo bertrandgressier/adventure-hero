@@ -4,6 +4,17 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'app/**'
+      - 'lib/**'
+      - 'public/**'
+      - 'components/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'next.config.ts'
+      - 'tsconfig.json'
+      - 'tailwind.config.ts'
+      - 'postcss.config.mjs'
 
 permissions:
   contents: write
