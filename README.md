@@ -165,6 +165,14 @@ pnpm start
 - [Tailwind CSS](https://tailwindcss.com/docs)
 - [La Saga de Dagda](https://www.lasagadedagda.fr/)on)](https://vercel.com/new)
 
+## ☕ Soutenir le projet
+
+Ce projet est **100% gratuit et open-source**. Si ce projet vous est utile ou si vous voulez soutenir ce jeu, vous pouvez m'offrir un café ☕
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=Q5EPDFZEEXQHJ)
+
+Merci pour votre soutien ! ❤️
+
 ## 🧪 Tests
 
 ```bash

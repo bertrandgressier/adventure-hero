@@ -217,21 +217,21 @@ export default function Home() {
             </p>
             <p className="text-[10px] text-muted-light/50">
               <a 
-                href="https://github.com/bertrandgressier/adventure-tome" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors inline-flex items-center gap-1"
-              >
-                <span>⭐</span> Code source sur GitHub
-              </a>
-              {' • '}
-              <a 
                 href="https://github.com/bertrandgressier/adventure-tome/issues/new" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors inline-flex items-center gap-1"
               >
                 <span>🐛</span> Signaler un bug
+              </a>
+              {' • '}
+              <a 
+                href="https://www.paypal.com/donate/?hosted_button_id=Q5EPDFZEEXQHJ" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors inline-flex items-center gap-1"
+              >
+                <span>☕</span> Offrez-moi un café
               </a>
             </p>
             <p className="text-[10px] text-muted-light/50">
@@ -244,6 +244,9 @@ export default function Home() {
               >
                 <span>📝</span> v{process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0'}
               </a>
+            </p>
+            <p className="text-[10px] text-muted-light/50">
+              Fait avec ❤️ • Merci pour votre soutien
             </p>
           </div>
         </div>
