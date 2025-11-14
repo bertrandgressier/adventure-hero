@@ -18,11 +18,8 @@ export default function Home() {
     const standalone = window.matchMedia('(display-mode: standalone)').matches;
     setIsStandalone(standalone);
 
-    console.log('isIOS:', iOS, 'isStandalone:', standalone);
-
     // Écouter l'événement beforeinstallprompt (Chrome, Edge, etc.)
     const handler = (e: any) => {
-      console.log('beforeinstallprompt event triggered');
       e.preventDefault();
       setDeferredPrompt(e);
     };
@@ -35,8 +32,6 @@ export default function Home() {
   }, []);
 
   const handleInstall = async () => {
-    console.log('handleInstall called, isIOS:', isIOS, 'deferredPrompt:', !!deferredPrompt);
-    
     if (isIOS) {
       // Pour iOS, afficher une alerte avec les instructions
       alert('Sur iOS : Appuyez sur le bouton de partage (⬆️) puis "Sur l\'écran d\'accueil" (➕)');
@@ -44,16 +39,13 @@ export default function Home() {
     }
 
     if (!deferredPrompt) {
-      console.log('No deferredPrompt available');
       alert('Pour installer l\'application :\n\n1. Cliquez sur le menu ⋮ (3 points) en haut à droite\n2. Sélectionnez "Installer Adventure Hero" ou "Ajouter à l\'écran d\'accueil"\n\nOu utilisez le raccourci : Ctrl+Shift+A (Windows) ou Cmd+Shift+A (Mac)');
       return;
     }
 
     try {
-      console.log('Calling deferredPrompt.prompt()');
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log('Install outcome:', outcome);
       
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
