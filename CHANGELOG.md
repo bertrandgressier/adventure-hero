@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.0.0...v1.1.0) (2025-11-14)
+
+
+### Bug Fixes
+
+* correction des titres en double et nettoyage ([b881191](https://github.com/bertrandgressier/adventure-tome/commit/b8811919de7bc04af6fda0cfa7bfbee4e831f038))
+* corrections UI et ESLint ([be085c1](https://github.com/bertrandgressier/adventure-tome/commit/be085c1eb2a145df8063b52261f6bfddf2575699))
+
+
+### Features
+
+* ajout liens GitHub et signalement de bugs ([0da26bb](https://github.com/bertrandgressier/adventure-tome/commit/0da26bb8c1625701ff0fb24caf793e4a452611ec))
+
 # 1.0.0 (2025-11-13)
 
 
