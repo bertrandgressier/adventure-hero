@@ -27,7 +27,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Adventure Tome - La Saga de Dagda",
+  title: {
+    default: "Adventure Tome - La Saga de Dagda",
+    template: "%s - Adventure Tome",
+  },
   description: "Gérez vos héros dans les livres dont vous êtes le héros",
   manifest: "/manifest.json",
   icons: {

@@ -62,11 +62,8 @@ adventure-tome/
 │       │   ├── ProgressTracker.tsx
 │       │   └── NotesEditor.tsx
 │       │
-│       └── shared/                # Composants partagés
-│           ├── Header.tsx
-│           ├── Navigation.tsx
-│           ├── InstallPrompt.tsx
-│           └── ThemeProvider.tsx
+│       ├── GoogleAnalytics.tsx    # Google Analytics
+│       └── MusicPlayer.tsx        # Lecteur de musique
 │
 ├── lib/
 │   ├── storage/                   # Gestion du stockage

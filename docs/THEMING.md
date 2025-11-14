@@ -1,4 +1,4 @@
-# Thème - Adventure Hero
+# Thème - Adventure Tome
 
 ## Design System
 
