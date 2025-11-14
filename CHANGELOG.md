@@ -1,3 +1,11 @@
+## [1.4.4](https://github.com/bertrandgressier/adventure-tome/compare/v1.4.3...v1.4.4) (2025-11-14)
+
+
+### Bug Fixes
+
+* **lint:** move localStorage read to useState initializer ([e589395](https://github.com/bertrandgressier/adventure-tome/commit/e5893957b5277612af7ae9de81658209563c793a))
+* **music:** prevent incorrect playing state on first load ([0645dec](https://github.com/bertrandgressier/adventure-tome/commit/0645decad2b06bf687402a6ac5d27ca06a20040a))
+
 ## [1.4.3](https://github.com/bertrandgressier/adventure-tome/compare/v1.4.2...v1.4.3) (2025-11-14)
 
 
