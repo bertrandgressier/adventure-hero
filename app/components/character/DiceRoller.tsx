@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackDiceRoll } from '@/lib/analytics';
 
 interface DiceRollerProps {
   onClose: () => void;
@@ -37,6 +38,9 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
       setDiceResult(results);
       setDiceTotal(total);
       setIsRolling(false);
+      
+      // Tracker le lancer de dés
+      trackDiceRoll(count === 1 ? '1d6' : '2d6', total, 'general');
     }, 500);
   };
 

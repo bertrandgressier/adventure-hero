@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import { trackCombatEnd } from '@/lib/analytics';
 
 interface CombatEndModalProps {
   status: 'victory' | 'defeat';
@@ -11,6 +13,7 @@ interface CombatEndModalProps {
   onResurrect: () => void;
   onDelete: () => void;
   onClose: () => void;
+  remainingEndurance?: number;
 }
 
 export default function CombatEndModal({
@@ -21,9 +24,19 @@ export default function CombatEndModal({
   characterId,
   onResurrect,
   onDelete,
-  onClose
+  onClose,
+  remainingEndurance = 0
 }: CombatEndModalProps) {
   const router = useRouter();
+  const trackedRef = useRef(false);
+
+  // Tracker la fin du combat
+  useEffect(() => {
+    if (!trackedRef.current) {
+      trackCombatEnd(enemyName, status, roundsCount, remainingEndurance);
+      trackedRef.current = true;
+    }
+  }, [enemyName, status, roundsCount, remainingEndurance]);
 
   if (status === 'victory') {
     return (

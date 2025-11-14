@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { saveCharacter } from '@/lib/storage/characters';
 import { Character } from '@/lib/types/character';
+import { trackCharacterCreation, trackDiceRoll } from '@/lib/analytics';
 
 const TALENTS = [
   { id: 'instinct', name: 'Instinct', description: 'Capacité à pressentir le danger et prendre les bonnes décisions' },
@@ -56,6 +57,10 @@ export default function NewCharacterPage() {
       chance,
       pointsDeVieMax,
     });
+
+    // Tracker les lancers de dés pour la création de personnage
+    trackDiceRoll('1d6', chance, 'character_creation_chance');
+    trackDiceRoll('2d6', pointsDeVieMax / 4, 'character_creation_hp');
   };
 
   const handleCreateCharacter = async () => {
@@ -87,6 +92,14 @@ export default function NewCharacterPage() {
 
     try {
       await saveCharacter(character);
+      
+      // Tracker la création du personnage
+      trackCharacterCreation(selectedTalent, {
+        dexterite: stats.dexterite,
+        chance: stats.chance,
+        pointsDeVieMax: stats.pointsDeVieMax,
+      });
+      
       router.push('/characters');
     } catch (error) {
       console.error('Error saving character:', error);

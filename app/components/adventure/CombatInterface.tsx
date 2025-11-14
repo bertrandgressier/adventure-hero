@@ -5,6 +5,7 @@ import type { Character } from '@/lib/types/character';
 import type { Enemy, CombatState, CombatMode } from '@/lib/types/combat';
 import { resolveCombatRound } from '@/lib/game/combat';
 import CombatRoundDisplay from './CombatRoundDisplay';
+import { trackCombatStart } from '@/lib/analytics';
 
 interface CombatInterfaceProps {
   character: Character;
@@ -33,6 +34,18 @@ export default function CombatInterface({
   const [isRolling, setIsRolling] = useState(false);
   const [showEndButton, setShowEndButton] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
+  const combatTrackedRef = useRef(false); // Pour tracker le début une seule fois
+
+  // Tracker le début du combat
+  useEffect(() => {
+    if (!combatTrackedRef.current) {
+      trackCombatStart(initialEnemy.name, {
+        habilete: character.stats.dexterite,
+        endurance: character.stats.pointsDeVieActuels,
+      });
+      combatTrackedRef.current = true;
+    }
+  }, [initialEnemy.name, character.stats.dexterite, character.stats.pointsDeVieActuels]);
 
   const executeRound = (hitDiceRoll?: number, damageDiceRoll?: number) => {
     setIsRolling(true);
