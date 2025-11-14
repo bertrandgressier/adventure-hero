@@ -4,25 +4,21 @@ import { useState, useEffect, useRef } from 'react';
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(() => 
-    typeof window !== 'undefined' && localStorage.getItem('musicMuted') === 'true'
-  );
+  const [isMuted, setIsMuted] = useState(true); // Commence toujours muted par défaut
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasInteracted = useRef(false);
 
   useEffect(() => {
+    // Charger les préférences depuis localStorage
+    const savedMuted = localStorage.getItem('musicMuted');
+    if (savedMuted === 'false') {
+      setIsMuted(false);
+    }
+
     // Créer l'élément audio
     audioRef.current = new Audio('/music1.mp3');
     audioRef.current.loop = true;
     audioRef.current.volume = 0.3; // Volume à 30% par défaut
-
-    // Charger les préférences depuis localStorage
-    if (!isMuted) {
-      // Démarrer la musique automatiquement si non muté
-      audioRef.current.play().catch(error => {
-        console.log('Audio autoplay blocked:', error);
-      });
-      setIsPlaying(true); // Mettre à jour l'état
-    }
 
     return () => {
       if (audioRef.current) {
@@ -30,28 +26,35 @@ export default function MusicPlayer() {
         audioRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleMusic = () => {
+    hasInteracted.current = true;
+
     if (isMuted || !isPlaying) {
-      // Activer la musique - créer une nouvelle instance si nécessaire
+      // Activer la musique
       if (!audioRef.current) {
         audioRef.current = new Audio('/music1.mp3');
         audioRef.current.loop = true;
         audioRef.current.volume = 0.3;
       }
-      audioRef.current.play();
-      setIsPlaying(true);
-      setIsMuted(false);
-      localStorage.setItem('musicMuted', 'false');
+      
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setIsMuted(false);
+          localStorage.setItem('musicMuted', 'false');
+        })
+        .catch(error => {
+          console.error('Failed to play audio:', error);
+          setIsPlaying(false);
+          setIsMuted(true);
+        });
     } else {
-      // Désactiver la musique complètement - détruire l'instance audio
+      // Désactiver la musique
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
-        audioRef.current.src = ''; // Libère la ressource
-        audioRef.current = null; // Détruit l'instance
       }
       setIsPlaying(false);
       setIsMuted(true);
