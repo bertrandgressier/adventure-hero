@@ -3,6 +3,12 @@ import { Uncial_Antiqua, Merriweather, Inter, JetBrains_Mono } from "next/font/g
 import "./globals.css";
 import MusicPlayer from "./components/MusicPlayer";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import { WebVitals } from "./components/WebVitals";
+
+// Log des variables d'environnement au chargement du module (côté serveur)
+console.log('[Server] Environment variables loaded:');
+console.log('  - GA_ID:', process.env.GA_ID || 'NOT SET');
+console.log('  - NEXT_PUBLIC_APP_VERSION:', process.env.NEXT_PUBLIC_APP_VERSION || 'NOT SET');
 
 const uncialAntiqua = Uncial_Antiqua({
   variable: "--font-uncial",
@@ -62,7 +68,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  // Lecture de la variable au runtime côté serveur (sans NEXT_PUBLIC_ pour runtime injection)
+  const gaId = process.env.GA_ID;
   
   return (
     <html lang="fr" className="dark">
@@ -71,6 +78,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {gaId && <GoogleAnalytics gaId={gaId} />}
+        {gaId && <WebVitals />}
         <MusicPlayer />
         {children}
       </body>
