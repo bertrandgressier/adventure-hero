@@ -65,6 +65,7 @@ export default function RootLayout({
     <html lang="fr" className="dark">
       <body
         className={`${uncialAntiqua.variable} ${merriweather.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <MusicPlayer />

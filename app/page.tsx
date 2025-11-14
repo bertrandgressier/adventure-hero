@@ -1,8 +1,47 @@
-import InstallPrompt from './components/InstallPrompt';
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+
+  useEffect(() => {
+    // Détecter iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    setIsIOS(iOS);
+
+    // Vérifier si déjà installé
+    const standalone = window.matchMedia('(display-mode: standalone)').matches;
+    setIsStandalone(standalone);
+
+    // Écouter l'événement beforeinstallprompt (Chrome, Edge, etc.)
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
+
   return (
     <>
       <main className="relative flex min-h-screen flex-col items-center justify-center p-4 overflow-hidden">
@@ -112,9 +151,21 @@ export default function Home() {
               Commencer l&apos;aventure
             </Link>
 
-            <p className="text-center text-xs text-muted-light">
-              💡 Installez l&apos;app sur votre écran d&apos;accueil pour une expérience optimale
-            </p>
+            {!isStandalone && (
+              <div className="space-y-2">
+                <p className="text-center text-xs text-muted-light">
+                  💡 Installez l&apos;app sur votre écran d&apos;accueil pour une expérience optimale
+                </p>
+                {(deferredPrompt || isIOS) && (
+                  <button
+                    onClick={handleInstall}
+                    className="block w-full bg-primary hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-2 px-4 rounded transition-all duration-300 shadow-md hover:shadow-[0_0_10px_rgba(255,191,0,0.4)] hover:scale-[1.01] active:scale-[0.99] text-center text-sm"
+                  >
+                    {isIOS ? 'Installer sur iOS' : 'Installer l\'application'}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Mention légale */}
@@ -138,7 +189,6 @@ export default function Home() {
         </div>
       </main>
       
-      <InstallPrompt />
     </>
   );
 }
