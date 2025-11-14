@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/bertrandgressier/adventure-tome/compare/v1.5.0...v1.5.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* retirer autoFocus du formulaire de combat pour mobile ([111370c](https://github.com/bertrandgressier/adventure-tome/commit/111370cf9b507bb78dbf8803e0d2a6d559872f80))
+
 # [1.5.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.4.4...v1.5.0) (2025-11-14)
 
 
