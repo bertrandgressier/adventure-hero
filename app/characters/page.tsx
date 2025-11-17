@@ -9,6 +9,8 @@ export default function CharactersPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const isDead = (character: Character) => character.stats.pointsDeVieActuels <= 0;
+
   useEffect(() => {
     loadCharacters();
   }, []);
@@ -110,13 +112,24 @@ export default function CharactersPage() {
             {characters.map((character) => (
               <div
                 key={character.id}
-                className="bg-[#2a1e17] glow-border rounded-lg p-6 hover:bg-[#2a1e17]/80 transition-all"
+                className={`rounded-lg p-6 transition-all ${
+                  isDead(character)
+                    ? 'bg-[#3d1f1f] border-2 border-destructive/50 opacity-50 grayscale hover:opacity-60'
+                    : 'bg-[#2a1e17] glow-border hover:bg-[#2a1e17]/80'
+                }`}
               >
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex-1">
-                    <h3 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light mb-2">
-                      {character.name}
-                    </h3>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
+                        {character.name}
+                      </h3>
+                      {isDead(character) && (
+                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-600 text-white rounded-full text-sm font-bold shadow-lg">
+                          <span className="text-lg">💀</span> DÉCÉDÉ
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-3 text-sm">
                       <span className="font-[var(--font-merriweather)] text-light font-semibold">
                         Talent : <span className="text-primary">{character.talent}</span>
