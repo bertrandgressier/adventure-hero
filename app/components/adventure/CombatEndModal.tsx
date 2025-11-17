@@ -10,8 +10,6 @@ interface CombatEndModalProps {
   enemyName: string;
   roundsCount: number;
   characterId: string;
-  onResurrect: () => void;
-  onDelete: () => void;
   onClose: () => void;
   remainingEndurance?: number;
 }
@@ -22,8 +20,6 @@ export default function CombatEndModal({
   enemyName,
   roundsCount,
   characterId,
-  onResurrect,
-  onDelete,
   onClose,
   remainingEndurance = 0
 }: CombatEndModalProps) {

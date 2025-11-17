@@ -146,25 +146,6 @@ export default function CharacterDetail() {
     setShowCombat(false);
   };
 
-  const handleResurrect = async () => {
-    if (!character) return;
-
-    const updatedCharacter = {
-      ...character,
-      stats: {
-        ...character.stats,
-        pointsDeVieActuels: 0
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
-    setCombatEndStatus(null);
-  };
-
-  const handleDeleteCharacterAfterDeath = async () => {
-    await handleDelete();
-  };
-
   const handleCloseCombatModal = () => {
     setCombatEndStatus(null);
   };
@@ -364,8 +345,6 @@ export default function CharacterDetail() {
             roundsCount={roundsCount}
             remainingEndurance={remainingEndurance}
             characterId={id}
-            onResurrect={handleResurrect}
-            onDelete={handleDeleteCharacterAfterDeath}
             onClose={handleCloseCombatModal}
           />
         )}
