@@ -1,3 +1,11 @@
+# [1.7.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.6.0...v1.7.0) (2025-11-17)
+
+
+### Features
+
+* affichage fantomatique des personnages morts et simplification popup défaite ([5f0927c](https://github.com/bertrandgressier/adventure-tome/commit/5f0927c4315b1cdf98b095de69fb6bb398568621)), closes [#3d1f1f](https://github.com/bertrandgressier/adventure-tome/issues/3d1f1f)
+* ajout composant BookTag pour identifier les 3 livres de la saga ([013db6b](https://github.com/bertrandgressier/adventure-tome/commit/013db6ba8791bbb4a6b1b1d00e3373b32ead7021))
+
 # [1.6.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.5.1...v1.6.0) (2025-11-14)
 
 
