@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAllCharacters, deleteCharacter, saveCharacter } from '@/lib/storage/characters';
 import { Character } from '@/lib/types/character';
+import { BookTag } from '@/app/components/ui/book-tag';
 
 export default function CharactersPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -135,9 +136,7 @@ export default function CharactersPage() {
                         Talent : <span className="text-primary">{character.talent}</span>
                       </span>
                       <span className="text-muted-light">•</span>
-                      <span className="text-muted-light">
-                        La Harpe des Quatre Saisons
-                      </span>
+                      <BookTag book={character.book} />
                     </div>
                   </div>
                   <div className="flex gap-2">

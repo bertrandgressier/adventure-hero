@@ -6,6 +6,13 @@ import { useRouter } from 'next/navigation';
 import { saveCharacter } from '@/lib/storage/characters';
 import { Character } from '@/lib/types/character';
 import { trackCharacterCreation, trackDiceRoll } from '@/lib/analytics';
+import { BookTag, type BookTitle } from '@/app/components/ui/book-tag';
+
+const BOOKS: BookTitle[] = [
+  "La Harpe des Quatre Saisons",
+  "La Confrérie de NUADA",
+  "Les Entrailles du temps",
+];
 
 const TALENTS = [
   { id: 'instinct', name: 'Instinct', description: 'Capacité à pressentir le danger et prendre les bonnes décisions' },
@@ -19,7 +26,8 @@ const TALENTS = [
 
 export default function NewCharacterPage() {
   const router = useRouter();
-  const [step, setStep] = useState<'name' | 'talent' | 'stats'>('name');
+  const [step, setStep] = useState<'book' | 'name' | 'talent' | 'stats'>('book');
+  const [selectedBook, setSelectedBook] = useState<BookTitle>('La Harpe des Quatre Saisons');
   const [name, setName] = useState('');
   const [selectedTalent, setSelectedTalent] = useState('');
   const [manualMode, setManualMode] = useState(false);
@@ -67,7 +75,7 @@ export default function NewCharacterPage() {
     const character: Character = {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name,
-      book: 'La Harpe des Quatre Saisons',
+      book: selectedBook,
       talent: selectedTalent,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -116,9 +124,9 @@ export default function NewCharacterPage() {
             <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-2">
               Créer un héros
             </h1>
-            <p className="font-[var(--font-merriweather)] text-muted-light">
-              La Harpe des Quatre Saisons
-            </p>
+            <div className="flex items-center gap-2">
+              <BookTag book={selectedBook} />
+            </div>
           </div>
           <Link
             href="/characters"
@@ -128,6 +136,48 @@ export default function NewCharacterPage() {
             ←
           </Link>
         </div>
+
+        {/* Étape 0 : Choix du livre */}
+        {step === 'book' && (
+          <div className="bg-[#2a1e17] glow-border rounded-lg p-8 space-y-6">
+            <div className="space-y-2">
+              <h2 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
+                Choisissez votre livre
+              </h2>
+              <p className="font-[var(--font-merriweather)] text-sm text-muted-light">
+                Sélectionnez le tome de la saga de Dagda auquel votre héros appartient
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {BOOKS.map((book) => (
+                <button
+                  key={book}
+                  onClick={() => setSelectedBook(book)}
+                  className={`w-full text-left bg-[#1a140f] border-2 rounded-lg p-4 transition-all ${
+                    selectedBook === book
+                      ? 'border-primary shadow-[0_0_10px_rgba(255,191,0,0.4)]'
+                      : 'border-primary/30 hover:border-primary/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <BookTag book={book} className="text-base px-3 py-1" />
+                    <div className="font-[var(--font-uncial)] text-lg tracking-wide text-light">
+                      {book}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setStep('name')}
+              className="w-full bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg"
+            >
+              Continuer
+            </button>
+          </div>
+        )}
 
         {/* Étape 1 : Nom du personnage */}
         {step === 'name' && (
