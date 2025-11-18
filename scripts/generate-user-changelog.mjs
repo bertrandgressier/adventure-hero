@@ -58,37 +58,36 @@ for (const line of lines) {
   if (currentSection && line.startsWith('* ')) {
     // Nettoyer le message : retirer les références techniques
     let message = line
-      .replace(/\* \*\*[^:]+:\*\* /, '* ') // Retirer le scope
+      .replace(/\*\*[^:]+:\*\* /, '') // Retirer le scope (ex: **analytics:** )
       .replace(/ \(\[[a-f0-9]+\].*?\)$/, '') // Retirer le hash de commit
-      .replace(/^* /, '• '); // Remplacer * par •
+      .replace(/^\* /, '• '); // Remplacer * par •
     
     userChanges[currentSection].push(message);
   }
 }
 
-// Construire le changelog user-friendly
-let userChangelog = `# 📝 Nouveautés - Version ${version}\n\n`;
-userChangelog += `*${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}*\n\n`;
+// Construire la nouvelle entrée de version
+let versionEntry = `## Version ${version}\n`;
+versionEntry += `*${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}*\n\n`;
 
 let hasChanges = false;
 
 for (const [section, items] of Object.entries(userChanges)) {
   if (items.length > 0) {
     hasChanges = true;
-    userChangelog += `${section}\n\n`;
+    versionEntry += `${section}\n\n`;
     items.forEach(item => {
-      userChangelog += `${item}\n`;
+      versionEntry += `${item}\n`;
     });
-    userChangelog += '\n';
+    versionEntry += '\n';
   }
 }
 
 if (!hasChanges) {
-  userChangelog += "Cette version contient des améliorations techniques et des corrections mineures.\n\n";
+  versionEntry += "Cette version contient des améliorations techniques et des corrections mineures.\n\n";
 }
 
-userChangelog += `---\n\n`;
-userChangelog += `Pour voir tous les détails techniques, consultez le [CHANGELOG complet](./CHANGELOG.md).\n`;
+versionEntry += `---\n\n`;
 
 // Lire l'ancien changelog user si il existe
 const userChangelogPath = path.join(__dirname, '..', 'CHANGELOG_USER.md');
@@ -96,14 +95,67 @@ let existingUserChangelog = '';
 
 if (fs.existsSync(userChangelogPath)) {
   existingUserChangelog = fs.readFileSync(userChangelogPath, 'utf-8');
-  // Retirer l'ancien header si présent
-  existingUserChangelog = existingUserChangelog.replace(/^# 📝 Historique des nouveautés\n\n/, '');
+  
+  // Trouver la position après le header (après la ligne ---)
+  const headerEndMatch = existingUserChangelog.match(/---\n\n/);
+  if (headerEndMatch) {
+    const headerEnd = headerEndMatch.index + headerEndMatch[0].length;
+    const header = existingUserChangelog.substring(0, headerEnd);
+    const existingVersions = existingUserChangelog.substring(headerEnd);
+    
+    // Vérifier si cette version existe déjà
+    const versionPattern = new RegExp(`## Version ${version.replace(/\./g, '\\.')}\\n[\\s\\S]*?(?=\\n## Version |$)`);
+    const existingVersionMatch = existingVersions.match(versionPattern);
+    
+    if (existingVersionMatch) {
+      const existingVersionContent = existingVersionMatch[0];
+      
+      // Comparer le contenu (ignorer la date et les espaces de fin)
+      const normalizeContent = (content) => 
+        content
+          .replace(/\*\d{1,2} \w+ \d{4}\*/g, '') // Retirer dates
+          .trim();
+      
+      const existingNormalized = normalizeContent(existingVersionContent);
+      const newNormalized = normalizeContent(versionEntry);
+      
+      if (existingNormalized === newNormalized) {
+        console.log(`✅ Version ${version} déjà à jour dans CHANGELOG_USER.md`);
+        process.exit(0);
+      }
+      
+      // Le contenu a changé, remplacer la version existante
+      console.log(`🔄 Mise à jour de la version ${version} dans CHANGELOG_USER.md`);
+      const updatedVersions = existingVersions.replace(versionPattern, versionEntry.trimEnd() + '\n');
+      const finalUserChangelog = header + updatedVersions;
+      fs.writeFileSync(userChangelogPath, finalUserChangelog, 'utf-8');
+    } else {
+      // Nouvelle version, insérer après le header
+      const finalUserChangelog = header + versionEntry + existingVersions;
+      fs.writeFileSync(userChangelogPath, finalUserChangelog, 'utf-8');
+    }
+  } else {
+    // Pas de header trouvé, créer un nouveau fichier complet
+    const finalUserChangelog = createFullChangelog(versionEntry);
+    fs.writeFileSync(userChangelogPath, finalUserChangelog, 'utf-8');
+  }
+} else {
+  // Fichier n'existe pas, créer un nouveau
+  const finalUserChangelog = createFullChangelog(versionEntry);
+  fs.writeFileSync(userChangelogPath, finalUserChangelog, 'utf-8');
 }
 
-// Ajouter la nouvelle version en haut
-const finalUserChangelog = `# 📝 Historique des nouveautés\n\n${userChangelog}${existingUserChangelog}`;
-
-// Écrire le changelog user
-fs.writeFileSync(userChangelogPath, finalUserChangelog, 'utf-8');
+function createFullChangelog(versionEntry) {
+  let changelog = '# 📝 Historique des nouveautés\n\n';
+  changelog += 'Bienvenue dans l\'historique des nouveautés d\'Adventure Tome ! 🗡️\n\n';
+  changelog += 'Cette page liste uniquement les changements visibles pour vous, les aventuriers :\n\n';
+  changelog += '- ✨ Nouvelles fonctionnalités\n';
+  changelog += '- 🐛 Corrections de bugs\n';
+  changelog += '- ⚡ Améliorations de performance\n\n';
+  changelog += 'Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.md).\n\n';
+  changelog += '---\n\n';
+  changelog += versionEntry;
+  return changelog;
+}
 
 console.log(`✅ CHANGELOG_USER.md généré avec succès pour la version ${version}`);
