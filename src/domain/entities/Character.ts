@@ -121,6 +121,24 @@ export class Character {
   }
 
   /**
+   * Met à jour le livre du personnage
+   */
+  updateBook(newBook: string): Character {
+    return new Character(
+      this.id,
+      this._name,
+      newBook,
+      this.talent,
+      this.createdAt,
+      new Date().toISOString(),
+      this.stats,
+      this.inventory,
+      this.progress,
+      this._notes
+    );
+  }
+
+  /**
    * Met à jour les statistiques
    */
   updateStats(newStats: Partial<StatsData>): Character {
