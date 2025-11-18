@@ -126,7 +126,7 @@ export default function CombatInterface({
 
   return (
     <div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-[#2a1e17] border-2 border-primary rounded-lg p-6 max-w-4xl w-full my-4">
+      <div className="bg-card border-2 border-primary rounded-lg p-6 max-w-4xl w-full my-4">
         {/* En-tête */}
         <h2 className="font-[var(--font-uncial)] text-3xl text-primary text-center mb-6">
           ⚔️ COMBAT EN COURS ⚔️
@@ -148,7 +148,7 @@ export default function CombatInterface({
         {/* Stats des combattants */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {/* Joueur */}
-          <div className="bg-[#1a140f] border-2 border-green-500/50 rounded-lg p-4">
+          <div className="bg-background border-2 border-green-500/50 rounded-lg p-4">
             <h3 className="font-[var(--font-uncial)] text-xl text-primary mb-3">
               {character.name}
             </h3>
@@ -177,7 +177,7 @@ export default function CombatInterface({
           </div>
 
           {/* Ennemi */}
-          <div className="bg-[#1a140f] border-2 border-red-500/50 rounded-lg p-4">
+          <div className="bg-background border-2 border-red-500/50 rounded-lg p-4">
             <h3 className="font-[var(--font-uncial)] text-xl text-primary mb-3">
               {combatState.enemy.name}
             </h3>
@@ -207,7 +207,7 @@ export default function CombatInterface({
         </div>
 
         {/* Historique des rounds */}
-        <div ref={historyRef} className="bg-[#1a140f] rounded-lg p-4 mb-4 max-h-96 overflow-y-auto scroll-smooth">
+        <div ref={historyRef} className="bg-background rounded-lg p-4 mb-4 max-h-96 overflow-y-auto scroll-smooth">
           <h3 className="font-[var(--font-uncial)] text-lg text-primary mb-3 flex items-center justify-between">
             <span>Historique des rounds</span>
             {combatState.rounds.length > 0 && (
@@ -256,14 +256,14 @@ export default function CombatInterface({
               disabled={isRolling || combatState.status !== 'ongoing'}
               className={`flex-1 font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                 showEndButton 
-                  ? 'bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#000000] shadow-lg shadow-[#FFBF00]/50 animate-bounce'
-                  : 'bg-gradient-to-r from-[#FFBF00] to-[#FFD700] hover:from-[#FFD700] hover:to-[#FFBF00] text-[#000000] shadow-md hover:shadow-lg'
+                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/50 animate-bounce'
+                  : 'bg-gradient-to-r from-primary to-yellow-400 hover:from-yellow-400 hover:to-primary text-primary-foreground shadow-md hover:shadow-lg'
               }`}
             >
               {isRolling ? '⏳ Lancer en cours...' : showEndButton ? '✓ Voir le résultat' : '🎲 Lancer les dés'}
             </button>
           ) : (
-            <div className="flex-1 bg-[#1a140f] border border-primary/50 text-primary font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg text-center">
+            <div className="flex-1 bg-background border border-primary/50 text-primary font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg text-center">
               {isRolling ? '⏳ Round en cours...' : '⚡ Mode automatique actif'}
             </div>
           )}
@@ -288,7 +288,7 @@ export default function CombatInterface({
                   onCombatEnd('victory', combatState.playerEndurance, combatState.rounds.length);
                 }
               }}
-              className="bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#000000] font-cinzel px-8 py-6 text-lg shadow-lg shadow-[#FFBF00]/50 animate-bounce"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-cinzel px-8 py-6 text-lg shadow-lg shadow-primary/50 animate-bounce"
             >
               ✓ Voir le résultat
             </button>

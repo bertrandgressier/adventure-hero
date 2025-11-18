@@ -75,7 +75,7 @@ export default function EditableStatField({
   };
 
   return (
-    <div className="bg-[#1a140f] glow-border rounded-lg p-4 text-center">
+    <div className="bg-background glow-border rounded-lg p-4 text-center">
       <div className="font-[var(--font-merriweather)] text-sm text-muted-light mb-2">
         {label}
       </div>
@@ -88,7 +88,7 @@ export default function EditableStatField({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-16 bg-[#2a1e17] border border-primary/50 rounded px-2 py-1 text-center font-[var(--font-geist-mono)] text-2xl text-primary focus:outline-none focus:border-primary"
+            className="w-16 bg-card border border-primary/50 rounded px-2 py-1 text-center font-[var(--font-geist-mono)] text-2xl text-primary focus:outline-none focus:border-primary"
             min={min}
           />
           <button
