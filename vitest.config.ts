@@ -19,6 +19,10 @@ export default defineConfig({
         'app/**', // On ne teste pas l'UI
       ],
     },
+    reporters: ['default', 'junit'],
+    outputFile: {
+      junit: './test-results/test-report.junit.xml',
+    },
   },
   resolve: {
     alias: {
