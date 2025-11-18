@@ -2,7 +2,6 @@
   "name": "adventure-tome",
   "version": "1.7.0",
   "private": true,
-  "type": "module",
   "engines": {
     "node": ">=24.0.0",
     "pnpm": ">=10.20.0"
@@ -13,8 +12,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:ui": "vitest run --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
