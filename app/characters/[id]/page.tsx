@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { CharacterService } from '@/src/application/services/CharacterService';
-import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
-import type { Character as CharacterEntity } from '@/src/domain/entities/Character';
-import type { CharacterDTO } from '@/src/infrastructure/dto/CharacterDTO';
+import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import type { Enemy, CombatMode } from '@/src/domain/types/combat';
 import CombatSetup from '@/components/adventure/CombatSetup';
 import CombatInterface from '@/components/adventure/CombatInterface';
@@ -18,23 +15,20 @@ import DiceRoller from '@/components/character/DiceRoller';
 import AddWeaponModal from '@/components/character/AddWeaponModal';
 import AddItemModal from '@/components/character/AddItemModal';
 
-// Instance singleton du service (client-side only)
-let serviceInstance: CharacterService | null = null;
-
-function getService(): CharacterService {
-  if (!serviceInstance) {
-    const repository = new IndexedDBCharacterRepository();
-    serviceInstance = new CharacterService(repository);
-  }
-  return serviceInstance;
-}
-
 export default function CharacterDetail() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const [character, setCharacter] = useState<CharacterDTO | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  // Zustand store - chargé depuis le cache
+  const character = useCharacterStore((state) => state.getCharacter(id));
+  const isLoading = useCharacterStore((state) => state.isLoading);
+  const deleteCharacter = useCharacterStore((state) => state.deleteCharacter);
+  const updateName = useCharacterStore((state) => state.updateName);
+  const equipWeapon = useCharacterStore((state) => state.equipWeapon);
+  const addItem = useCharacterStore((state) => state.addItem);
+  const applyDamage = useCharacterStore((state) => state.applyDamage);
+  
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState('');
   
@@ -53,56 +47,24 @@ export default function CharacterDetail() {
   const [roundsCount, setRoundsCount] = useState(0);
   const [remainingEndurance, setRemainingEndurance] = useState(0);
 
-  useEffect(() => {
-    loadCharacter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  const loadCharacter = async () => {
-    try {
-      const service = getService();
-      const char = await service.getCharacter(id);
-      if (!char) {
-        router.push('/characters');
-        return;
-      }
-      setCharacter(char.toData());
-    } catch (error) {
-      console.error('Error loading character:', error);
-      router.push('/characters');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleDelete = async () => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce personnage ?')) {
       return;
     }
 
     try {
-      const service = getService();
-      await service.deleteCharacter(id);
+      await deleteCharacter(id);
       router.push('/characters');
     } catch (error) {
       console.error('Error deleting character:', error);
     }
   };
 
-  // Generic character update handler - kept for combat compatibility
-  const handleUpdateCharacter = async (updatedCharacter: CharacterDTO) => {
-    setCharacter(updatedCharacter);
-  };
-
   // Modal handlers for adding weapon/item
   const handleAddWeapon = async (name: string, attackPoints: number) => {
     try {
-      const service = getService();
-      const char = await service.getCharacter(id);
-      if (!char) return;
-      
-      await service.equipWeapon(id, { name, attackPoints });
-      await loadCharacter();
+      await equipWeapon(id, { name, attackPoints });
+      setShowWeaponModal(false);
     } catch (error) {
       console.error('Error adding weapon:', error);
     }
@@ -110,9 +72,8 @@ export default function CharacterDetail() {
 
   const handleAddItem = async (name: string) => {
     try {
-      const service = getService();
-      await service.addItemToInventory(id, { name, possessed: true });
-      await loadCharacter();
+      await addItem(id, { name, possessed: true });
+      setShowItemModal(false);
     } catch (error) {
       console.error('Error adding item:', error);
     }
@@ -134,16 +95,12 @@ export default function CharacterDetail() {
     setRoundsCount(rounds);
     setRemainingEndurance(finalEnd);
 
-    // Mettre à jour les PV du personnage
-    const updatedCharacter = {
-      ...character,
-      stats: {
-        ...character.stats,
-        pointsDeVieActuels: finalEnd
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
+    // Calculer les dégâts et appliquer via le store
+    const data = character.toData();
+    const damageAmount = data.stats.pointsDeVieActuels - finalEnd;
+    if (damageAmount > 0) {
+      await applyDamage(id, damageAmount);
+    }
 
     setShowCombat(false);
   };
@@ -162,9 +119,7 @@ export default function CharacterDetail() {
     if (!character || !tempName.trim()) return;
     
     try {
-      const service = getService();
-      await service.updateCharacterName(id, tempName.trim());
-      await loadCharacter();
+      await updateName(id, tempName.trim());
       setEditingName(false);
     } catch (error) {
       console.error('Error updating name:', error);
@@ -184,7 +139,13 @@ export default function CharacterDetail() {
     }
   };
 
-  if (loading) {
+  // Redirect si personnage non trouvé après chargement
+  if (!isLoading && !character) {
+    router.push('/characters');
+    return null;
+  }
+
+  if (isLoading) {
     return (
       <main className="min-h-screen bg-[#1a140f] p-4">
         <div className="max-w-4xl mx-auto py-8">
@@ -271,30 +232,23 @@ export default function CharacterDetail() {
         {/* Stats Section */}
         <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
           <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Caractéristiques</h2>
-          <CharacterStats characterId={id} onUpdate={loadCharacter} />
+          <CharacterStats characterId={id} />
         </div>
 
         {/* Progress Section */}
-        <CharacterProgress
-          characterId={id}
-          onUpdate={loadCharacter}
-        />
+        <CharacterProgress characterId={id} />
 
         {/* Weapon Section */}
         <CharacterWeapon
           characterId={id}
-          onUpdate={loadCharacter}
           onOpenAddWeaponModal={() => setShowWeaponModal(true)}
         />
 
         {/* Inventory Section */}
         <CharacterInventory
           characterId={id}
-          onUpdate={loadCharacter}
           onOpenAddItemModal={() => setShowItemModal(true)}
         />
-
-        {/* Action Buttons - Supprimés car les icônes + sont dans les sections */}
 
         {/* Notes Section */}
         {character.notes && (
@@ -330,9 +284,9 @@ export default function CharacterDetail() {
           />
         )}
 
-        {showCombat && currentEnemy && (
+        {showCombat && currentEnemy && character && (
           <CombatInterface
-            character={character}
+            character={character.toData()}
             enemy={currentEnemy}
             mode={combatMode}
             firstAttacker={firstAttacker}

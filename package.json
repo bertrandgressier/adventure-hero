@@ -24,7 +24,9 @@
     "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "use-sync-external-store": "^1.6.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",

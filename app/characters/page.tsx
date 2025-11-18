@@ -1,79 +1,48 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import Link from 'next/link';
-import { CharacterService } from '@/src/application/services/CharacterService';
-import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
-import { Character } from '@/src/domain/entities/Character';
+import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { BookTag } from '@/components/ui/book-tag';
-
-// Instance singleton du service (client-side only)
-let serviceInstance: CharacterService | null = null;
-
-function getService(): CharacterService {
-  if (!serviceInstance) {
-    const repository = new IndexedDBCharacterRepository();
-    serviceInstance = new CharacterService(repository);
-  }
-  return serviceInstance;
-}
+import type { Character } from '@/src/domain/entities/Character';
 
 export default function CharactersPage() {
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [loading, setLoading] = useState(true);
+  const characters = useCharacterStore((state) => state.getAllCharacters());
+  const isLoading = useCharacterStore((state) => state.isLoading);
+  const deleteCharacter = useCharacterStore((state) => state.deleteCharacter);
+  const createCharacter = useCharacterStore((state) => state.createCharacter);
 
-  const isDead = (character: Character) => character.isDead();
+  const isDead = useCallback((character: any) => character.isDead(), []);
 
-  useEffect(() => {
-    loadCharacters();
-  }, []);
-
-  const loadCharacters = async () => {
-    try {
-      const service = getService();
-      const chars = await service.getAllCharacters();
-      setCharacters(chars);
-    } catch (error) {
-      console.error('Error loading characters:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = useCallback(async (id: string, name: string) => {
     if (confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
       try {
-        const service = getService();
-        await service.deleteCharacter(id);
-        await loadCharacters();
+        await deleteCharacter(id);
       } catch (error) {
         console.error('Error deleting character:', error);
         alert('Erreur lors de la suppression du personnage');
       }
     }
-  };
+  }, [deleteCharacter]);
 
-  const handleDuplicate = async (character: Character) => {
+  const handleDuplicate = useCallback(async (character: any) => {
     try {
-      const service = getService();
       const characterData = character.toData();
       
       // Créer un nouveau personnage avec les mêmes données
-      const duplicated = await service.createCharacter({
+      await createCharacter({
         name: `${characterData.name} (Copie)`,
         book: characterData.book,
         talent: characterData.talent,
         stats: characterData.stats,
       });
-      
-      await loadCharacters();
     } catch (error) {
       console.error('Error duplicating character:', error);
       alert('Erreur lors de la duplication du personnage');
     }
-  };
+  }, [createCharacter]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <main className="min-h-screen bg-[#1a140f] p-4">
         <div className="max-w-4xl mx-auto py-8">
@@ -127,7 +96,7 @@ export default function CharactersPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {characters.map((character) => {
+            {characters.map((character: Character) => {
               const characterData = character.toData();
               const stats = character.getStatsObject().toData();
               const progress = character.getProgress();

@@ -1,20 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Character } from '@/src/domain/entities/Character';
-import { CharacterService } from '@/src/application/services/CharacterService';
-import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
+import { useEffect } from 'react';
+import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
+import type { Character } from '@/src/domain/entities/Character';
 import type { StatsData } from '@/src/domain/value-objects/Stats';
 import type { Weapon } from '@/src/domain/value-objects/Inventory';
-
-// Instance singleton du service (client-side only)
-let serviceInstance: CharacterService | null = null;
-
-function getService(): CharacterService {
-  if (!serviceInstance) {
-    const repository = new IndexedDBCharacterRepository();
-    serviceInstance = new CharacterService(repository);
-  }
-  return serviceInstance;
-}
 
 interface UseCharacterResult {
   character: Character | null;
@@ -38,254 +26,109 @@ interface UseCharacterResult {
 }
 
 /**
- * Hook React pour gérer un personnage.
+ * Hook React pour gérer un personnage via Zustand store.
  * 
- * Utilise CharacterService pour toutes les opérations.
- * Gère le state local (character, loading, error).
+ * Utilise le cache centralisé, pas de rechargement depuis IndexedDB.
+ * Toutes les mutations sont automatiquement persistées.
  * 
- * @param characterId - ID du personnage à charger
+ * @param characterId - ID du personnage
  * @returns État et actions pour le personnage
  */
 export function useCharacter(characterId: string | null): UseCharacterResult {
-  const [character, setCharacter] = useState<Character | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Récupérer toutes les données et actions depuis le store
+  const character = useCharacterStore((state) => characterId ? state.getCharacter(characterId) : null);
+  const isLoading = useCharacterStore((state) => state.isLoading);
+  const error = useCharacterStore((state) => state.error);
+  const storeUpdateName = useCharacterStore((state) => state.updateName);
+  const storeUpdateStats = useCharacterStore((state) => state.updateStats);
+  const storeApplyDamage = useCharacterStore((state) => state.applyDamage);
+  const storeHeal = useCharacterStore((state) => state.heal);
+  const storeEquipWeapon = useCharacterStore((state) => state.equipWeapon);
+  const storeAddItem = useCharacterStore((state) => state.addItem);
+  const storeRemoveItem = useCharacterStore((state) => state.removeItem);
+  const storeToggleItem = useCharacterStore((state) => state.toggleItem);
+  const storeAddBoulons = useCharacterStore((state) => state.addBoulons);
+  const storeRemoveBoulons = useCharacterStore((state) => state.removeBoulons);
+  const storeGoToParagraph = useCharacterStore((state) => state.goToParagraph);
+  const storeUpdateNotes = useCharacterStore((state) => state.updateNotes);
+  const storeLoadOne = useCharacterStore((state) => state.loadOne);
 
-  const service = getService();
-
-  // Charger le personnage
-  const loadCharacter = useCallback(async () => {
-    if (!characterId) {
-      setCharacter(null);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-      const char = await service.getCharacter(characterId);
-      setCharacter(char);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
-      setCharacter(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [characterId, service]);
-
-  // Charger au montage et quand l'ID change
+  // Charger le personnage si pas dans le cache
   useEffect(() => {
-    loadCharacter();
-  }, [loadCharacter]);
-
-  // Actions
-  const updateName = useCallback(async (name: string) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.updateCharacterName(characterId, name);
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour');
-      throw err;
+    if (characterId && !character && !isLoading) {
+      storeLoadOne(characterId);
     }
-  }, [characterId, service]);
+  }, [characterId, character, isLoading, storeLoadOne]);
 
-  const updateStats = useCallback(async (stats: Partial<StatsData>) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.updateCharacterStats(characterId, stats);
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const applyDamage = useCallback(async (amount: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.applyDamage(characterId, amount);
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'application des dégâts');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const heal = useCallback(async (amount: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.healCharacter(characterId, amount);
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors des soins');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const equipWeapon = useCallback(async (weapon: Weapon | null) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      
-      if (weapon === null) {
-        // Unequip weapon
-        const character = await service.getCharacter(characterId);
-        if (!character) throw new Error('Personnage non trouvé');
-        const updated = character.unequipWeapon();
-        await service.updateCharacterStats(characterId, {}); // Force save
-        setCharacter(updated);
-      } else {
-        const updated = await service.equipWeapon(characterId, weapon);
-        setCharacter(updated);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'équipement');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const addItem = useCallback(async (item: string) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.addItemToInventory(characterId, {
-        name: item,
-        possessed: true,
-        type: 'item',
-      });
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'ajout');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const removeItem = useCallback(async (itemIndex: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const character = await service.getCharacter(characterId);
-      if (!character) throw new Error('Personnage non trouvé');
-      
-      const updated = character.removeItem(itemIndex);
-      await service.updateCharacterStats(characterId, {}); // Force save
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la suppression');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const toggleItem = useCallback(async (itemIndex: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const character = await service.getCharacter(characterId);
-      if (!character) throw new Error('Personnage non trouvé');
-      
-      const updated = character.toggleItemPossession(itemIndex);
-      await service.updateCharacterStats(characterId, {}); // Force save
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du changement de statut');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const addBoulons = useCallback(async (amount: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const character = await service.getCharacter(characterId);
-      if (!character) throw new Error('Personnage non trouvé');
-      
-      const updated = character.addBoulons(amount);
-      await service.updateCharacterStats(characterId, {}); // Force save
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'ajout');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const removeBoulons = useCallback(async (amount: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const character = await service.getCharacter(characterId);
-      if (!character) throw new Error('Personnage non trouvé');
-      
-      const updated = character.removeBoulons(amount);
-      await service.updateCharacterStats(characterId, {}); // Force save
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du retrait');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const goToParagraph = useCallback(async (paragraph: number) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.goToParagraph(characterId, paragraph);
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du changement de paragraphe');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const updateNotes = useCallback(async (notes: string) => {
-    if (!characterId) return;
-    
-    try {
-      setError(null);
-      const updated = await service.updateNotes(characterId, notes);
-      setCharacter(updated);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour des notes');
-      throw err;
-    }
-  }, [characterId, service]);
-
-  const refresh = useCallback(async () => {
-    await loadCharacter();
-  }, [loadCharacter]);
-
+  // Wrappers des actions avec l'ID
   return {
     character,
     isLoading,
     error,
-    updateName,
-    updateStats,
-    applyDamage,
-    heal,
-    equipWeapon,
-    addItem,
-    removeItem,
-    toggleItem,
-    addBoulons,
-    removeBoulons,
-    goToParagraph,
-    updateNotes,
-    refresh,
+
+    updateName: async (name: string) => {
+      if (!characterId) return;
+      await storeUpdateName(characterId, name);
+    },
+
+    updateStats: async (stats: Partial<StatsData>) => {
+      if (!characterId) return;
+      await storeUpdateStats(characterId, stats);
+    },
+
+    applyDamage: async (amount: number) => {
+      if (!characterId) return;
+      await storeApplyDamage(characterId, amount);
+    },
+
+    heal: async (amount: number) => {
+      if (!characterId) return;
+      await storeHeal(characterId, amount);
+    },
+
+    equipWeapon: async (weapon: Weapon | null) => {
+      if (!characterId) return;
+      await storeEquipWeapon(characterId, weapon);
+    },
+
+    addItem: async (item: string) => {
+      if (!characterId) return;
+      await storeAddItem(characterId, { name: item, possessed: true });
+    },
+
+    removeItem: async (itemIndex: number) => {
+      if (!characterId) return;
+      await storeRemoveItem(characterId, itemIndex);
+    },
+
+    toggleItem: async (itemIndex: number) => {
+      if (!characterId) return;
+      await storeToggleItem(characterId, itemIndex);
+    },
+
+    addBoulons: async (amount: number) => {
+      if (!characterId) return;
+      await storeAddBoulons(characterId, amount);
+    },
+
+    removeBoulons: async (amount: number) => {
+      if (!characterId) return;
+      await storeRemoveBoulons(characterId, amount);
+    },
+
+    goToParagraph: async (paragraph: number) => {
+      if (!characterId) return;
+      await storeGoToParagraph(characterId, paragraph);
+    },
+
+    updateNotes: async (notes: string) => {
+      if (!characterId) return;
+      await storeUpdateNotes(characterId, notes);
+    },
+
+    refresh: async () => {
+      if (!characterId) return;
+      await storeLoadOne(characterId);
+    },
   };
 }

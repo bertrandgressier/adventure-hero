@@ -192,6 +192,86 @@ export class CharacterService {
   }
 
   /**
+   * Retire l'arme équipée
+   */
+  async unequipWeapon(id: string): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.unequipWeapon();
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Basculer la possession d'un objet
+   */
+  async toggleItemPossession(id: string, itemIndex: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.toggleItemPossession(itemIndex);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Supprimer un objet de l'inventaire
+   */
+  async removeItemFromInventory(id: string, itemIndex: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.removeItem(itemIndex);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Ajouter des boulons
+   */
+  async addBoulons(id: string, amount: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.addBoulons(amount);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Retirer des boulons
+   */
+  async removeBoulons(id: string, amount: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.removeBoulons(amount);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
    * Duplique un personnage
    */
   async duplicateCharacter(id: string): Promise<Character> {

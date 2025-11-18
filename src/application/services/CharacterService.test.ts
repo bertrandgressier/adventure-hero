@@ -306,4 +306,194 @@ describe('CharacterService', () => {
       expect(all).toHaveLength(2);
     });
   });
+
+  describe('unequipWeapon()', () => {
+    it('devrait retirer l\'arme équipée', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      await service.equipWeapon(character.id, {
+        name: 'Glamdring',
+        attackPoints: 5,
+      });
+
+      const unequipped = await service.unequipWeapon(character.id);
+
+      expect(unequipped.getInventory().weapon).toBeUndefined();
+    });
+  });
+
+  describe('addItemToInventory()', () => {
+    it('devrait ajouter un objet à l\'inventaire', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = await service.addItemToInventory(character.id, {
+        name: 'Potion de soin',
+        possessed: true,
+        type: 'item',
+      });
+
+      const items = updated.getInventory().items;
+      expect(items).toHaveLength(1);
+      expect(items[0].name).toBe('Potion de soin');
+    });
+  });
+
+  describe('toggleItemPossession()', () => {
+    it('devrait basculer la possession d\'un objet', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      await service.addItemToInventory(character.id, {
+        name: 'Potion',
+        possessed: true,
+      });
+
+      const toggled = await service.toggleItemPossession(character.id, 0);
+
+      expect(toggled.getInventory().items[0].possessed).toBe(false);
+    });
+  });
+
+  describe('removeItemFromInventory()', () => {
+    it('devrait supprimer un objet de l\'inventaire', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      await service.addItemToInventory(character.id, {
+        name: 'Potion',
+        possessed: true,
+      });
+
+      const removed = await service.removeItemFromInventory(character.id, 0);
+
+      expect(removed.getInventory().items).toHaveLength(0);
+    });
+  });
+
+  describe('addBoulons() et removeBoulons()', () => {
+    it('devrait ajouter des boulons', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = await service.addBoulons(character.id, 10);
+
+      expect(updated.getInventory().boulons).toBe(10);
+    });
+
+    it('devrait retirer des boulons', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      await service.addBoulons(character.id, 20);
+      const updated = await service.removeBoulons(character.id, 5);
+
+      expect(updated.getInventory().boulons).toBe(15);
+    });
+  });
+
+  describe('goToParagraph()', () => {
+    it('devrait mettre à jour le paragraphe actuel', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = await service.goToParagraph(character.id, 42);
+
+      expect(updated.getProgress().currentParagraph).toBe(42);
+      expect(updated.getProgress().history).toContain(1);
+      expect(updated.getProgress().history).toContain(42);
+    });
+  });
+
+  describe('updateNotes()', () => {
+    it('devrait mettre à jour les notes du personnage', async () => {
+      const character = await service.createCharacter({
+        name: 'Gandalf',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = await service.updateNotes(character.id, 'Rencontré un dragon');
+
+      expect(updated.notes).toBe('Rencontré un dragon');
+    });
+  });
 });
