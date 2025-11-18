@@ -23,6 +23,8 @@ export default function CharacterDetail() {
   // Zustand store - chargé depuis le cache
   const character = useCharacterStore((state) => state.getCharacter(id));
   const isLoading = useCharacterStore((state) => state.isLoading);
+  const hasInitialLoad = useCharacterStore((state) => state.hasInitialLoad);
+  const loadOne = useCharacterStore((state) => state.loadOne);
   const updateName = useCharacterStore((state) => state.updateName);
   const equipWeapon = useCharacterStore((state) => state.equipWeapon);
   const addItem = useCharacterStore((state) => state.addItem);
@@ -46,12 +48,19 @@ export default function CharacterDetail() {
   const [roundsCount, setRoundsCount] = useState(0);
   const [remainingEndurance, setRemainingEndurance] = useState(0);
 
+  // Charger le personnage spécifique s'il n'est pas dans le cache
+  useEffect(() => {
+    if (hasInitialLoad && !character && !isLoading) {
+      loadOne(id);
+    }
+  }, [hasInitialLoad, character, isLoading, id, loadOne]);
+
   // Redirect si personnage non trouvé après chargement
   useEffect(() => {
-    if (!isLoading && !character) {
+    if (hasInitialLoad && !isLoading && !character) {
       router.push('/characters');
     }
-  }, [isLoading, character, router]);
+  }, [hasInitialLoad, isLoading, character, router]);
 
   // Modal handlers for adding weapon/item
   const handleAddWeapon = async (name: string, attackPoints: number) => {

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createCharacterStore } from './characterStore';
 import type { CharacterStore } from './characterStore';
+import type { Character } from '@/src/domain/entities/Character';
 
 // Mock du service
 vi.mock('@/src/application/services/CharacterService');
@@ -107,7 +108,7 @@ describe('CharacterStore', () => {
       const initialCharacters = store.getState().characters;
       
       // Tenter une mutation directe (ne devrait pas affecter le store)
-      (initialCharacters as any)['test-id'] = { id: 'test-id', name: 'Test' };
+      (initialCharacters as Record<string, Character>)['test-id'] = { id: 'test-id', name: 'Test' } as Character;
 
       // Le store ne devrait pas avoir changé
       expect(store.getState().characters).toBe(initialCharacters);
@@ -174,7 +175,7 @@ describe('CharacterStore', () => {
       store.setState({ 
         isLoading: true, 
         error: 'Test',
-        characters: { 'id1': {} as any }
+        characters: { 'id1': {} as Character }
       });
 
       // Remplacer avec un état minimal

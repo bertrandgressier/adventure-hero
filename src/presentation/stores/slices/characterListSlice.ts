@@ -4,6 +4,7 @@ import type { CharacterService } from '@/src/application/services/CharacterServi
 export interface CharacterListSlice {
   characters: Record<string, Character>;
   isLoading: boolean;
+  hasInitialLoad: boolean;
   error: string | null;
   loadAll: () => Promise<void>;
   loadOne: (id: string) => Promise<void>;
@@ -19,6 +20,7 @@ export const createCharacterListSlice = (service: CharacterService) => {
   return (set: SetState, get: GetState): CharacterListSlice => ({
     characters: {},
     isLoading: false,
+    hasInitialLoad: false,
     error: null,
 
     loadAll: async () => {
@@ -29,7 +31,7 @@ export const createCharacterListSlice = (service: CharacterService) => {
           (acc, char) => ({ ...acc, [char.id]: char }),
           {} as Record<string, Character>
         );
-        set({ characters: characterRecord, isLoading: false });
+        set({ characters: characterRecord, isLoading: false, hasInitialLoad: true });
       } catch (error) {
         set({
           error: error instanceof Error ? error.message : 'Erreur de chargement',
@@ -46,6 +48,7 @@ export const createCharacterListSlice = (service: CharacterService) => {
           set((state) => ({
             characters: { ...state.characters, [id]: character },
             isLoading: false,
+            hasInitialLoad: true,
           }));
         } else {
           set({ error: 'Personnage non trouvé', isLoading: false });

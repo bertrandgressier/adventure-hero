@@ -32,7 +32,7 @@ export const createCharacterStore = () => {
 
   return createStore<CharacterStore>()(
     devtools(
-      (set, get, store) => ({
+      (set, get) => ({
         ...createCharacterListSlice(service)(set, get),
         ...createCharacterMutationSlice(service)(set),
         ...createCharacterStatsSlice(service)(set, get),
