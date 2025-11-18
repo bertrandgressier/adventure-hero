@@ -2,15 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAllCharacters, deleteCharacter, saveCharacter } from '@/lib/storage/characters';
-import { Character } from '@/lib/types/character';
+import { CharacterService } from '@/src/application/services/CharacterService';
+import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
+import { Character } from '@/src/domain/entities/Character';
 import { BookTag } from '@/app/components/ui/book-tag';
+
+// Instance singleton du service (client-side only)
+let serviceInstance: CharacterService | null = null;
+
+function getService(): CharacterService {
+  if (!serviceInstance) {
+    const repository = new IndexedDBCharacterRepository();
+    serviceInstance = new CharacterService(repository);
+  }
+  return serviceInstance;
+}
 
 export default function CharactersPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const isDead = (character: Character) => character.stats.pointsDeVieActuels <= 0;
+  const isDead = (character: Character) => character.isDead();
 
   useEffect(() => {
     loadCharacters();
@@ -18,7 +30,8 @@ export default function CharactersPage() {
 
   const loadCharacters = async () => {
     try {
-      const chars = await getAllCharacters();
+      const service = getService();
+      const chars = await service.getAllCharacters();
       setCharacters(chars);
     } catch (error) {
       console.error('Error loading characters:', error);
@@ -30,7 +43,8 @@ export default function CharactersPage() {
   const handleDelete = async (id: string, name: string) => {
     if (confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
       try {
-        await deleteCharacter(id);
+        const service = getService();
+        await service.deleteCharacter(id);
         await loadCharacters();
       } catch (error) {
         console.error('Error deleting character:', error);
@@ -41,14 +55,17 @@ export default function CharactersPage() {
 
   const handleDuplicate = async (character: Character) => {
     try {
-      const duplicatedCharacter: Character = {
-        ...character,
-        id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        name: `${character.name} (Copie)`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      await saveCharacter(duplicatedCharacter);
+      const service = getService();
+      const characterData = character.toData();
+      
+      // Créer un nouveau personnage avec les mêmes données
+      const duplicated = await service.createCharacter({
+        name: `${characterData.name} (Copie)`,
+        book: characterData.book,
+        talent: characterData.talent,
+        stats: characterData.stats,
+      });
+      
       await loadCharacters();
     } catch (error) {
       console.error('Error duplicating character:', error);
@@ -110,7 +127,12 @@ export default function CharactersPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {characters.map((character) => (
+            {characters.map((character) => {
+              const characterData = character.toData();
+              const stats = character.getStatsObject().toData();
+              const progress = character.getProgress();
+              
+              return (
               <div
                 key={character.id}
                 className={`rounded-lg p-6 transition-all ${
@@ -123,7 +145,7 @@ export default function CharactersPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
-                        {character.name}
+                        {characterData.name}
                       </h3>
                       {isDead(character) && (
                         <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-600 text-white rounded-full text-sm font-bold shadow-lg">
@@ -133,10 +155,10 @@ export default function CharactersPage() {
                     </div>
                     <div className="flex items-center gap-3 text-sm">
                       <span className="font-[var(--font-merriweather)] text-light font-semibold">
-                        Talent : <span className="text-primary">{character.talent}</span>
+                        Talent : <span className="text-primary">{characterData.talent}</span>
                       </span>
                       <span className="text-muted-light">•</span>
-                      <BookTag book={character.book} />
+                      <BookTag book={characterData.book} />
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -170,7 +192,7 @@ export default function CharactersPage() {
                       DEXTÉRITÉ
                     </div>
                     <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
-                      {character.stats.dexterite}
+                      {stats.dexterite}
                     </div>
                   </div>
                   <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
@@ -178,7 +200,7 @@ export default function CharactersPage() {
                       CHANCE
                     </div>
                     <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
-                      {character.stats.chance}
+                      {stats.chance}
                     </div>
                   </div>
                   <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
@@ -186,16 +208,16 @@ export default function CharactersPage() {
                       POINTS DE VIE
                     </div>
                     <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
-                      {character.stats.pointsDeVieActuels}<span className="text-xl text-muted-light">/{character.stats.pointsDeVieMax}</span>
+                      {stats.pointsDeVieActuels}<span className="text-xl text-muted-light">/{stats.pointsDeVieMax}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-primary/20">
                   <div className="flex items-center gap-2 text-sm text-muted-light">
-                    <span className="font-[var(--font-geist-mono)]">§{character.progress.currentParagraph}</span>
+                    <span className="font-[var(--font-geist-mono)]">§{progress.currentParagraph}</span>
                     <span>•</span>
-                    <span>{new Date(character.updatedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>{new Date(characterData.updatedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                   <Link
                     href={`/characters/${character.id}`}
@@ -205,7 +227,8 @@ export default function CharactersPage() {
                   </Link>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
 
