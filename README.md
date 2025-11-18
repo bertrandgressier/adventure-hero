@@ -1,6 +1,14 @@
 # 🗡️ Adventure Tome - Le Jeu Dont Tu Es Le Héro
 
+[![Déploiement](https://img.shields.io/badge/🚀_Démo_Live-dagda.chtibox.ovh-blue?style=for-the-badge)](https://dagda.chtibox.ovh/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Donate](https://img.shields.io/badge/☕_Soutenir-PayPal-orange?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=Q5EPDFZEEXQHJ)
+
 Application PWA mobile pour gérer vos personnages des livres "Le jeu dont tu es le héro" de la collection [La Saga de Dagda](https://www.lasagadedagda.fr/).
+
+**[🎮 Lancer l'application](https://dagda.chtibox.ovh/)** | **[📖 Documentation](#-documentation)**
+
+---
 
 ## 📖 Description
 
