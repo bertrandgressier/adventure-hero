@@ -1,7 +1,8 @@
 'use client';
 
+import React from 'react';
 import { useState } from 'react';
-import type { Enemy } from '@/lib/types/combat';
+import type { Enemy } from '@/src/domain/types/combat';
 
 interface CombatSetupProps {
   onStartCombat: (enemy: Enemy, mode: 'auto' | 'manual', firstAttacker: 'player' | 'enemy') => void;

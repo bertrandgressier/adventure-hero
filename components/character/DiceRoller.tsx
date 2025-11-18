@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trackDiceRoll } from '@/lib/analytics';
+import { trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
 
 interface DiceRollerProps {
   onClose: () => void;

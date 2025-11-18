@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import type { Character } from '@/lib/types/character';
-import type { Enemy, CombatState, CombatMode } from '@/lib/types/combat';
-import { resolveCombatRound } from '@/lib/game/combat';
+import type { CharacterDTO } from '@/src/infrastructure/dto/CharacterDTO';
+import type { Enemy, CombatState, CombatMode } from '@/src/domain/types/combat';
+import { CombatService } from '@/src/domain/services/CombatService';
 import CombatRoundDisplay from './CombatRoundDisplay';
-import { trackCombatStart } from '@/lib/analytics';
+import { trackCombatStart } from '@/src/infrastructure/analytics/tracking';
 
 interface CombatInterfaceProps {
-  character: Character;
+  character: CharacterDTO;
   enemy: Enemy;
   mode: CombatMode;
   firstAttacker: 'player' | 'enemy';
@@ -55,7 +55,7 @@ export default function CombatInterface({
       const playerWeaponPoints = character.inventory.weapon?.attackPoints || 0;
       const roundNumber = combatState.rounds.length + 1;
 
-      const round = resolveCombatRound(
+      const round = CombatService.resolveCombatRound(
         roundNumber,
         combatState.nextAttacker,
         character.stats.dexterite,

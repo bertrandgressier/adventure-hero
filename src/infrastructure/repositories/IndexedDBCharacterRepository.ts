@@ -1,6 +1,6 @@
 import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
 import { Character } from '@/src/domain/entities/Character';
-import { getDB } from '@/lib/storage/db';
+import { getDB } from '@/src/infrastructure/persistence/indexeddb';
 
 /**
  * Implémentation IndexedDB du repository Character.

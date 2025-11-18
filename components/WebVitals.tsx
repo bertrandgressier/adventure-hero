@@ -1,7 +1,7 @@
 'use client';
 
 import { useReportWebVitals } from 'next/web-vitals';
-import * as gtag from '@/lib/gtag';
+import * as gtag from '@/src/infrastructure/analytics/gtag';
 
 export function WebVitals() {
   useReportWebVitals((metric) => {

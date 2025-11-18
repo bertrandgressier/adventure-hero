@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CharacterService } from '@/src/application/services/CharacterService';
 import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
-import { trackCharacterCreation, trackDiceRoll } from '@/lib/analytics';
+import { trackCharacterCreation, trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
 import { BookTag, type BookTitle } from '@/components/ui/book-tag';
 
 // Instance singleton du service (client-side only)

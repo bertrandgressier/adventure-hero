@@ -1,10 +1,10 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import { Character } from '../types/character';
+import type { CharacterDTO } from '../dto/CharacterDTO';
 
 interface AdventureHeroDB extends DBSchema {
   characters: {
     key: string;
-    value: Character;
+    value: CharacterDTO;
     indexes: { 'by-date': string };
   };
 }

@@ -1,4 +1,12 @@
-export interface Character {
+/**
+ * CharacterDTO - Data Transfer Object
+ * 
+ * Format de persistance pour IndexedDB.
+ * Représente la structure exacte des données stockées.
+ * 
+ * Ce type est différent de l'entité Character (domain) qui contient la logique métier.
+ */
+export interface CharacterDTO {
   id: string;
   name: string;
   book: string;

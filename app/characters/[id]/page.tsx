@@ -5,8 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { CharacterService } from '@/src/application/services/CharacterService';
 import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
 import type { Character as CharacterEntity } from '@/src/domain/entities/Character';
-import type { Character } from '@/lib/types/character';
-import type { Enemy, CombatMode } from '@/lib/types/combat';
+import type { CharacterDTO } from '@/src/infrastructure/dto/CharacterDTO';
+import type { Enemy, CombatMode } from '@/src/domain/types/combat';
 import CombatSetup from '@/components/adventure/CombatSetup';
 import CombatInterface from '@/components/adventure/CombatInterface';
 import CombatEndModal from '@/components/adventure/CombatEndModal';
@@ -33,7 +33,7 @@ export default function CharacterDetail() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const [character, setCharacter] = useState<Character | null>(null);
+  const [character, setCharacter] = useState<CharacterDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState('');
@@ -90,7 +90,7 @@ export default function CharacterDetail() {
   };
 
   // Generic character update handler - kept for combat compatibility
-  const handleUpdateCharacter = async (updatedCharacter: Character) => {
+  const handleUpdateCharacter = async (updatedCharacter: CharacterDTO) => {
     setCharacter(updatedCharacter);
   };
 

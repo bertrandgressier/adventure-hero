@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useEffect, useRef } from 'react';
-import { trackCombatEnd } from '@/lib/analytics';
+import { trackCombatEnd } from '@/src/infrastructure/analytics/tracking';
 
 interface CombatEndModalProps {
   status: 'victory' | 'defeat';

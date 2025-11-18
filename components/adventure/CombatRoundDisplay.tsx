@@ -1,6 +1,7 @@
 'use client';
 
-import type { CombatRound } from '@/lib/types/combat';
+import React from 'react';
+import type { CombatRound } from '@/src/domain/types/combat';
 
 interface CombatRoundDisplayProps {
   round: CombatRound;
