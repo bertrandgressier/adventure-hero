@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import type { Enemy, CombatMode } from '@/src/domain/types/combat';
@@ -45,6 +45,13 @@ export default function CharacterDetail() {
   const [combatEndStatus, setCombatEndStatus] = useState<'victory' | 'defeat' | null>(null);
   const [roundsCount, setRoundsCount] = useState(0);
   const [remainingEndurance, setRemainingEndurance] = useState(0);
+
+  // Redirect si personnage non trouvé après chargement
+  useEffect(() => {
+    if (!isLoading && !character) {
+      router.push('/characters');
+    }
+  }, [isLoading, character, router]);
 
   // Modal handlers for adding weapon/item
   const handleAddWeapon = async (name: string, attackPoints: number) => {
@@ -124,12 +131,6 @@ export default function CharacterDetail() {
       handleNameCancel();
     }
   };
-
-  // Redirect si personnage non trouvé après chargement
-  if (!isLoading && !character) {
-    router.push('/characters');
-    return null;
-  }
 
   if (isLoading) {
     return (
