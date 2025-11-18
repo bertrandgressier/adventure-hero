@@ -1,0 +1,400 @@
+import { describe, it, expect } from 'vitest';
+import { Character } from './Character';
+
+describe('Character', () => {
+  describe('create()', () => {
+    it('devrait créer un nouveau personnage', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      expect(character.name).toBe('Aragorn');
+      expect(character.book).toBe('La Harpe des Quatre Saisons');
+      expect(character.talent).toBe('instinct');
+      expect(character.id).toBeTruthy();
+      expect(character.createdAt).toBeTruthy();
+    });
+
+    it('devrait trimmer le nom', () => {
+      const character = Character.create({
+        name: '  Aragorn  ',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      expect(character.name).toBe('Aragorn');
+    });
+
+    it('devrait rejeter un nom vide', () => {
+      expect(() =>
+        Character.create({
+          name: '   ',
+          book: 'La Harpe des Quatre Saisons',
+          talent: 'instinct',
+          stats: {
+            dexterite: 7,
+            chance: 5,
+            chanceInitiale: 5,
+            pointsDeVieMax: 32,
+            pointsDeVieActuels: 32,
+          },
+        })
+      ).toThrow('Le nom du personnage ne peut pas être vide');
+    });
+  });
+
+  describe('updateName()', () => {
+    it('devrait mettre à jour le nom', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = character.updateName('Legolas');
+
+      expect(updated.name).toBe('Legolas');
+      expect(character.name).toBe('Aragorn'); // Original inchangé
+    });
+
+    it('devrait rejeter un nom vide', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      expect(() => character.updateName('   ')).toThrow(
+        'Le nom du personnage ne peut pas être vide'
+      );
+    });
+  });
+
+  describe('updateStats()', () => {
+    it('devrait mettre à jour les stats', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = character.updateStats({ dexterite: 10 });
+
+      expect(updated.getStats().dexterite).toBe(10);
+      expect(character.getStats().dexterite).toBe(7); // Original inchangé
+    });
+  });
+
+  describe('takeDamage() et heal()', () => {
+    it('devrait appliquer des dégâts', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const damaged = character.takeDamage(10);
+
+      expect(damaged.getStats().pointsDeVieActuels).toBe(22);
+    });
+
+    it('devrait soigner le personnage', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 20,
+        },
+      });
+
+      const healed = character.heal(5);
+
+      expect(healed.getStats().pointsDeVieActuels).toBe(25);
+    });
+  });
+
+  describe('equipWeapon() et unequipWeapon()', () => {
+    it('devrait équiper une arme', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const equipped = character.equipWeapon({
+        name: 'Épée longue',
+        attackPoints: 3,
+      });
+
+      expect(equipped.getInventory().weapon).toEqual({
+        name: 'Épée longue',
+        attackPoints: 3,
+      });
+    });
+
+    it('devrait retirer l\'arme équipée', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      }).equipWeapon({ name: 'Épée longue', attackPoints: 3 });
+
+      const unequipped = character.unequipWeapon();
+
+      expect(unequipped.getInventory().weapon).toBeUndefined();
+    });
+  });
+
+  describe('addItem() et removeItem()', () => {
+    it('devrait ajouter un objet', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const withItem = character.addItem({
+        name: 'Potion de soin',
+        possessed: true,
+        type: 'item',
+      });
+
+      expect(withItem.getInventory().items).toHaveLength(1);
+      expect(withItem.getInventory().items[0].name).toBe('Potion de soin');
+    });
+
+    it('devrait retirer un objet', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      })
+        .addItem({ name: 'Potion de soin', possessed: true })
+        .addItem({ name: 'Corde', possessed: true });
+
+      const removed = character.removeItem(0);
+
+      expect(removed.getInventory().items).toHaveLength(1);
+      expect(removed.getInventory().items[0].name).toBe('Corde');
+    });
+  });
+
+  describe('addBoulons() et removeBoulons()', () => {
+    it('devrait ajouter des boulons', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const withMoney = character.addBoulons(50);
+
+      expect(withMoney.getInventory().boulons).toBe(50);
+    });
+
+    it('devrait retirer des boulons', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      }).addBoulons(50);
+
+      const afterPurchase = character.removeBoulons(20);
+
+      expect(afterPurchase.getInventory().boulons).toBe(30);
+    });
+  });
+
+  describe('goToParagraph()', () => {
+    it('devrait changer le paragraphe actuel', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const updated = character.goToParagraph(42);
+
+      expect(updated.getProgress().currentParagraph).toBe(42);
+      expect(updated.getProgress().history).toContain(42);
+    });
+  });
+
+  describe('isDead() et isCriticalHealth()', () => {
+    it('devrait détecter un personnage mort', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 0,
+        },
+      });
+
+      expect(character.isDead()).toBe(true);
+    });
+
+    it('devrait détecter une santé critique', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 5,
+        },
+      });
+
+      expect(character.isCriticalHealth()).toBe(true);
+    });
+  });
+
+  describe('toData() et fromData()', () => {
+    it('devrait sérialiser et désérialiser correctement', () => {
+      const original = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const data = original.toData();
+      const reconstructed = Character.fromData(data);
+
+      expect(reconstructed.name).toBe(original.name);
+      expect(reconstructed.id).toBe(original.id);
+      expect(reconstructed.getStats()).toEqual(original.getStats());
+    });
+
+    it('devrait ajouter updatedAt lors de la sérialisation', () => {
+      const character = Character.create({
+        name: 'Aragorn',
+        book: 'La Harpe des Quatre Saisons',
+        talent: 'instinct',
+        stats: {
+          dexterite: 7,
+          chance: 5,
+          chanceInitiale: 5,
+          pointsDeVieMax: 32,
+          pointsDeVieActuels: 32,
+        },
+      });
+
+      const data = character.toData();
+
+      expect(data.updatedAt).toBeTruthy();
+      expect(new Date(data.updatedAt).getTime()).toBeGreaterThan(0);
+    });
+  });
+});
