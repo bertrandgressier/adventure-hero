@@ -9,6 +9,11 @@
 - **Tailwind CSS 4** - Styling avec theming
 - **shadcn/ui** - Composants UI
 
+### State Management
+- **Zustand 5.x** - State management avec vanilla store pattern
+- **Slices Pattern** - Store modulaire divisé en slices thématiques
+- **Immutabilité** - Updates avec `Record<string, T>` et spread operator
+
 ### PWA
 - **Service Worker** - Cache et offline
 - **Web App Manifest** - Configuration PWA
@@ -16,93 +21,120 @@
 
 ## Structure du projet
 
-```
+```text
 adventure-tome/
-├── app/
+├── app/                           # Next.js App Router
 │   ├── layout.tsx                 # Layout principal + metadata
 │   ├── page.tsx                   # Page d'accueil
 │   ├── manifest.ts                # PWA manifest
 │   ├── globals.css                # Styles globaux + theme
 │   │
 │   ├── characters/                # Gestion des personnages
+│   │   ├── layout.tsx            # Provider Zustand scoped
 │   │   ├── page.tsx              # Liste des personnages
 │   │   ├── new/
 │   │   │   └── page.tsx          # Créer un personnage
 │   │   └── [id]/
-│   │       ├── page.tsx          # Détail personnage
-│   │       └── edit/
-│   │           └── page.tsx      # Éditer personnage
+│   │       └── page.tsx          # Détail personnage
 │   │
-│   ├── adventure/                 # Aventure en cours
-│   │   ├── page.tsx              # Écran principal aventure
-│   │   ├── combat/
-│   │   │   └── page.tsx          # Phase de combat
-│   │   ├── dice/
-│   │   │   └── page.tsx          # Lancer de dés
-│   │   └── notes/
-│   │       └── page.tsx          # Bloc-notes
-│   │
-│   └── components/                # Composants réutilisables
+│   └── components/                # Composants Next.js legacy
 │       ├── ui/                    # Composants shadcn/ui
-│       │   ├── button.tsx
-│       │   ├── card.tsx
-│       │   ├── input.tsx
-│       │   ├── dialog.tsx
-│       │   └── ...
-│       │
-│       ├── character/             # Composants personnage
-│       │   ├── CharacterCard.tsx
-│       │   ├── CharacterForm.tsx
-│       │   ├── StatsDisplay.tsx
-│       │   └── InventoryList.tsx
-│       │
-│       ├── adventure/             # Composants aventure
-│       │   ├── CombatInterface.tsx
-│       │   ├── DiceRoller.tsx
-│       │   ├── ProgressTracker.tsx
-│       │   └── NotesEditor.tsx
-│       │
-│       ├── GoogleAnalytics.tsx    # Google Analytics
-│       └── MusicPlayer.tsx        # Lecteur de musique
+│       ├── adventure/             # Combat, dice roller
+│       ├── character/             # Character legacy components
+│       ├── GoogleAnalytics.tsx
+│       └── MusicPlayer.tsx
 │
-├── lib/
-│   ├── storage/                   # Gestion du stockage
-│   │   ├── characters.ts         # CRUD personnages
-│   │   ├── progress.ts           # Sauvegarde progression
-│   │   └── notes.ts              # Gestion notes
+├── src/                           # Clean Architecture
+│   ├── domain/                    # Couche métier (logique pure)
+│   │   ├── entities/
+│   │   │   ├── Character.ts      # Entité Character avec logique métier
+│   │   │   └── Character.test.ts
+│   │   │
+│   │   ├── value-objects/
+│   │   │   ├── Stats.ts          # Stats avec validation
+│   │   │   ├── Stats.test.ts
+│   │   │   └── Inventory.ts      # Inventory, Weapon types
+│   │   │
+│   │   ├── services/
+│   │   │   ├── CombatService.ts  # Logique de combat pure
+│   │   │   └── CombatService.test.ts
+│   │   │
+│   │   ├── repositories/
+│   │   │   └── ICharacterRepository.ts  # Interface repository
+│   │   │
+│   │   └── types/
+│   │       └── combat.ts         # Types combat
 │   │
-│   ├── game/                      # Logique de jeu
-│   │   ├── combat.ts             # Calculs de combat
-│   │   ├── dice.ts               # Lancer de dés
-│   │   └── character.ts          # Gestion personnage
+│   ├── application/               # Couche application (use cases)
+│   │   └── services/
+│   │       ├── CharacterService.ts      # Orchestration CRUD
+│   │       └── CharacterService.test.ts
 │   │
-│   ├── utils/                     # Utilitaires
-│   │   ├── export.ts             # Import/Export JSON
-│   │   ├── validation.ts         # Validation données
-│   │   └── format.ts             # Formatage
+│   ├── infrastructure/            # Couche infrastructure (I/O)
+│   │   ├── repositories/
+│   │   │   └── IndexedDBCharacterRepository.ts  # Implémentation IndexedDB
+│   │   │
+│   │   ├── persistence/
+│   │   │   └── indexeddb.ts      # Helpers IndexedDB
+│   │   │
+│   │   ├── dto/
+│   │   │   └── CharacterDTO.ts   # Mapping DB <-> Domain
+│   │   │
+│   │   └── analytics/
+│   │       ├── gtag.ts           # Google Analytics
+│   │       └── tracking.ts
 │   │
-│   └── types/                     # Types TypeScript
-│       ├── character.ts
-│       ├── combat.ts
-│       └── game.ts
+│   └── presentation/              # Couche présentation (UI)
+│       ├── stores/
+│       │   ├── characterStore.ts         # Store principal (combine slices)
+│       │   ├── characterStore.test.ts
+│       │   ├── createSelectors.ts        # Auto-selectors helper
+│       │   │
+│       │   └── slices/                   # Slices Pattern
+│       │       ├── characterListSlice.ts     # Load, refresh, getters
+│       │       ├── characterMutationSlice.ts # Create, delete
+│       │       ├── characterStatsSlice.ts    # Update stats, damage, heal
+│       │       ├── characterInventorySlice.ts # Inventory, weapons, boulons
+│       │       └── characterMetadataSlice.ts # Name, notes, progress
+│       │
+│       ├── providers/
+│       │   ├── character-store-provider.tsx  # Context provider
+│       │   └── CharacterStoreProvider.test.tsx
+│       │
+│       ├── hooks/
+│       │   └── useCharacter.ts   # Custom hook pour Zustand store
+│       │
+│       └── components/
+│           ├── CharacterStats.tsx
+│           ├── CharacterInventory.tsx
+│           ├── CharacterProgress.tsx
+│           ├── CharacterWeapon.tsx
+│           └── EditableStatField.tsx
+│
+├── lib/                           # Legacy code (en cours de migration)
+│   ├── storage/                   # DEPRECATED - use CharacterService
+│   ├── game/
+│   │   └── combat.ts             # DEPRECATED - use CombatService
+│   ├── utils.ts
+│   └── types/
+│       ├── character.ts          # DEPRECATED - use domain entities
+│       └── combat.ts             # DEPRECATED - use domain types
+│
+├── tests/
+│   └── integration/
+│       ├── character-flow.test.ts    # Tests E2E flux personnage
+│       └── data-migration.test.ts    # Tests migration données
 │
 ├── public/
 │   ├── icons/                     # Icônes PWA
-│   │   ├── icon-192.png
-│   │   ├── icon-512.png
-│   │   └── apple-touch-icon.png
-│   │
 │   └── manifest.json              # Manifest statique
 │
-├── docs/                          # Documentation
-│   ├── FEATURES.md
-│   ├── ARCHITECTURE.md
-│   ├── CHARACTER_SHEET.md
-│   ├── THEMING.md
-│   └── DEPLOYMENT.md
-│
-└── config/
-    └── site.ts                    # Configuration site
+└── docs/                          # Documentation
+    ├── ARCHITECTURE.md            # Ce fichier
+    ├── FEATURES.md
+    ├── CHARACTER_SHEET.md
+    ├── COMBAT.md
+    └── THEMING.md
 ```
 
 ## Modèles de données
@@ -195,15 +227,41 @@ type CombatMode = 'auto' | 'manual';
 
 ## Flux de données
 
-### Stockage local
+### Architecture Clean - Flux de données
+
+```text
+User Action → Component (Presentation)
+    ↓
+useCharacter Hook → Zustand Store
+    ↓
+CharacterService (Application)
+    ↓
+IndexedDBRepository (Infrastructure) → IndexedDB
+    ↓
+Return Domain Entity
+    ↓
+Update Zustand Store → Re-render Component
 ```
-User Action → Component → Storage Lib → IndexedDB/LocalStorage
-                ↓
-            Update UI
+
+### Exemple : Mise à jour d'une stat
+
+```text
+1. User clicks "Save" in EditableStatField
+2. Component calls updateStats from useCharacter hook
+3. Hook dispatches to Zustand characterStatsSlice
+4. Slice calls CharacterService.updateCharacterStats()
+5. Service validates with Stats Value Object
+6. Service calls repository.update(character)
+7. Repository saves to IndexedDB
+8. Repository returns updated Character entity
+9. Service returns to slice
+10. Slice updates store state (immutable Record update)
+11. Component re-renders with new data
 ```
 
 ### Combat
-```
+
+```text
 Start Combat → Initialize Combat State (mode, first attacker)
     ↓
 Roll to Hit (2d6) → Check if ≤ DEXTÉRITÉ
@@ -221,15 +279,34 @@ Save Updated Character → Show End Modal
 
 ## Gestion d'état
 
-### Client-side uniquement
-- React hooks (useState, useEffect, useReducer)
-- Context API pour état global (personnage actif)
-- LocalStorage pour persistance
-- Pas de state management externe (Redux, etc.)
+### Zustand avec Slices Pattern
+
+- **Store centralisé** : `characterStore.ts` combine 5 slices thématiques
+- **Vanilla store** : `zustand/vanilla` pour compatibilité SSR Next.js
+- **Provider scoped** : Context limité à `/characters` routes
+- **Immutabilité** : `Record<string, Character>` avec spread operator (pas de `Map`)
+- **Auto-selectors** : `createSelectors()` helper pour accès type-safe
+- **Persistence** : Auto-save vers IndexedDB via `CharacterService`
+
+### Slices (5 modules)
+
+1. **characterListSlice** : État + chargement (`characters`, `isLoading`, `hasInitialLoad`, `loadAll`, `loadOne`)
+2. **characterMutationSlice** : CRUD (`createCharacter`, `deleteCharacter`)
+3. **characterStatsSlice** : Stats (`updateStats`, `applyDamage`, `heal`)
+4. **characterInventorySlice** : Inventaire (`equipWeapon`, `addItem`, `toggleItem`, `addBoulons`)
+5. **characterMetadataSlice** : Métadonnées (`updateName`, `updateNotes`, `goToParagraph`)
+
+### Tests
+
+- **Unit tests** : Test store directement avec `store.getState()` et `store.setState()`
+- **Component tests** : Test avec `CharacterStoreProvider` wrapper
+- **Mocks auto-reset** : `__mocks__/zustand/vanilla.ts` réinitialise après chaque test
+- **109 tests** : 100% de couverture sur Domain, Application, Infrastructure, Presentation
 
 ## Performance
 
 ### Optimisations
+
 - Next.js App Router avec RSC
 - Code splitting automatique
 - Lazy loading des composants
@@ -240,6 +317,7 @@ Save Updated Character → Show End Modal
 ## Sécurité
 
 ### Données locales
+
 - Validation côté client
 - Sanitization des inputs
 - Pas de données sensibles
@@ -248,6 +326,7 @@ Save Updated Character → Show End Modal
 ## Accessibilité
 
 ### ARIA et sémantique
+
 - Labels appropriés
 - Navigation au clavier
 - Contraste des couleurs
