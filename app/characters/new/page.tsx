@@ -3,21 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CharacterService } from '@/src/application/services/CharacterService';
-import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
+import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { trackCharacterCreation, trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
 import { BookTag, type BookTitle } from '@/components/ui/book-tag';
-
-// Instance singleton du service (client-side only)
-let serviceInstance: CharacterService | null = null;
-
-function getService(): CharacterService {
-  if (!serviceInstance) {
-    const repository = new IndexedDBCharacterRepository();
-    serviceInstance = new CharacterService(repository);
-  }
-  return serviceInstance;
-}
 
 const BOOKS: BookTitle[] = [
   "La Harpe des Quatre Saisons",
@@ -37,6 +25,7 @@ const TALENTS = [
 
 export default function NewCharacterPage() {
   const router = useRouter();
+  const createCharacter = useCharacterStore((state) => state.createCharacter);
   const [step, setStep] = useState<'book' | 'name' | 'talent' | 'stats'>('book');
   const [selectedBook, setSelectedBook] = useState<BookTitle>('La Harpe des Quatre Saisons');
   const [name, setName] = useState('');
@@ -84,10 +73,8 @@ export default function NewCharacterPage() {
 
   const handleCreateCharacter = async () => {
     try {
-      const service = getService();
-      
-      // Utiliser CharacterService.createCharacter() de la Clean Architecture
-      await service.createCharacter({
+      // Utiliser le store pour créer le personnage (met à jour le state global)
+      const newCharacter = await createCharacter({
         name,
         book: selectedBook,
         talent: selectedTalent,
@@ -107,7 +94,8 @@ export default function NewCharacterPage() {
         pointsDeVieMax: stats.pointsDeVieMax,
       });
       
-      router.push('/characters');
+      // Rediriger vers la page du nouveau personnage
+      router.push(`/characters/${newCharacter.id}`);
     } catch (error) {
       console.error('Error saving character:', error);
       alert('Erreur lors de la sauvegarde du personnage');
