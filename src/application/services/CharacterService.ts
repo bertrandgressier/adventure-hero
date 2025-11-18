@@ -1,0 +1,215 @@
+import { Character } from '@/src/domain/entities/Character';
+import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
+import { StatsData } from '@/src/domain/value-objects/Stats';
+
+/**
+ * CharacterService - Application Service
+ * Orchestre les use cases de gestion des personnages
+ */
+export class CharacterService {
+  constructor(private readonly repository: ICharacterRepository) {}
+
+  /**
+   * Récupère un personnage par son ID
+   */
+  async getCharacter(id: string): Promise<Character | null> {
+    return this.repository.findById(id);
+  }
+
+  /**
+   * Récupère tous les personnages
+   */
+  async getAllCharacters(): Promise<Character[]> {
+    return this.repository.findAll();
+  }
+
+  /**
+   * Crée un nouveau personnage
+   */
+  async createCharacter(data: {
+    name: string;
+    book: string;
+    talent: string;
+    stats: StatsData;
+  }): Promise<Character> {
+    // La logique métier est dans Character.create()
+    const character = Character.create(data);
+    
+    await this.repository.save(character);
+    
+    return character;
+  }
+
+  /**
+   * Supprime un personnage
+   */
+  async deleteCharacter(id: string): Promise<void> {
+    const exists = await this.repository.exists(id);
+    if (!exists) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+    
+    await this.repository.delete(id);
+  }
+
+  /**
+   * Met à jour le nom d'un personnage
+   */
+  async updateCharacterName(id: string, newName: string): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    // La logique métier (validation) est dans Character.updateName()
+    const updated = character.updateName(newName);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Met à jour les statistiques d'un personnage
+   */
+  async updateCharacterStats(
+    id: string,
+    statsUpdate: Partial<StatsData>
+  ): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    // La logique métier (validation) est dans Character.updateStats()
+    const updated = character.updateStats(statsUpdate);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Applique des dégâts à un personnage
+   */
+  async applyDamage(id: string, damage: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.takeDamage(damage);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Soigne un personnage
+   */
+  async healCharacter(id: string, amount: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.heal(amount);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Équipe une arme à un personnage
+   */
+  async equipWeapon(
+    id: string,
+    weapon: { name: string; attackPoints: number }
+  ): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.equipWeapon(weapon);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Ajoute un objet à l'inventaire
+   */
+  async addItemToInventory(
+    id: string,
+    item: { name: string; possessed: boolean; type?: 'item' | 'special' }
+  ): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.addItem(item);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Change le paragraphe actuel
+   */
+  async goToParagraph(id: string, paragraph: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.goToParagraph(paragraph);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Met à jour les notes
+   */
+  async updateNotes(id: string, notes: string): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    const updated = character.updateNotes(notes);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Duplique un personnage
+   */
+  async duplicateCharacter(id: string): Promise<Character> {
+    const original = await this.repository.findById(id);
+    if (!original) {
+      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+    }
+
+    // Créer une copie avec un nouveau nom et ID
+    const copy = Character.create({
+      name: `${original.name} (Copie)`,
+      book: original.book,
+      talent: original.talent,
+      stats: original.getStats(),
+    });
+
+    await this.repository.save(copy);
+    
+    return copy;
+  }
+}
