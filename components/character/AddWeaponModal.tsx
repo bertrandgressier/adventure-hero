@@ -38,7 +38,7 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
       }}
     >
       <div 
-        className="bg-[#2a1e17] border-2 border-primary/50 rounded-lg p-6 max-w-md w-full"
+        className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
@@ -55,7 +55,7 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
               value={newWeaponName}
               onChange={(e) => setNewWeaponName(e.target.value)}
               placeholder="Ex: Épée longue, Arc, Dague..."
-              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-merriweather)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+              className="w-full bg-background border border-primary/20 rounded px-4 py-2 font-[var(--font-merriweather)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
               autoFocus
             />
           </div>
@@ -70,7 +70,7 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
               onChange={(e) => setNewWeaponAttack(e.target.value)}
               placeholder="0"
               min="0"
-              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+              className="w-full bg-background border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
             />
           </div>
         </div>
@@ -78,13 +78,13 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#3a2e27] hover:bg-[#4a3e37] text-light font-[var(--font-merriweather)] font-bold px-6 py-3 rounded-lg transition-colors border border-primary/20"
+            className="flex-1 bg-muted hover:bg-muted/80 text-light font-[var(--font-merriweather)] font-bold px-6 py-3 rounded-lg transition-colors border border-primary/20"
           >
             Annuler
           </button>
           <button
             onClick={handleAdd}
-            className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-400 hover:to-yellow-300 text-[#1a140f] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-all shadow-[0_0_20px_rgba(255,191,0,0.8)] hover:shadow-[0_0_30px_rgba(255,191,0,1)] border-2 border-yellow-300"
+            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98]"
           >
             Ajouter
           </button>

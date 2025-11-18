@@ -80,7 +80,7 @@ export default function CombatEndModal({
 
         <button
           onClick={() => router.push('/characters')}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-base sm:text-lg"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-base sm:text-lg"
         >
           Retour à la liste des personnages
         </button>

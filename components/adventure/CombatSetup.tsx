@@ -47,7 +47,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={(e) => {
       if (e.target === e.currentTarget) onCancel();
     }}>
-      <div className="bg-[#2a1e17] border-2 border-primary/50 rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
         <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
           ⚔️ Nouveau Combat
         </h3>
@@ -64,7 +64,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
               onChange={(e) => setFormData({ ...formData, dexterite: parseInt(e.target.value) || 0 })}
               placeholder="Score de combat"
               min="1"
-              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+              className="w-full bg-background border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
               }}
               placeholder="Points de vie"
               min="1"
-              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+              className="w-full bg-background border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -97,7 +97,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
               onChange={(e) => setFormData({ ...formData, attackPoints: parseInt(e.target.value) || 0 })}
               placeholder="Bonus de dommages"
               min="0"
-              className="w-full bg-[#1a140f] border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
+              className="w-full bg-background border border-primary/20 rounded px-4 py-2 font-[var(--font-geist-mono)] text-light placeholder:text-muted-light focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -111,8 +111,8 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
                 onClick={() => setFirstAttacker('player')}
                 className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
                   firstAttacker === 'player'
-                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
-                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/50 border-2 border-primary'
+                    : 'bg-background border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
                 }`}
               >
                 🛡️ Vous
@@ -121,8 +121,8 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
                 onClick={() => setFirstAttacker('enemy')}
                 className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
                   firstAttacker === 'enemy'
-                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
-                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/50 border-2 border-primary'
+                    : 'bg-background border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
                 }`}
               >
                 ⚔️ Ennemi
@@ -140,8 +140,8 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
                 onClick={() => setMode('auto')}
                 className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
                   mode === 'auto'
-                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
-                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/50 border-2 border-primary'
+                    : 'bg-background border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
                 }`}
               >
                 ⚡ Auto
@@ -150,8 +150,8 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
                 onClick={() => setMode('manual')}
                 className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
                   mode === 'manual'
-                    ? 'bg-yellow-600 text-[#000000] shadow-lg shadow-yellow-600/50 border-2 border-yellow-600'
-                    : 'bg-[#1a140f] border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/50 border-2 border-primary'
+                    : 'bg-background border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
                 }`}
               >
                 🎲 Manuel
@@ -174,7 +174,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
           </button>
           <button
             onClick={handleStart}
-            className="flex-1 bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98]"
           >
             Commencer
           </button>

@@ -25,7 +25,7 @@ export default function CombatRoundDisplay({ round, playerName, enemyName }: Com
   };
 
   return (
-    <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 mb-3">
+    <div className="bg-background border border-primary/20 rounded-lg p-4 mb-3">
       {/* En-tête du round */}
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-[var(--font-uncial)] text-lg text-primary">
@@ -37,7 +37,7 @@ export default function CombatRoundDisplay({ round, playerName, enemyName }: Com
       </div>
 
       {/* Détails de l'attaque */}
-      <div className={`bg-[#2a1e17] rounded p-3 border-l-4 border-${attackerColor}-500/50`}>
+      <div className={`bg-card rounded p-3 border-l-4 border-${attackerColor}-500/50`}>
         {/* Test pour toucher */}
         <div className="mb-2">
           <div className="text-xs font-[var(--font-merriweather)] text-muted-light mb-1">

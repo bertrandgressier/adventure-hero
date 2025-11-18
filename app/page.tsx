@@ -81,7 +81,7 @@ export default function Home() {
     <>
       <main className="relative flex min-h-screen flex-col items-center justify-center p-4 overflow-hidden">
         {/* Fond sombre uniforme */}
-        <div className="absolute inset-0 bg-[#1a140f]">
+        <div className="absolute inset-0 bg-background">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/8 via-transparent to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-amber-700/10 via-transparent to-transparent" />
         </div>
@@ -91,7 +91,7 @@ export default function Home() {
           {stars.map((star, i) => (
             <div
               key={i}
-              className="absolute w-2 h-2 bg-primary rounded-full animate-magic shadow-[0_0_8px_rgba(255,191,0,1),0_0_12px_rgba(255,191,0,0.6)]"
+              className="absolute w-2 h-2 bg-primary rounded-full animate-magic shadow-[0_0_8px_hsl(var(--primary)/1),0_0_12px_hsl(var(--primary)/0.6)]"
               style={{
                 left: `${star.left}%`,
                 top: `${star.top}%`,
@@ -128,7 +128,7 @@ export default function Home() {
 
           {/* Cartes de fonctionnalités */}
           <div className="space-y-4">
-            <div className="group relative bg-[#2a1e17] backdrop-blur-sm glow-border glow-border-hover rounded-lg p-6 transition-all duration-300">
+            <div className="group relative bg-card backdrop-blur-sm glow-border glow-border-hover rounded-lg p-6 transition-all duration-300">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <span className="text-2xl">📖</span>
@@ -144,7 +144,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="group relative bg-[#2a1e17] backdrop-blur-sm glow-border glow-border-hover rounded-lg p-6 transition-all duration-300">
+            <div className="group relative bg-card backdrop-blur-sm glow-border glow-border-hover rounded-lg p-6 transition-all duration-300">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <span className="text-2xl">⚔️</span>
@@ -160,7 +160,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="group relative bg-[#2a1e17] backdrop-blur-sm glow-border glow-border-hover rounded-lg p-6 transition-all duration-300">
+            <div className="group relative bg-card backdrop-blur-sm glow-border glow-border-hover rounded-lg p-6 transition-all duration-300">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <span className="text-2xl">🎲</span>
@@ -181,7 +181,7 @@ export default function Home() {
           <div className="space-y-4">
             <Link
               href="/characters"
-              className="block w-full bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-center text-lg"
+              className="block w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-center text-lg"
             >
               Commencer l&apos;aventure
             </Link>

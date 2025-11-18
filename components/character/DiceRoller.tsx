@@ -52,10 +52,10 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
       }}
     >
       <div 
-        className="bg-[#2a1e17] border-2 border-[#FFBF00] rounded-lg p-6 max-w-md w-full"
+        className="bg-card border-2 border-primary rounded-lg p-6 max-w-md w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-[#FFBF00] mb-6 text-center">
+        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
           🎲 Lancer de dés
         </h3>
 
@@ -64,7 +64,7 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
           <div className="flex justify-center gap-4 mb-4">
             {diceResult[0] > 0 && (
               <div
-                className={`w-24 h-24 bg-[#FFBF00] border-2 border-[#000000] rounded-xl flex items-center justify-center text-7xl text-[#000000] shadow-lg shadow-[#FFBF00]/50 ${
+                className={`w-24 h-24 bg-primary border-2 border-primary-foreground rounded-xl flex items-center justify-center text-7xl text-primary-foreground shadow-lg shadow-primary/50 ${
                   isRolling ? 'animate-[spin_0.5s_ease-in-out]' : 'animate-[bounce_0.5s_ease-in-out]'
                 }`}
               >
@@ -73,7 +73,7 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
             )}
             {diceResult[1] > 0 && (
               <div
-                className={`w-24 h-24 bg-[#FFBF00] border-2 border-[#000000] rounded-xl flex items-center justify-center text-7xl text-[#000000] shadow-lg shadow-[#FFBF00]/50 ${
+                className={`w-24 h-24 bg-primary border-2 border-primary-foreground rounded-xl flex items-center justify-center text-7xl text-primary-foreground shadow-lg shadow-primary/50 ${
                   isRolling ? 'animate-[spin_0.5s_ease-in-out]' : 'animate-[bounce_0.5s_ease-in-out]'
                 }`}
               >
@@ -83,7 +83,7 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
           </div>
           {diceTotal > 0 && (
             <div className="font-[var(--font-uncial)] text-3xl text-center">
-              Total: <span className="text-[#FFBF00] text-4xl font-bold">{diceTotal}</span>
+              Total: <span className="text-primary text-4xl font-bold">{diceTotal}</span>
             </div>
           )}
         </div>
@@ -92,21 +92,21 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
           <button
             onClick={() => rollDice(1)}
             disabled={isRolling}
-            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
           >
             {isRolling ? '⏳' : '1 dé'}
           </button>
           <button
             onClick={() => rollDice(2)}
             disabled={isRolling}
-            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
           >
             {isRolling ? '⏳' : '2 dés'}
           </button>
         </div>
         <button
           onClick={onClose}
-          className="w-full bg-[#1a140f] border border-muted-light/30 hover:border-[#FFBF00] text-light font-[var(--font-merriweather)] px-6 py-3 rounded-lg transition-colors"
+          className="w-full bg-background border border-muted-light/30 hover:border-primary text-light font-[var(--font-merriweather)] px-6 py-3 rounded-lg transition-colors"
         >
           Fermer
         </button>
