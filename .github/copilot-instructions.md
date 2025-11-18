@@ -96,12 +96,25 @@ src/
 - Mobile-first: test all layouts on 375px width minimum
 - PWA icons required: 192x192, 512x512 in `public/icons/`
 
-### 4. State Management (Zustand + Clean Architecture)
-- **Zustand** for centralized state with vanilla store pattern (`zustand/vanilla`)
+### 4. State Management (Zustand + Clean Architecture + Slices Pattern)
+- **Zustand 5.x** with vanilla store pattern (`zustand/vanilla`)
+- **Slices Pattern** for modularity - store divisé en slices thématiques
 - **Provider scoped** to `/characters` routes only (client-side only)
 - **Immutable updates**: Use `Record<string, T>` + spread operator, NEVER `Map`
 - **Auto-selectors**: Use `createSelectors()` helper for type-safe access
 - Persist to IndexedDB via `CharacterService` (all mutations auto-save)
+
+**Store Architecture (Slices Pattern)**:
+```
+src/presentation/stores/
+  characterStore.ts           # Store principal (combine tous les slices)
+  slices/
+    characterListSlice.ts     # État + chargement (characters, isLoading, error)
+    characterMutationSlice.ts # CRUD (create, delete)
+    characterStatsSlice.ts    # Stats (updateStats, applyDamage, heal)
+    characterInventorySlice.ts # Inventaire (equipWeapon, addItem, toggleItem)
+    characterMetadataSlice.ts # Métadonnées (updateName, updateNotes, goToParagraph)
+```
 
 ```typescript
 // ✅ Correct: Immutable Record updates
@@ -110,15 +123,39 @@ set((state) => ({ characters: { ...state.characters, [id]: updated } }))
 // ❌ Wrong: Map mutations
 set((state) => ({ characters: new Map(state.characters).set(id, updated) }))
 
-// ✅ Auto-selector usage
-const useBearStore = createSelectors(bearStore);
-const bears = useBearStore.use.bears(); // Type-safe!
+// ✅ Slice pattern (maintainability)
+export const createCharacterStatsSlice = (service: CharacterService) => {
+  return (set: SetState, get: GetState): CharacterStatsSlice => ({
+    updateStats: async (id, stats) => { /* ... */ },
+    applyDamage: async (id, amount) => { /* ... */ },
+  });
+};
+
+// ✅ Combine slices in main store
+export const createCharacterStore = () => {
+  const service = getService();
+  return createStore<CharacterStore>()(
+    devtools((set, get, store) => ({
+      ...createCharacterListSlice(service)(set, get),
+      ...createCharacterStatsSlice(service)(set, get),
+      // ... other slices
+    }))
+  );
+};
 ```
 
 **Key patterns**:
-- `StateCreator<T, [['zustand/devtools', never]], []>` for typed middlewares
+- **Slices** = fonctions retournant un objet avec state + actions
+- **Typed signatures**: `SetState`, `GetState` pour chaque slice
+- **Service injection**: Pass `CharacterService` to each slice creator
+- `useMemo` in provider (not `useRef`) for React 19 compatibility
 - `shallow` equality in `useStoreWithEqualityFn` for performance
 - Test mocks: `__mocks__/zustand.ts` auto-resets stores after each test
+
+**Testing**:
+- Unit tests: Test store directly with `store.getState()` and `store.setState()`
+- Component tests: Test with `CharacterStoreProvider` wrapper
+- All tests auto-reset state via `__mocks__/zustand/vanilla.ts`
 
 ## Development Workflow
 
