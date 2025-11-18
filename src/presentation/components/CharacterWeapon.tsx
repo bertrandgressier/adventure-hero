@@ -67,7 +67,7 @@ export default function CharacterWeapon({
 
   if (isLoading) {
     return (
-      <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+      <div className="bg-card glow-border rounded-lg p-6">
         <p className="text-muted-light text-center">Chargement...</p>
       </div>
     );
@@ -75,7 +75,7 @@ export default function CharacterWeapon({
 
   if (error) {
     return (
-      <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+      <div className="bg-card glow-border rounded-lg p-6">
         <p className="text-red-400 text-center">Erreur: {error}</p>
       </div>
     );
@@ -83,7 +83,7 @@ export default function CharacterWeapon({
 
   if (!character) {
     return (
-      <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+      <div className="bg-card glow-border rounded-lg p-6">
         <p className="text-muted-light text-center">Personnage non trouvé</p>
       </div>
     );
@@ -93,7 +93,7 @@ export default function CharacterWeapon({
   const weapon = inventory.weapon;
 
   return (
-    <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+    <div className="bg-card glow-border rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light">
           Arme équipée
