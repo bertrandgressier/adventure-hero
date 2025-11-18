@@ -11,7 +11,7 @@ import CombatEndModal from '@/app/components/adventure/CombatEndModal';
 import CharacterStats from '@/src/presentation/components/CharacterStatsRefactored';
 import CharacterProgress from '@/src/presentation/components/CharacterProgressRefactored';
 import CharacterWeapon from '@/src/presentation/components/CharacterWeaponRefactored';
-import CharacterInventory from '@/app/components/character/CharacterInventory';
+import CharacterInventory from '@/src/presentation/components/CharacterInventoryRefactored';
 import DiceRoller from '@/app/components/character/DiceRoller';
 import AddWeaponModal from '@/app/components/character/AddWeaponModal';
 import AddItemModal from '@/app/components/character/AddItemModal';
@@ -286,8 +286,8 @@ export default function CharacterDetail() {
 
         {/* Inventory Section */}
         <CharacterInventory
-          character={character}
-          onUpdate={handleUpdateCharacter}
+          characterId={id}
+          onUpdate={loadCharacter}
           onOpenAddItemModal={() => setShowItemModal(true)}
         />
 

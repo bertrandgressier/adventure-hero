@@ -29,6 +29,7 @@ interface UseCharacterResult {
   equipWeapon: (weapon: Weapon | null) => Promise<void>;
   addItem: (item: string) => Promise<void>;
   removeItem: (itemIndex: number) => Promise<void>;
+  toggleItem: (itemIndex: number) => Promise<void>;
   addBoulons: (amount: number) => Promise<void>;
   removeBoulons: (amount: number) => Promise<void>;
   goToParagraph: (paragraph: number) => Promise<void>;
@@ -188,6 +189,23 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
     }
   }, [characterId, service]);
 
+  const toggleItem = useCallback(async (itemIndex: number) => {
+    if (!characterId) return;
+    
+    try {
+      setError(null);
+      const character = await service.getCharacter(characterId);
+      if (!character) throw new Error('Personnage non trouvé');
+      
+      const updated = character.toggleItemPossession(itemIndex);
+      await service.updateCharacterStats(characterId, {}); // Force save
+      setCharacter(updated);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du changement de statut');
+      throw err;
+    }
+  }, [characterId, service]);
+
   const addBoulons = useCallback(async (amount: number) => {
     if (!characterId) return;
     
@@ -263,6 +281,7 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
     equipWeapon,
     addItem,
     removeItem,
+    toggleItem,
     addBoulons,
     removeBoulons,
     goToParagraph,
