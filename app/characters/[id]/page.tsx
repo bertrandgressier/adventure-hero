@@ -2,19 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getCharacter, deleteCharacter, updateCharacter } from '@/lib/storage/characters';
+import { CharacterService } from '@/src/application/services/CharacterService';
+import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
+import type { Character as CharacterEntity } from '@/src/domain/entities/Character';
 import type { Character } from '@/lib/types/character';
 import type { Enemy, CombatMode } from '@/lib/types/combat';
-import CombatSetup from '@/app/components/adventure/CombatSetup';
-import CombatInterface from '@/app/components/adventure/CombatInterface';
-import CombatEndModal from '@/app/components/adventure/CombatEndModal';
-import CharacterStats from '@/src/presentation/components/CharacterStatsRefactored';
-import CharacterProgress from '@/src/presentation/components/CharacterProgressRefactored';
-import CharacterWeapon from '@/src/presentation/components/CharacterWeaponRefactored';
-import CharacterInventory from '@/src/presentation/components/CharacterInventoryRefactored';
-import DiceRoller from '@/app/components/character/DiceRoller';
-import AddWeaponModal from '@/app/components/character/AddWeaponModal';
-import AddItemModal from '@/app/components/character/AddItemModal';
+import CombatSetup from '@/components/adventure/CombatSetup';
+import CombatInterface from '@/components/adventure/CombatInterface';
+import CombatEndModal from '@/components/adventure/CombatEndModal';
+import CharacterStats from '@/src/presentation/components/CharacterStats';
+import CharacterProgress from '@/src/presentation/components/CharacterProgress';
+import CharacterWeapon from '@/src/presentation/components/CharacterWeapon';
+import CharacterInventory from '@/src/presentation/components/CharacterInventory';
+import DiceRoller from '@/components/character/DiceRoller';
+import AddWeaponModal from '@/components/character/AddWeaponModal';
+import AddItemModal from '@/components/character/AddItemModal';
+
+// Instance singleton du service (client-side only)
+let serviceInstance: CharacterService | null = null;
+
+function getService(): CharacterService {
+  if (!serviceInstance) {
+    const repository = new IndexedDBCharacterRepository();
+    serviceInstance = new CharacterService(repository);
+  }
+  return serviceInstance;
+}
 
 export default function CharacterDetail() {
   const router = useRouter();
@@ -47,12 +60,13 @@ export default function CharacterDetail() {
 
   const loadCharacter = async () => {
     try {
-      const char = await getCharacter(id);
+      const service = getService();
+      const char = await service.getCharacter(id);
       if (!char) {
         router.push('/characters');
         return;
       }
-      setCharacter(char);
+      setCharacter(char.toData());
     } catch (error) {
       console.error('Error loading character:', error);
       router.push('/characters');
@@ -67,53 +81,41 @@ export default function CharacterDetail() {
     }
 
     try {
-      await deleteCharacter(id);
+      const service = getService();
+      await service.deleteCharacter(id);
       router.push('/characters');
     } catch (error) {
       console.error('Error deleting character:', error);
     }
   };
 
-  // Generic character update handler
+  // Generic character update handler - kept for combat compatibility
   const handleUpdateCharacter = async (updatedCharacter: Character) => {
-    try {
-      await updateCharacter(updatedCharacter);
-      setCharacter(updatedCharacter);
-    } catch (error) {
-      console.error('Error updating character:', error);
-    }
+    setCharacter(updatedCharacter);
   };
 
   // Modal handlers for adding weapon/item
   const handleAddWeapon = async (name: string, attackPoints: number) => {
-    if (!character) return;
-
-    const updatedCharacter = {
-      ...character,
-      inventory: {
-        ...character.inventory,
-        weapon: { name, attackPoints }
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
+    try {
+      const service = getService();
+      const char = await service.getCharacter(id);
+      if (!char) return;
+      
+      await service.equipWeapon(id, { name, attackPoints });
+      await loadCharacter();
+    } catch (error) {
+      console.error('Error adding weapon:', error);
+    }
   };
 
   const handleAddItem = async (name: string) => {
-    if (!character) return;
-
-    const updatedCharacter = {
-      ...character,
-      inventory: {
-        ...character.inventory,
-        items: [
-          ...character.inventory.items,
-          { name, possessed: true }
-        ]
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
+    try {
+      const service = getService();
+      await service.addItemToInventory(id, { name, possessed: true });
+      await loadCharacter();
+    } catch (error) {
+      console.error('Error adding item:', error);
+    }
   };
 
   // Combat handlers
@@ -159,13 +161,14 @@ export default function CharacterDetail() {
   const handleNameSave = async () => {
     if (!character || !tempName.trim()) return;
     
-    const updatedCharacter = {
-      ...character,
-      name: tempName.trim(),
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
-    setEditingName(false);
+    try {
+      const service = getService();
+      await service.updateCharacterName(id, tempName.trim());
+      await loadCharacter();
+      setEditingName(false);
+    } catch (error) {
+      console.error('Error updating name:', error);
+    }
   };
 
   const handleNameCancel = () => {

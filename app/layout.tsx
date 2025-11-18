@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Uncial_Antiqua, Merriweather, Inter, JetBrains_Mono } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import MusicPlayer from "./components/MusicPlayer";
-import GoogleAnalytics from "./components/GoogleAnalytics";
-import { WebVitals } from "./components/WebVitals";
+import MusicPlayer from "@/components/MusicPlayer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { WebVitals } from "@/components/WebVitals";
 
 // Log des variables d'environnement au chargement du module (côté serveur)
 console.log('[Server] Environment variables loaded:');

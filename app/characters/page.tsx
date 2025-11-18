@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { CharacterService } from '@/src/application/services/CharacterService';
 import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
 import { Character } from '@/src/domain/entities/Character';
-import { BookTag } from '@/app/components/ui/book-tag';
+import { BookTag } from '@/components/ui/book-tag';
 
 // Instance singleton du service (client-side only)
 let serviceInstance: CharacterService | null = null;

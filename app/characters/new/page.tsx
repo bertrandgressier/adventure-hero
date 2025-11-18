@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { CharacterService } from '@/src/application/services/CharacterService';
 import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
 import { trackCharacterCreation, trackDiceRoll } from '@/lib/analytics';
-import { BookTag, type BookTitle } from '@/app/components/ui/book-tag';
+import { BookTag, type BookTitle } from '@/components/ui/book-tag';
 
 // Instance singleton du service (client-side only)
 let serviceInstance: CharacterService | null = null;
