@@ -2,14 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { Uncial_Antiqua, Merriweather, Inter, JetBrains_Mono } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import MusicPlayer from "./components/MusicPlayer";
-import GoogleAnalytics from "./components/GoogleAnalytics";
-import { WebVitals } from "./components/WebVitals";
+import MusicPlayer from "@/components/MusicPlayer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { WebVitals } from "@/components/WebVitals";
 
 // Log des variables d'environnement au chargement du module (côté serveur)
 console.log('[Server] Environment variables loaded:');
 console.log('  - NEXT_PUBLIC_GA_ID:', process.env.NEXT_PUBLIC_GA_ID || 'NOT SET');
-console.log('  - GA_ID:', process.env.GA_ID || 'NOT SET');
 console.log('  - NEXT_PUBLIC_APP_VERSION:', process.env.NEXT_PUBLIC_APP_VERSION || 'NOT SET');
 
 const uncialAntiqua = Uncial_Antiqua({
@@ -70,8 +69,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Support des deux modes: NEXT_PUBLIC_GA_ID (build-time) et GA_ID (runtime avec Docker)
-  const gaId = process.env.NEXT_PUBLIC_GA_ID || process.env.GA_ID;
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
   
   return (
     <html lang="fr" className="dark">

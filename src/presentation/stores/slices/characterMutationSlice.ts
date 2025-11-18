@@ -1,0 +1,52 @@
+import type { Character } from '@/src/domain/entities/Character';
+import type { CharacterService } from '@/src/application/services/CharacterService';
+import type { StatsData } from '@/src/domain/value-objects/Stats';
+import type { CharacterListSlice } from './characterListSlice';
+
+export interface CharacterMutationSlice {
+  createCharacter: (data: {
+    name: string;
+    book: string;
+    talent: string;
+    stats: StatsData;
+  }) => Promise<Character>;
+  deleteCharacter: (id: string) => Promise<void>;
+}
+
+type StoreState = CharacterMutationSlice & CharacterListSlice;
+type SetState = (partial: Partial<StoreState> | ((state: StoreState) => Partial<StoreState>)) => void;
+
+export const createCharacterMutationSlice = (service: CharacterService) => {
+  return (set: SetState): CharacterMutationSlice => ({
+    createCharacter: async (data) => {
+      set({ error: null });
+      try {
+        const character = await service.createCharacter(data);
+        set((state) => ({
+          characters: { ...state.characters, [character.id]: character },
+        }));
+        return character;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Erreur de création';
+        set({ error: errorMessage });
+        throw error;
+      }
+    },
+
+    deleteCharacter: async (id: string) => {
+      set({ error: null });
+      try {
+        await service.deleteCharacter(id);
+        set((state) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [id]: _deletedId, ...rest } = state.characters;
+          return { characters: rest };
+        });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Erreur de suppression';
+        set({ error: errorMessage });
+        throw error;
+      }
+    },
+  });
+};

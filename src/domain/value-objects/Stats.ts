@@ -1,0 +1,146 @@
+/**
+ * Stats - Value Object
+ * Représente les statistiques d'un personnage avec validation
+ */
+
+export interface StatsData {
+  dexterite: number;
+  chance: number;
+  chanceInitiale: number;
+  pointsDeVieMax: number;
+  pointsDeVieActuels: number;
+}
+
+export class Stats {
+  constructor(
+    public readonly dexterite: number,
+    public readonly chance: number,
+    public readonly chanceInitiale: number,
+    public readonly maxHealth: number,
+    public readonly currentHealth: number
+  ) {
+    this.validate();
+  }
+
+  private validate(): void {
+    if (this.dexterite < 1) {
+      throw new Error('La dextérité doit être supérieure ou égale à 1');
+    }
+    if (this.chance < 0) {
+      throw new Error('La chance doit être supérieure ou égale à 0');
+    }
+    if (this.chanceInitiale < 0) {
+      throw new Error('La chance initiale doit être supérieure ou égale à 0');
+    }
+    if (this.maxHealth < 1) {
+      throw new Error('Les points de vie maximum doivent être supérieurs ou égaux à 1');
+    }
+    if (this.currentHealth < 0) {
+      throw new Error('Les points de vie actuels doivent être supérieurs ou égaux à 0');
+    }
+    if (this.currentHealth > this.maxHealth) {
+      throw new Error('Les points de vie actuels ne peuvent pas dépasser le maximum');
+    }
+  }
+
+  /**
+   * Crée une nouvelle instance avec les stats mises à jour
+   * Pattern immutable - ne modifie jamais l'instance actuelle
+   */
+  update(newStats: Partial<StatsData>): Stats {
+    return new Stats(
+      newStats.dexterite ?? this.dexterite,
+      newStats.chance ?? this.chance,
+      newStats.chanceInitiale ?? this.chanceInitiale,
+      newStats.pointsDeVieMax ?? this.maxHealth,
+      newStats.pointsDeVieActuels ?? this.currentHealth
+    );
+  }
+
+  /**
+   * Réduit la chance de 1 (après un test de chance)
+   */
+  decreaseChance(): Stats {
+    return new Stats(
+      this.dexterite,
+      Math.max(0, this.chance - 1),
+      this.chanceInitiale,
+      this.maxHealth,
+      this.currentHealth
+    );
+  }
+
+  /**
+   * Applique des dégâts aux points de vie
+   */
+  takeDamage(damage: number): Stats {
+    if (damage < 0) {
+      throw new Error('Les dégâts ne peuvent pas être négatifs');
+    }
+    
+    return new Stats(
+      this.dexterite,
+      this.chance,
+      this.chanceInitiale,
+      this.maxHealth,
+      Math.max(0, this.currentHealth - damage)
+    );
+  }
+
+  /**
+   * Soigne le personnage
+   */
+  heal(amount: number): Stats {
+    if (amount < 0) {
+      throw new Error('La quantité de soin ne peut pas être négative');
+    }
+    
+    return new Stats(
+      this.dexterite,
+      this.chance,
+      this.chanceInitiale,
+      this.maxHealth,
+      Math.min(this.maxHealth, this.currentHealth + amount)
+    );
+  }
+
+  /**
+   * Vérifie si le personnage est mort
+   */
+  isDead(): boolean {
+    return this.currentHealth <= 0;
+  }
+
+  /**
+   * Vérifie si le personnage a peu de vie (25% ou moins)
+   */
+  isCriticalHealth(): boolean {
+    return this.currentHealth > 0 && this.currentHealth <= this.maxHealth / 4;
+  }
+
+  /**
+   * Convertit en format de données pour la persistance
+   */
+  toData(): StatsData {
+    return {
+      dexterite: this.dexterite,
+      chance: this.chance,
+      chanceInitiale: this.chanceInitiale,
+      pointsDeVieMax: this.maxHealth,
+      pointsDeVieActuels: this.currentHealth,
+    };
+  }
+
+  /**
+   * Crée une instance depuis des données
+   */
+  static fromData(data: StatsData): Stats {
+    return new Stats(
+      data.dexterite,
+      data.chance,
+      data.chanceInitiale,
+      data.pointsDeVieMax,
+      data.pointsDeVieActuels
+    );
+  }
+}

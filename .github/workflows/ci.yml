@@ -34,7 +34,20 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Run tests
+        run: pnpm test
+
       - name: Build
         run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Generate coverage report
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: false

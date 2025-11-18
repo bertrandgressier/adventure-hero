@@ -26,10 +26,10 @@ jobs:
           version: '10.20.0'
 
       - name: Install dependencies
-        run: pnpm add -g @commitlint/cli @commitlint/config-conventional
+        run: pnpm install
 
       - name: Validate PR title
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          echo "$PR_TITLE" | npx commitlint
+          echo "$PR_TITLE" | pnpm exec commitlint

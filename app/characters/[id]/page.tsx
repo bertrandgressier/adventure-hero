@@ -2,26 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getCharacter, deleteCharacter, updateCharacter } from '@/lib/storage/characters';
-import type { Character } from '@/lib/types/character';
-import type { Enemy, CombatMode } from '@/lib/types/combat';
-import CombatSetup from '@/app/components/adventure/CombatSetup';
-import CombatInterface from '@/app/components/adventure/CombatInterface';
-import CombatEndModal from '@/app/components/adventure/CombatEndModal';
-import CharacterStats from '@/app/components/character/CharacterStats';
-import CharacterProgress from '@/app/components/character/CharacterProgress';
-import CharacterWeapon from '@/app/components/character/CharacterWeapon';
-import CharacterInventory from '@/app/components/character/CharacterInventory';
-import DiceRoller from '@/app/components/character/DiceRoller';
-import AddWeaponModal from '@/app/components/character/AddWeaponModal';
-import AddItemModal from '@/app/components/character/AddItemModal';
+import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
+import type { Enemy, CombatMode } from '@/src/domain/types/combat';
+import CombatSetup from '@/components/adventure/CombatSetup';
+import CombatInterface from '@/components/adventure/CombatInterface';
+import CombatEndModal from '@/components/adventure/CombatEndModal';
+import CharacterStats from '@/src/presentation/components/CharacterStats';
+import CharacterProgress from '@/src/presentation/components/CharacterProgress';
+import CharacterWeapon from '@/src/presentation/components/CharacterWeapon';
+import CharacterInventory from '@/src/presentation/components/CharacterInventory';
+import DiceRoller from '@/components/character/DiceRoller';
+import AddWeaponModal from '@/components/character/AddWeaponModal';
+import AddItemModal from '@/components/character/AddItemModal';
 
 export default function CharacterDetail() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const [character, setCharacter] = useState<Character | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  // Zustand store - chargé depuis le cache
+  const character = useCharacterStore((state) => state.getCharacter(id));
+  const isLoading = useCharacterStore((state) => state.isLoading);
+  const hasInitialLoad = useCharacterStore((state) => state.hasInitialLoad);
+  const loadOne = useCharacterStore((state) => state.loadOne);
+  const updateName = useCharacterStore((state) => state.updateName);
+  const equipWeapon = useCharacterStore((state) => state.equipWeapon);
+  const addItem = useCharacterStore((state) => state.addItem);
+  const applyDamage = useCharacterStore((state) => state.applyDamage);
+  
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState('');
   
@@ -40,80 +48,37 @@ export default function CharacterDetail() {
   const [roundsCount, setRoundsCount] = useState(0);
   const [remainingEndurance, setRemainingEndurance] = useState(0);
 
+  // Charger le personnage spécifique s'il n'est pas dans le cache
   useEffect(() => {
-    loadCharacter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    if (hasInitialLoad && !character && !isLoading) {
+      loadOne(id);
+    }
+  }, [hasInitialLoad, character, isLoading, id, loadOne]);
 
-  const loadCharacter = async () => {
-    try {
-      const char = await getCharacter(id);
-      if (!char) {
-        router.push('/characters');
-        return;
-      }
-      setCharacter(char);
-    } catch (error) {
-      console.error('Error loading character:', error);
+  // Redirect si personnage non trouvé après chargement
+  useEffect(() => {
+    if (hasInitialLoad && !isLoading && !character) {
       router.push('/characters');
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce personnage ?')) {
-      return;
-    }
-
-    try {
-      await deleteCharacter(id);
-      router.push('/characters');
-    } catch (error) {
-      console.error('Error deleting character:', error);
-    }
-  };
-
-  // Generic character update handler
-  const handleUpdateCharacter = async (updatedCharacter: Character) => {
-    try {
-      await updateCharacter(updatedCharacter);
-      setCharacter(updatedCharacter);
-    } catch (error) {
-      console.error('Error updating character:', error);
-    }
-  };
+  }, [hasInitialLoad, isLoading, character, router]);
 
   // Modal handlers for adding weapon/item
   const handleAddWeapon = async (name: string, attackPoints: number) => {
-    if (!character) return;
-
-    const updatedCharacter = {
-      ...character,
-      inventory: {
-        ...character.inventory,
-        weapon: { name, attackPoints }
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
+    try {
+      await equipWeapon(id, { name, attackPoints });
+      setShowWeaponModal(false);
+    } catch (error) {
+      console.error('Error adding weapon:', error);
+    }
   };
 
   const handleAddItem = async (name: string) => {
-    if (!character) return;
-
-    const updatedCharacter = {
-      ...character,
-      inventory: {
-        ...character.inventory,
-        items: [
-          ...character.inventory.items,
-          { name, possessed: true }
-        ]
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
+    try {
+      await addItem(id, { name, possessed: true });
+      setShowItemModal(false);
+    } catch (error) {
+      console.error('Error adding item:', error);
+    }
   };
 
   // Combat handlers
@@ -132,16 +97,12 @@ export default function CharacterDetail() {
     setRoundsCount(rounds);
     setRemainingEndurance(finalEnd);
 
-    // Mettre à jour les PV du personnage
-    const updatedCharacter = {
-      ...character,
-      stats: {
-        ...character.stats,
-        pointsDeVieActuels: finalEnd
-      },
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
+    // Calculer les dégâts et appliquer via le store
+    const data = character.toData();
+    const damageAmount = data.stats.pointsDeVieActuels - finalEnd;
+    if (damageAmount > 0) {
+      await applyDamage(id, damageAmount);
+    }
 
     setShowCombat(false);
   };
@@ -159,13 +120,12 @@ export default function CharacterDetail() {
   const handleNameSave = async () => {
     if (!character || !tempName.trim()) return;
     
-    const updatedCharacter = {
-      ...character,
-      name: tempName.trim(),
-      updatedAt: new Date().toISOString()
-    };
-    await handleUpdateCharacter(updatedCharacter);
-    setEditingName(false);
+    try {
+      await updateName(id, tempName.trim());
+      setEditingName(false);
+    } catch (error) {
+      console.error('Error updating name:', error);
+    }
   };
 
   const handleNameCancel = () => {
@@ -181,7 +141,7 @@ export default function CharacterDetail() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <main className="min-h-screen bg-[#1a140f] p-4">
         <div className="max-w-4xl mx-auto py-8">
@@ -268,30 +228,23 @@ export default function CharacterDetail() {
         {/* Stats Section */}
         <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
           <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Caractéristiques</h2>
-          <CharacterStats character={character} onUpdate={handleUpdateCharacter} />
+          <CharacterStats characterId={id} />
         </div>
 
         {/* Progress Section */}
-        <CharacterProgress
-          character={character}
-          onUpdate={handleUpdateCharacter}
-        />
+        <CharacterProgress characterId={id} />
 
         {/* Weapon Section */}
         <CharacterWeapon
-          character={character}
-          onUpdate={handleUpdateCharacter}
+          characterId={id}
           onOpenAddWeaponModal={() => setShowWeaponModal(true)}
         />
 
         {/* Inventory Section */}
         <CharacterInventory
-          character={character}
-          onUpdate={handleUpdateCharacter}
+          characterId={id}
           onOpenAddItemModal={() => setShowItemModal(true)}
         />
-
-        {/* Action Buttons - Supprimés car les icônes + sont dans les sections */}
 
         {/* Notes Section */}
         {character.notes && (
@@ -327,9 +280,9 @@ export default function CharacterDetail() {
           />
         )}
 
-        {showCombat && currentEnemy && (
+        {showCombat && currentEnemy && character && (
           <CombatInterface
-            character={character}
+            character={character.toData()}
             enemy={currentEnemy}
             mode={combatMode}
             firstAttacker={firstAttacker}
