@@ -104,17 +104,12 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
       </div>
 
       {/* Boulons */}
-      <div className="bg-background glow-border rounded-lg p-4">
-        <div className="font-[var(--font-merriweather)] text-sm text-muted-light mb-2">
-          Boulons 🪙
-        </div>
-        <EditableStatField
-          label=""
-          value={inventoryData.boulons}
-          onSave={handleUpdateBoulons}
-          min={0}
-        />
-      </div>
+      <EditableStatField
+        label="Boulons 🪙"
+        value={inventoryData.boulons}
+        onSave={handleUpdateBoulons}
+        min={0}
+      />
     </div>
   );
 }
