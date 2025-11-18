@@ -9,7 +9,7 @@ import CombatSetup from '@/app/components/adventure/CombatSetup';
 import CombatInterface from '@/app/components/adventure/CombatInterface';
 import CombatEndModal from '@/app/components/adventure/CombatEndModal';
 import CharacterStats from '@/src/presentation/components/CharacterStatsRefactored';
-import CharacterProgress from '@/app/components/character/CharacterProgress';
+import CharacterProgress from '@/src/presentation/components/CharacterProgressRefactored';
 import CharacterWeapon from '@/app/components/character/CharacterWeapon';
 import CharacterInventory from '@/app/components/character/CharacterInventory';
 import DiceRoller from '@/app/components/character/DiceRoller';
@@ -273,8 +273,8 @@ export default function CharacterDetail() {
 
         {/* Progress Section */}
         <CharacterProgress
-          character={character}
-          onUpdate={handleUpdateCharacter}
+          characterId={id}
+          onUpdate={loadCharacter}
         />
 
         {/* Weapon Section */}
