@@ -3,10 +3,21 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { saveCharacter } from '@/lib/storage/characters';
-import { Character } from '@/lib/types/character';
+import { CharacterService } from '@/src/application/services/CharacterService';
+import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
 import { trackCharacterCreation, trackDiceRoll } from '@/lib/analytics';
 import { BookTag, type BookTitle } from '@/app/components/ui/book-tag';
+
+// Instance singleton du service (client-side only)
+let serviceInstance: CharacterService | null = null;
+
+function getService(): CharacterService {
+  if (!serviceInstance) {
+    const repository = new IndexedDBCharacterRepository();
+    serviceInstance = new CharacterService(repository);
+  }
+  return serviceInstance;
+}
 
 const BOOKS: BookTitle[] = [
   "La Harpe des Quatre Saisons",
@@ -72,34 +83,22 @@ export default function NewCharacterPage() {
   };
 
   const handleCreateCharacter = async () => {
-    const character: Character = {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      name,
-      book: selectedBook,
-      talent: selectedTalent,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      stats: {
-        dexterite: stats.dexterite,
-        chance: stats.chance,
-        chanceInitiale: stats.chance,
-        pointsDeVieMax: stats.pointsDeVieMax,
-        pointsDeVieActuels: stats.pointsDeVieMax,
-      },
-      inventory: {
-        boulons: 0,
-        items: [],
-      },
-      progress: {
-        currentParagraph: 1,
-        history: [1],
-        lastSaved: new Date().toISOString(),
-      },
-      notes: '',
-    };
-
     try {
-      await saveCharacter(character);
+      const service = getService();
+      
+      // Utiliser CharacterService.createCharacter() de la Clean Architecture
+      const character = await service.createCharacter({
+        name,
+        book: selectedBook,
+        talent: selectedTalent,
+        stats: {
+          dexterite: stats.dexterite,
+          chance: stats.chance,
+          chanceInitiale: stats.chance,
+          pointsDeVieMax: stats.pointsDeVieMax,
+          pointsDeVieActuels: stats.pointsDeVieMax,
+        },
+      });
       
       // Tracker la création du personnage
       trackCharacterCreation(selectedTalent, {
