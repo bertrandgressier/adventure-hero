@@ -182,6 +182,7 @@ pnpm start
 - [🔄 Exemple de refactoring](./docs/REFACTORING_EXAMPLE.md) - Avant/après avec code
 - [📐 Diagrammes](./docs/ARCHITECTURE_DIAGRAMS.md) - Visualisation
 - [📘 Guide de migration](./docs/MIGRATION_GUIDE.md) - **Comment migrer vos composants** ⭐
+- [🔒 Garantie de migration](./docs/MIGRATION_GUARANTEE.md) - **Aucune perte de données** ✅
 
 ### Avantages de la nouvelle architecture
 
@@ -193,9 +194,10 @@ pnpm start
 
 **Après** (Clean Architecture) :
 - Séparation claire: Domain → Application → Infrastructure → Presentation
-- 65 tests unitaires pour la logique métier (0 dépendance UI)
+- 71 tests unitaires pour la logique métier (0 dépendance UI)
 - Single Source of Truth pour les règles métier
 - Code réduit de 70% dans les composants refactorés
+- **Aucune perte de données** - Migration garantie par 6 tests
 
 **Composants pilotes** :
 - `src/presentation/components/CharacterStatsRefactored.tsx` - Exemple complet (90 lignes vs 300)
