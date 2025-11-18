@@ -22,7 +22,6 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
     enduranceMax: 6,
     attackPoints: 0
   });
-  const [mode, setMode] = useState<'auto' | 'manual'>('auto');
   const [firstAttacker, setFirstAttacker] = useState<'player' | 'enemy'>('player');
 
   const handleStart = () => {
@@ -39,19 +38,20 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
     }
 
     const enemy: Enemy = {
-      name: 'Adversaire',
+      name: 'Ennemi',
       dexterite,
       endurance,
       enduranceMax,
       attackPoints
     };
 
-    onStartCombat(enemy, mode, firstAttacker);
+    // Toujours démarrer en mode manuel par défaut
+    onStartCombat(enemy, 'manual', firstAttacker);
   };
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full">
+      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
             ⚔️ Nouveau Combat
@@ -134,40 +134,6 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
                 ⚔️ Ennemi
               </button>
             </div>
-          </div>
-
-          {/* Mode de combat */}
-          <div>
-            <label className="font-[var(--font-merriweather)] text-muted-light text-sm mb-2 block">
-              Mode de combat
-            </label>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setMode('auto')}
-                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
-                  mode === 'auto'
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/50 border-2 border-primary'
-                    : 'bg-background border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
-                }`}
-              >
-                ⚡ Auto
-              </button>
-              <button
-                onClick={() => setMode('manual')}
-                className={`flex-1 px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold transition-all ${
-                  mode === 'manual'
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/50 border-2 border-primary'
-                    : 'bg-background border-2 border-muted-light/30 text-muted-light hover:border-muted-light/50'
-                }`}
-              >
-                🎲 Manuel
-              </button>
-            </div>
-            <p className="text-xs text-muted-light mt-2 font-[var(--font-merriweather)]">
-              {mode === 'auto' 
-                ? 'Les dés sont lancés automatiquement à chaque round' 
-                : 'Vous lancez les dés manuellement pour chaque round'}
-            </p>
           </div>
         </div>
 
