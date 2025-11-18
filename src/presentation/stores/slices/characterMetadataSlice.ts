@@ -3,6 +3,7 @@ import type { CharacterListSlice } from './characterListSlice';
 
 export interface CharacterMetadataSlice {
   updateName: (id: string, name: string) => Promise<void>;
+  updateBook: (id: string, book: string) => Promise<void>;
   updateNotes: (id: string, notes: string) => Promise<void>;
   goToParagraph: (id: string, paragraph: number) => Promise<void>;
 }
@@ -19,6 +20,21 @@ export const createCharacterMetadataSlice = (service: CharacterService) => {
 
       try {
         const updated = await service.updateCharacterName(id, name);
+        set((state) => ({
+          characters: { ...state.characters, [id]: updated },
+        }));
+      } catch (error) {
+        set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
+        throw error;
+      }
+    },
+
+    updateBook: async (id: string, book: string) => {
+      const character = get().characters[id];
+      if (!character) return;
+
+      try {
+        const updated = await service.updateBook(id, book);
         set((state) => ({
           characters: { ...state.characters, [id]: updated },
         }));

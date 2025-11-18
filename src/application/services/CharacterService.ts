@@ -293,4 +293,20 @@ export class CharacterService {
     
     return copy;
   }
+
+  /**
+   * Met à jour le livre d'un personnage
+   */
+  async updateBook(id: string, newBook: string): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new CharacterNotFoundError(id);
+    }
+
+    const updated = character.updateBook(newBook);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
 }

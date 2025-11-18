@@ -11,6 +11,7 @@ interface UseCharacterResult {
   
   // Actions
   updateName: (name: string) => Promise<void>;
+  updateBook: (book: string) => Promise<void>;
   updateStats: (stats: Partial<StatsData>) => Promise<void>;
   applyDamage: (amount: number) => Promise<void>;
   heal: (amount: number) => Promise<void>;
@@ -40,6 +41,7 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
   const isLoading = useCharacterStore((state) => state.isLoading);
   const error = useCharacterStore((state) => state.error);
   const storeUpdateName = useCharacterStore((state) => state.updateName);
+  const storeUpdateBook = useCharacterStore((state) => state.updateBook);
   const storeUpdateStats = useCharacterStore((state) => state.updateStats);
   const storeApplyDamage = useCharacterStore((state) => state.applyDamage);
   const storeHeal = useCharacterStore((state) => state.heal);
@@ -69,6 +71,11 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
     updateName: async (name: string) => {
       if (!characterId) return;
       await storeUpdateName(characterId, name);
+    },
+
+    updateBook: async (book: string) => {
+      if (!characterId) return;
+      await storeUpdateBook(characterId, book);
     },
 
     updateStats: async (stats: Partial<StatsData>) => {
