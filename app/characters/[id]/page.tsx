@@ -8,7 +8,7 @@ import type { Enemy, CombatMode } from '@/lib/types/combat';
 import CombatSetup from '@/app/components/adventure/CombatSetup';
 import CombatInterface from '@/app/components/adventure/CombatInterface';
 import CombatEndModal from '@/app/components/adventure/CombatEndModal';
-import CharacterStats from '@/app/components/character/CharacterStats';
+import CharacterStats from '@/src/presentation/components/CharacterStatsRefactored';
 import CharacterProgress from '@/app/components/character/CharacterProgress';
 import CharacterWeapon from '@/app/components/character/CharacterWeapon';
 import CharacterInventory from '@/app/components/character/CharacterInventory';
@@ -268,7 +268,7 @@ export default function CharacterDetail() {
         {/* Stats Section */}
         <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
           <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Caractéristiques</h2>
-          <CharacterStats character={character} onUpdate={handleUpdateCharacter} />
+          <CharacterStats characterId={id} onUpdate={loadCharacter} />
         </div>
 
         {/* Progress Section */}

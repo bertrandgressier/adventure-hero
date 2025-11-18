@@ -5,6 +5,7 @@ import EditableStatField from '@/src/presentation/components/EditableStatField';
 
 interface CharacterStatsProps {
   characterId: string;
+  onUpdate?: () => void; // Callback optionnel pour notifier le parent
 }
 
 /**
@@ -19,8 +20,13 @@ interface CharacterStatsProps {
  * - Composant réutilisable (EditableStatField)
  * - Pas de duplication de updatedAt
  */
-export default function CharacterStats({ characterId }: CharacterStatsProps) {
+export default function CharacterStats({ characterId, onUpdate }: CharacterStatsProps) {
   const { character, isLoading, error, updateStats } = useCharacter(characterId);
+  
+  const handleUpdate = async (updates: Parameters<typeof updateStats>[0]) => {
+    await updateStats(updates);
+    onUpdate?.(); // Notifier le parent si nécessaire
+  };
 
   if (isLoading) {
     return (
@@ -61,28 +67,28 @@ export default function CharacterStats({ characterId }: CharacterStatsProps) {
       <EditableStatField
         label="DEXTÉRITÉ"
         value={statsData.dexterite}
-        onSave={(value) => updateStats({ dexterite: value })}
+        onSave={(value) => handleUpdate({ dexterite: value })}
         min={1}
       />
 
       <EditableStatField
         label="CHANCE"
         value={statsData.chance}
-        onSave={(value) => updateStats({ chance: value })}
+        onSave={(value) => handleUpdate({ chance: value })}
         min={0}
       />
 
       <EditableStatField
         label="PV MAX"
         value={statsData.pointsDeVieMax}
-        onSave={(value) => updateStats({ pointsDeVieMax: value })}
+        onSave={(value) => handleUpdate({ pointsDeVieMax: value })}
         min={1}
       />
 
       <EditableStatField
         label="PV ACTUELS"
         value={statsData.pointsDeVieActuels}
-        onSave={(value) => updateStats({ pointsDeVieActuels: value })}
+        onSave={(value) => handleUpdate({ pointsDeVieActuels: value })}
         min={0}
         colorClass={pvColor}
       />
