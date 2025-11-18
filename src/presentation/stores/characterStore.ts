@@ -16,9 +16,9 @@ function getService(): CharacterService {
   return serviceInstance;
 }
 
-// Types pour le state et les actions
+// Séparation State et Actions (best practice Zustand)
 export interface CharacterState {
-  characters: Map<string, Character>;
+  characters: Record<string, Character>;
   isLoading: boolean;
   error: string | null;
 }
@@ -60,20 +60,18 @@ export type CharacterStore = CharacterState & CharacterActions;
 
 // État initial par défaut
 export const defaultInitState: CharacterState = {
-  characters: new Map(),
+  characters: {},
   isLoading: false,
   error: null,
 };
 
 // Factory function pour créer un store (pattern Next.js SSR)
-export const createCharacterStore = (
-  initState: CharacterState = defaultInitState
-) => {
+export const createCharacterStore = () => {
   return createStore<CharacterStore>()(
     devtools(
       (set, get) => ({
       // État initial
-      characters: new Map(),
+      characters: {},
       isLoading: false,
       error: null,
 
@@ -83,10 +81,11 @@ export const createCharacterStore = (
         try {
           const service = getService();
           const characters = await service.getAllCharacters();
-          const characterMap = new Map(
-            characters.map((char) => [char.id, char])
+          const characterRecord = characters.reduce(
+            (acc, char) => ({ ...acc, [char.id]: char }),
+            {} as Record<string, Character>
           );
-          set({ characters: characterMap, isLoading: false });
+          set({ characters: characterRecord, isLoading: false });
         } catch (error) {
           set({
             error: error instanceof Error ? error.message : 'Erreur de chargement',
@@ -103,7 +102,7 @@ export const createCharacterStore = (
           const character = await service.getCharacter(id);
           if (character) {
             set((state) => ({
-              characters: new Map(state.characters).set(id, character),
+              characters: { ...state.characters, [id]: character },
               isLoading: false,
             }));
           } else {
@@ -129,7 +128,7 @@ export const createCharacterStore = (
           const service = getService();
           const character = await service.createCharacter(data);
           set((state) => ({
-            characters: new Map(state.characters).set(character.id, character),
+            characters: { ...state.characters, [character.id]: character },
           }));
           return character;
         } catch (error) {
@@ -146,9 +145,9 @@ export const createCharacterStore = (
           const service = getService();
           await service.deleteCharacter(id);
           set((state) => {
-            const newMap = new Map(state.characters);
-            newMap.delete(id);
-            return { characters: newMap };
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [id]: _deletedId, ...rest } = state.characters;
+            return { characters: rest };
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Erreur de suppression';
@@ -159,14 +158,14 @@ export const createCharacterStore = (
 
       // Mettre à jour le nom
       updateName: async (id: string, name: string) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.updateCharacterName(id, name);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -176,14 +175,14 @@ export const createCharacterStore = (
 
       // Mettre à jour les stats
       updateStats: async (id: string, stats: Partial<StatsData>) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.updateCharacterStats(id, stats);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -193,14 +192,14 @@ export const createCharacterStore = (
 
       // Appliquer des dégâts
       applyDamage: async (id: string, amount: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.applyDamage(id, amount);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -210,14 +209,14 @@ export const createCharacterStore = (
 
       // Soigner
       heal: async (id: string, amount: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.healCharacter(id, amount);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -230,7 +229,7 @@ export const createCharacterStore = (
         id: string,
         weapon: { name: string; attackPoints: number } | null
       ) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
@@ -239,7 +238,7 @@ export const createCharacterStore = (
             ? await service.equipWeapon(id, weapon)
             : await service.unequipWeapon(id);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -252,14 +251,14 @@ export const createCharacterStore = (
         id: string,
         item: { name: string; possessed: boolean; type?: 'item' | 'special' }
       ) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.addItemToInventory(id, item);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -269,14 +268,14 @@ export const createCharacterStore = (
 
       // Basculer la possession d'un objet
       toggleItem: async (id: string, itemIndex: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.toggleItemPossession(id, itemIndex);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -286,14 +285,14 @@ export const createCharacterStore = (
 
       // Supprimer un objet
       removeItem: async (id: string, itemIndex: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.removeItemFromInventory(id, itemIndex);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -303,14 +302,14 @@ export const createCharacterStore = (
 
       // Ajouter des boulons
       addBoulons: async (id: string, amount: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.addBoulons(id, amount);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -320,14 +319,14 @@ export const createCharacterStore = (
 
       // Retirer des boulons
       removeBoulons: async (id: string, amount: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.removeBoulons(id, amount);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -337,14 +336,14 @@ export const createCharacterStore = (
 
       // Aller à un paragraphe
       goToParagraph: async (id: string, paragraph: number) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.goToParagraph(id, paragraph);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -354,14 +353,14 @@ export const createCharacterStore = (
 
       // Mettre à jour les notes
       updateNotes: async (id: string, notes: string) => {
-        const character = get().characters.get(id);
+        const character = get().characters[id];
         if (!character) return;
 
         try {
           const service = getService();
           const updated = await service.updateNotes(id, notes);
           set((state) => ({
-            characters: new Map(state.characters).set(id, updated),
+            characters: { ...state.characters, [id]: updated },
           }));
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
@@ -371,11 +370,11 @@ export const createCharacterStore = (
 
       // Utilitaires
       getCharacter: (id: string) => {
-        return get().characters.get(id) || null;
+        return get().characters[id] || null;
       },
 
       getAllCharacters: () => {
-        return Array.from(get().characters.values());
+        return Object.values(get().characters);
       },
     }),
     { name: 'CharacterStore', enabled: typeof window !== 'undefined' }

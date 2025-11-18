@@ -23,7 +23,6 @@ export default function CharacterDetail() {
   // Zustand store - chargé depuis le cache
   const character = useCharacterStore((state) => state.getCharacter(id));
   const isLoading = useCharacterStore((state) => state.isLoading);
-  const deleteCharacter = useCharacterStore((state) => state.deleteCharacter);
   const updateName = useCharacterStore((state) => state.updateName);
   const equipWeapon = useCharacterStore((state) => state.equipWeapon);
   const addItem = useCharacterStore((state) => state.addItem);
@@ -46,19 +45,6 @@ export default function CharacterDetail() {
   const [combatEndStatus, setCombatEndStatus] = useState<'victory' | 'defeat' | null>(null);
   const [roundsCount, setRoundsCount] = useState(0);
   const [remainingEndurance, setRemainingEndurance] = useState(0);
-
-  const handleDelete = async () => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce personnage ?')) {
-      return;
-    }
-
-    try {
-      await deleteCharacter(id);
-      router.push('/characters');
-    } catch (error) {
-      console.error('Error deleting character:', error);
-    }
-  };
 
   // Modal handlers for adding weapon/item
   const handleAddWeapon = async (name: string, attackPoints: number) => {

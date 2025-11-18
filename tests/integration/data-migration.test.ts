@@ -7,9 +7,8 @@
  * GARANTIE: Aucune perte de données lors de la migration.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Character } from '@/src/domain/entities/Character';
-import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
 import type { CharacterDTO as LegacyCharacter } from '@/src/infrastructure/dto/CharacterDTO';
 
 describe('Migration des données - Compatibilité', () => {

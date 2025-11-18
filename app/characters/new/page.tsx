@@ -87,7 +87,7 @@ export default function NewCharacterPage() {
       const service = getService();
       
       // Utiliser CharacterService.createCharacter() de la Clean Architecture
-      const character = await service.createCharacter({
+      await service.createCharacter({
         name,
         book: selectedBook,
         talent: selectedTalent,

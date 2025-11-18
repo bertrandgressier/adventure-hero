@@ -60,16 +60,20 @@ interface Character {
 ```
 app/
   characters/          # Character CRUD pages
+    layout.tsx         # CharacterStoreProvider scope
   adventure/           # Combat, dice, notes features
   components/
     ui/                # shadcn/ui primitives
     character/         # CharacterCard, CharacterForm, StatsDisplay
     adventure/         # CombatInterface, DiceRoller, ProgressTracker
-lib/
-  storage/             # IndexedDB wrappers (characters.ts, progress.ts)
-  game/                # Game logic (combat.ts, dice.ts, character.ts)
-  utils/               # export.ts (JSON import/export), validation.ts
-  types/               # TypeScript definitions
+src/
+  domain/              # Entities, Value Objects (Character, Stats, Inventory)
+  application/         # Services (CharacterService with business logic)
+  infrastructure/      # Repositories (IndexedDBCharacterRepository)
+  presentation/
+    stores/            # Zustand stores (characterStore.ts)
+    providers/         # React Context providers
+    hooks/             # Custom React hooks
 ```
 
 ## Critical Development Rules
@@ -92,11 +96,29 @@ lib/
 - Mobile-first: test all layouts on 375px width minimum
 - PWA icons required: 192x192, 512x512 in `public/icons/`
 
-### 4. State Management
-- **No Redux/Zustand** - use React hooks (useState, useEffect, useReducer)
-- Context API for global state (e.g., active character)
-- Persist to IndexedDB via `lib/storage/*` modules
-- Export/import characters as JSON via `lib/utils/export.ts`
+### 4. State Management (Zustand + Clean Architecture)
+- **Zustand** for centralized state with vanilla store pattern (`zustand/vanilla`)
+- **Provider scoped** to `/characters` routes only (client-side only)
+- **Immutable updates**: Use `Record<string, T>` + spread operator, NEVER `Map`
+- **Auto-selectors**: Use `createSelectors()` helper for type-safe access
+- Persist to IndexedDB via `CharacterService` (all mutations auto-save)
+
+```typescript
+// ✅ Correct: Immutable Record updates
+set((state) => ({ characters: { ...state.characters, [id]: updated } }))
+
+// ❌ Wrong: Map mutations
+set((state) => ({ characters: new Map(state.characters).set(id, updated) }))
+
+// ✅ Auto-selector usage
+const useBearStore = createSelectors(bearStore);
+const bears = useBearStore.use.bears(); // Type-safe!
+```
+
+**Key patterns**:
+- `StateCreator<T, [['zustand/devtools', never]], []>` for typed middlewares
+- `shallow` equality in `useStoreWithEqualityFn` for performance
+- Test mocks: `__mocks__/zustand.ts` auto-resets stores after each test
 
 ## Development Workflow
 
@@ -134,11 +156,16 @@ When adding features, update:
 
 ### Storage Operations
 ```typescript
-// Use lib/storage/*.ts wrappers, NOT direct IndexedDB calls
-import { saveCharacter, getCharacter } from '@/lib/storage/characters';
+// Use CharacterService, NOT direct IndexedDB calls
+import { CharacterService } from '@/src/application/services/CharacterService';
 
-await saveCharacter(character);
-const loaded = await getCharacter(characterId);
+const service = new CharacterService(repository);
+await service.createCharacter(data);
+await service.updateCharacterStats(id, stats);
+
+// Or use Zustand store (auto-persists to IndexedDB)
+const updateStats = useCharacterStore((state) => state.updateStats);
+await updateStats(characterId, { habilete: 12 });
 ```
 
 ## Key Files Reference
@@ -146,6 +173,9 @@ const loaded = await getCharacter(characterId);
 - `docs/COMBAT.md` - Complete combat rules with examples
 - `docs/THEMING.md` - CSS variables, color palette, component styling
 - `docs/CHARACTER_SHEET.md` - Official character sheet structure
+- `docs/ARCHITECTURE.md` - Clean Architecture + Zustand patterns
+- `src/presentation/stores/characterStore.ts` - Zustand store implementation
+- `app/characters/layout.tsx` - CharacterStoreProvider scope
 - `app/layout.tsx` - PWA metadata and viewport config
 - `tsconfig.json` - `@/*` path alias configuration
 

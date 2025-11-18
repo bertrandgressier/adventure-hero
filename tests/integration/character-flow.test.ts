@@ -9,7 +9,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CharacterService } from '@/src/application/services/CharacterService';
 import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
-import { Character } from '@/src/domain/entities/Character';
 
 describe('Integration: CharacterService + IndexedDBRepository', () => {
   let service: CharacterService;

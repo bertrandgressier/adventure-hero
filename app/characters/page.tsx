@@ -12,20 +12,19 @@ export default function CharactersPage() {
   const deleteCharacter = useCharacterStore((state) => state.deleteCharacter);
   const createCharacter = useCharacterStore((state) => state.createCharacter);
 
-  const isDead = useCallback((character: any) => character.isDead(), []);
+  const isDead = useCallback((character: Character) => character.isDead(), []);
 
-  const handleDelete = useCallback(async (id: string, name: string) => {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
-      try {
+  const handleDelete = useCallback(
+    async (id: string, name: string) => {
+      if (confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
         await deleteCharacter(id);
-      } catch (error) {
-        console.error('Error deleting character:', error);
-        alert('Erreur lors de la suppression du personnage');
       }
-    }
-  }, [deleteCharacter]);
+    },
+    [deleteCharacter]
+  );
 
-  const handleDuplicate = useCallback(async (character: any) => {
+  const handleDuplicate = useCallback(
+    async (character: Character) => {
     try {
       const characterData = character.toData();
       

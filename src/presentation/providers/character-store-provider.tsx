@@ -1,7 +1,8 @@
 'use client';
 
-import { type ReactNode, createContext, useRef, useContext, useEffect } from 'react';
+import { type ReactNode, createContext, useContext, useEffect, useMemo } from 'react';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import {
   type CharacterStore,
   createCharacterStore,
@@ -18,20 +19,14 @@ export interface CharacterStoreProviderProps {
 }
 
 export const CharacterStoreProvider = ({ children }: CharacterStoreProviderProps) => {
-  const storeRef = useRef<CharacterStoreApi | null>(null);
-  
-  if (storeRef.current === null) {
-    storeRef.current = createCharacterStore();
-  }
+  const store = useMemo(() => createCharacterStore(), []);
 
   useEffect(() => {
-    if (storeRef.current) {
-      storeRef.current.getState().loadAll();
-    }
-  }, []);
+    store.getState().loadAll();
+  }, [store]);
 
   return (
-    <CharacterStoreContext.Provider value={storeRef.current}>
+    <CharacterStoreContext.Provider value={store}>
       {children}
     </CharacterStoreContext.Provider>
   );
@@ -46,5 +41,5 @@ export function useCharacterStore<T>(
     throw new Error('useCharacterStore must be used within CharacterStoreProvider');
   }
 
-  return useStoreWithEqualityFn(store, selector);
+  return useStoreWithEqualityFn(store, selector, shallow);
 }

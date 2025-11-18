@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { CharacterService } from './CharacterService';
 import { Character } from '@/src/domain/entities/Character';
 import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
