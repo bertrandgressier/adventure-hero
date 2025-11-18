@@ -12,6 +12,19 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ---
 
+## Version 2.0.0
+*18 novembre 2025*
+
+### ✨ Nouvelles fonctionnalités
+
+• add custom event tracking for user actions
+
+### 🐛 Corrections de bugs
+
+• retirer autoFocus du formulaire de combat pour mobile
+
+---
+
 ## Version 1.7.0
 *17 novembre 2025*
 

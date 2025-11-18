@@ -1,3 +1,38 @@
+# [2.0.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.7.0...v2.0.0) (2025-11-18)
+
+
+### Bug Fixes
+
+* **changelog:** escape asterisk in regex pattern ([0e9876c](https://github.com/bertrandgressier/adventure-tome/commit/0e9876c22400af1978213af0694a3e1e81046e80))
+* **ci:** remove --from-stdin flag for commitlint v20 ([e896c7a](https://github.com/bertrandgressier/adventure-tome/commit/e896c7a760a996d6a301e22021ae8c9c01dcfbc7))
+* **ci:** use .mjs extension for ESM script ([f705064](https://github.com/bertrandgressier/adventure-tome/commit/f7050645439fe665813225e1f7267a04fc14b597))
+* **ci:** use pnpm exec commitlint from package.json deps ([f60df99](https://github.com/bertrandgressier/adventure-tome/commit/f60df990f946a8bbec809ca05972d5f7b6b5c15d))
+* **lint:** convert changelog script to ESM ([ca6c41a](https://github.com/bertrandgressier/adventure-tome/commit/ca6c41a65bfc292a7243fbeb92ecc27e7240e247))
+* **navigation:** move router.push to useEffect to avoid setState during render ([bcebbaf](https://github.com/bertrandgressier/adventure-tome/commit/bcebbafe04d2c8519ad85c16f5755ce5d3a7ec90))
+* **store:** add hasInitialLoad flag to prevent race condition on page reload ([70ca17c](https://github.com/bertrandgressier/adventure-tome/commit/70ca17cd3baff2170e30a9936b39d5947972c0ee))
+
+
+### Code Refactoring
+
+* migrate lib/ to src/ for Clean Architecture consistency ([d71bdd5](https://github.com/bertrandgressier/adventure-tome/commit/d71bdd56cb1fa739ed16483c828d101bdd673172))
+* reorganize project structure to follow Next.js best practices ([ab272ae](https://github.com/bertrandgressier/adventure-tome/commit/ab272ae16b66138df6f8288063487c31231fef5f))
+
+
+### Features
+
+* **application:** add character service with use cases ([6e29a57](https://github.com/bertrandgressier/adventure-tome/commit/6e29a57a0edbe52a08390d82e35a2e356024aba4))
+* **domain:** implement clean architecture domain layer ([893dcc4](https://github.com/bertrandgressier/adventure-tome/commit/893dcc4ca35d17c80b4b8e2f17a8fe62e3d8fa51))
+* implémentation de Zustand pour la gestion d'état centralisée ([40fc880](https://github.com/bertrandgressier/adventure-tome/commit/40fc880e6bad598d3ab412f98e0a088f88136c43))
+* **infrastructure:** add IndexedDB repository adapter ([4663d88](https://github.com/bertrandgressier/adventure-tome/commit/4663d88127546cc391a6d448d45cb6d0cd8df814))
+* **presentation:** add useCharacter hook and refactored components ([a682f88](https://github.com/bertrandgressier/adventure-tome/commit/a682f889bcc9b30e617a29357f0212d75738dee9))
+
+
+### BREAKING CHANGES
+
+* All lib/ imports now use @/src/* except @/lib/utils
+* Component imports now use @/components instead of @/app/components
+* **domain:** None - Data structure 100% compatible with existing IndexedDB schema
+
 # [1.7.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.6.0...v1.7.0) (2025-11-17)
 
 
