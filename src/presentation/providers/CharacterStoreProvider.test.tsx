@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CharacterStoreProvider, useCharacterStore } from '../character-store-provider';
+import { CharacterStoreProvider, useCharacterStore } from './character-store-provider';
 
 // Mock Zustand pour auto-reset entre tests
 vi.mock('zustand');

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createCharacterStore } from '../characterStore';
-import type { CharacterStore } from '../characterStore';
+import { createCharacterStore } from './characterStore';
+import type { CharacterStore } from './characterStore';
 
 // Mock du service
 vi.mock('@/src/application/services/CharacterService');
