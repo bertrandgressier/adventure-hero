@@ -1,6 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface AddItemModalProps {
   onAdd: (name: string) => Promise<void>;
@@ -22,19 +28,13 @@ export default function AddItemModal({ onAdd, onClose }: AddItemModalProps) {
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div 
-        className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
-          📦 Nouvel objet
-        </h3>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full">
+        <DialogHeader>
+          <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
+            📦 Nouvel objet
+          </DialogTitle>
+        </DialogHeader>
 
         <div className="mb-6">
           <label className="font-[var(--font-merriweather)] text-muted-light text-sm mb-2 block">
@@ -67,7 +67,7 @@ export default function AddItemModal({ onAdd, onClose }: AddItemModalProps) {
             Ajouter
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

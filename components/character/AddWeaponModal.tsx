@@ -1,6 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface AddWeaponModalProps {
   onAdd: (name: string, attackPoints: number) => Promise<void>;
@@ -31,19 +37,13 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div 
-        className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
-          ⚔️ Nouvelle arme
-        </h3>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full">
+        <DialogHeader>
+          <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
+            ⚔️ Nouvelle arme
+          </DialogTitle>
+        </DialogHeader>
 
         <div className="space-y-4 mb-6">
           <div>
@@ -89,7 +89,7 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
             Ajouter
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

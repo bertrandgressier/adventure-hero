@@ -3,6 +3,12 @@
 import React from 'react';
 import { useState } from 'react';
 import type { Enemy } from '@/src/domain/types/combat';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CombatSetupProps {
   onStartCombat: (enemy: Enemy, mode: 'auto' | 'manual', firstAttacker: 'player' | 'enemy') => void;
@@ -44,13 +50,13 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={(e) => {
-      if (e.target === e.currentTarget) onCancel();
-    }}>
-      <div className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
-          ⚔️ Nouveau Combat
-        </h3>
+    <Dialog open={true} onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full">
+        <DialogHeader>
+          <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
+            ⚔️ Nouveau Combat
+          </DialogTitle>
+        </DialogHeader>
 
         <div className="space-y-4 mb-6">
           {/* Dextérité */}
@@ -179,8 +185,8 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
             Commencer
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

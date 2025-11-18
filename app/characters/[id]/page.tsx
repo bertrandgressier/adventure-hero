@@ -287,6 +287,7 @@ export default function CharacterDetail() {
             mode={combatMode}
             firstAttacker={firstAttacker}
             onCombatEnd={handleCombatEnd}
+            onClose={() => setShowCombat(false)}
           />
         )}
 
