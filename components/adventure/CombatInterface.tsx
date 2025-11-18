@@ -35,6 +35,16 @@ export default function CombatInterface({
   const [showEndButton, setShowEndButton] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
   const combatTrackedRef = useRef(false); // Pour tracker le début une seule fois
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Nettoyage des timers au démontage
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // Tracker le début du combat
   useEffect(() => {
@@ -51,7 +61,9 @@ export default function CombatInterface({
     setIsRolling(true);
 
     // Simuler un délai pour l'animation des dés
-    setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
       const playerWeaponPoints = character.inventory.weapon?.attackPoints || 0;
       const roundNumber = combatState.rounds.length + 1;
 
