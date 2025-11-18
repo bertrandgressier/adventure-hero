@@ -6,6 +6,12 @@ import type { Enemy, CombatState, CombatMode } from '@/src/domain/types/combat';
 import { CombatService } from '@/src/domain/services/CombatService';
 import CombatRoundDisplay from './CombatRoundDisplay';
 import { trackCombatStart } from '@/src/infrastructure/analytics/tracking';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CombatInterfaceProps {
   character: CharacterDTO;
@@ -13,6 +19,7 @@ interface CombatInterfaceProps {
   mode: CombatMode;
   firstAttacker: 'player' | 'enemy';
   onCombatEnd: (status: 'victory' | 'defeat', finalEndurance: number, roundsCount: number) => void;
+  onClose?: () => void;
 }
 
 export default function CombatInterface({
@@ -20,7 +27,8 @@ export default function CombatInterface({
   enemy: initialEnemy,
   mode,
   firstAttacker,
-  onCombatEnd
+  onCombatEnd,
+  onClose
 }: CombatInterfaceProps) {
   const [combatState, setCombatState] = useState<CombatState>({
     enemy: { ...initialEnemy },
@@ -125,12 +133,13 @@ export default function CombatInterface({
   const playerWeaponPoints = character.inventory.weapon?.attackPoints || 0;
 
   return (
-    <div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-card border-2 border-primary rounded-lg p-6 max-w-4xl w-full my-4">
-        {/* En-tête */}
-        <h2 className="font-[var(--font-uncial)] text-3xl text-primary text-center mb-6">
-          ⚔️ COMBAT EN COURS ⚔️
-        </h2>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose && onClose()}>
+      <DialogContent className="max-w-4xl w-full bg-card border-2 border-primary p-6 max-h-[90vh] overflow-y-auto sm:max-w-4xl">
+        <DialogHeader>
+          <DialogTitle className="font-[var(--font-uncial)] text-3xl text-primary text-center mb-6">
+            ⚔️ COMBAT EN COURS ⚔️
+          </DialogTitle>
+        </DialogHeader>
 
         {/* Indicateur de tour */}
         {combatState.status === 'ongoing' && (
@@ -294,8 +303,8 @@ export default function CombatInterface({
             </button>
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

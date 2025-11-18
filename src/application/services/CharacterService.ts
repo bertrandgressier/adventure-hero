@@ -1,6 +1,7 @@
 import { Character } from '@/src/domain/entities/Character';
 import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
 import { StatsData } from '@/src/domain/value-objects/Stats';
+import { CharacterNotFoundError } from '@/src/domain/errors/DomainErrors';
 
 /**
  * CharacterService - Application Service
@@ -46,7 +47,7 @@ export class CharacterService {
   async deleteCharacter(id: string): Promise<void> {
     const exists = await this.repository.exists(id);
     if (!exists) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
     
     await this.repository.delete(id);
@@ -58,7 +59,7 @@ export class CharacterService {
   async updateCharacterName(id: string, newName: string): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     // La logique métier (validation) est dans Character.updateName()
@@ -78,7 +79,7 @@ export class CharacterService {
   ): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     // La logique métier (validation) est dans Character.updateStats()
@@ -95,7 +96,7 @@ export class CharacterService {
   async applyDamage(id: string, damage: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.takeDamage(damage);
@@ -111,7 +112,7 @@ export class CharacterService {
   async healCharacter(id: string, amount: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.heal(amount);
@@ -130,7 +131,7 @@ export class CharacterService {
   ): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.equipWeapon(weapon);
@@ -149,7 +150,7 @@ export class CharacterService {
   ): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.addItem(item);
@@ -165,7 +166,7 @@ export class CharacterService {
   async goToParagraph(id: string, paragraph: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.goToParagraph(paragraph);
@@ -181,7 +182,7 @@ export class CharacterService {
   async updateNotes(id: string, notes: string): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.updateNotes(notes);
@@ -197,7 +198,7 @@ export class CharacterService {
   async unequipWeapon(id: string): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.unequipWeapon();
@@ -213,7 +214,7 @@ export class CharacterService {
   async toggleItemPossession(id: string, itemIndex: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.toggleItemPossession(itemIndex);
@@ -229,7 +230,7 @@ export class CharacterService {
   async removeItemFromInventory(id: string, itemIndex: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.removeItem(itemIndex);
@@ -245,7 +246,7 @@ export class CharacterService {
   async addBoulons(id: string, amount: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.addBoulons(amount);
@@ -261,7 +262,7 @@ export class CharacterService {
   async removeBoulons(id: string, amount: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     const updated = character.removeBoulons(amount);
@@ -277,7 +278,7 @@ export class CharacterService {
   async duplicateCharacter(id: string): Promise<Character> {
     const original = await this.repository.findById(id);
     if (!original) {
-      throw new Error(`Le personnage avec l'ID ${id} n'existe pas`);
+      throw new CharacterNotFoundError(id);
     }
 
     // Créer une copie avec un nouveau nom et ID

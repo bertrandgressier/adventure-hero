@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface DiceRollerProps {
   onClose: () => void;
@@ -45,19 +51,13 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div 
-        className="bg-card border-2 border-primary rounded-lg p-6 max-w-md w-full"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
-          🎲 Lancer de dés
-        </h3>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-card border-2 border-primary rounded-lg p-6 max-w-md w-full">
+        <DialogHeader>
+          <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
+            🎲 Lancer de dés
+          </DialogTitle>
+        </DialogHeader>
 
         {/* Affichage des dés - toujours visible */}
         <div className="mb-6">
@@ -110,7 +110,7 @@ export default function DiceRoller({ onClose }: DiceRollerProps) {
         >
           Fermer
         </button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
