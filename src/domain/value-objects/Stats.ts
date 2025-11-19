@@ -5,6 +5,7 @@
 
 export interface StatsData {
   dexterite: number;
+  constitution?: number;
   chance: number;
   chanceInitiale: number;
   pointsDeVieMax: number;
@@ -14,6 +15,7 @@ export interface StatsData {
 export class Stats {
   constructor(
     public readonly dexterite: number,
+    public readonly constitution: number | null,
     public readonly chance: number,
     public readonly chanceInitiale: number,
     public readonly maxHealth: number,
@@ -25,6 +27,9 @@ export class Stats {
   private validate(): void {
     if (this.dexterite < 1) {
       throw new Error('La dextérité doit être supérieure ou égale à 1');
+    }
+    if (this.constitution !== null && this.constitution < 0) {
+      throw new Error('La constitution doit être supérieure ou égale à 0');
     }
     if (this.chance < 0) {
       throw new Error('La chance doit être supérieure ou égale à 0');
@@ -50,6 +55,7 @@ export class Stats {
   update(newStats: Partial<StatsData>): Stats {
     return new Stats(
       newStats.dexterite ?? this.dexterite,
+      newStats.constitution !== undefined ? (newStats.constitution ?? null) : this.constitution,
       newStats.chance ?? this.chance,
       newStats.chanceInitiale ?? this.chanceInitiale,
       newStats.pointsDeVieMax ?? this.maxHealth,
@@ -63,6 +69,7 @@ export class Stats {
   decreaseChance(): Stats {
     return new Stats(
       this.dexterite,
+      this.constitution,
       Math.max(0, this.chance - 1),
       this.chanceInitiale,
       this.maxHealth,
@@ -80,6 +87,7 @@ export class Stats {
     
     return new Stats(
       this.dexterite,
+      this.constitution,
       this.chance,
       this.chanceInitiale,
       this.maxHealth,
@@ -97,6 +105,7 @@ export class Stats {
     
     return new Stats(
       this.dexterite,
+      this.constitution,
       this.chance,
       this.chanceInitiale,
       this.maxHealth,
@@ -124,6 +133,7 @@ export class Stats {
   toData(): StatsData {
     return {
       dexterite: this.dexterite,
+      constitution: this.constitution ?? undefined,
       chance: this.chance,
       chanceInitiale: this.chanceInitiale,
       pointsDeVieMax: this.maxHealth,
@@ -137,6 +147,7 @@ export class Stats {
   static fromData(data: StatsData): Stats {
     return new Stats(
       data.dexterite,
+      data.constitution ?? null,
       data.chance,
       data.chanceInitiale,
       data.pointsDeVieMax,

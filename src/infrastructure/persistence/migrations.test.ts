@@ -32,10 +32,11 @@ describe('migrateCharacter', () => {
 
       const migrated = migrateCharacter(legacyData);
 
-      expect(migrated.version).toBe(2);
+      expect(migrated.version).toBe(3); // Now migrates to v3
       expect(migrated.gameMode).toBe('mortal');
       expect(migrated.name).toBe('Aragorn');
-      expect(migrated.stats).toEqual(legacyData.stats);
+      expect(migrated.stats.constitution).toBe(null); // New field from v2→v3
+      expect(migrated.stats.dexterite).toBe(legacyData.stats.dexterite);
     });
 
     it('should preserve existing gameMode if present', () => {
@@ -52,7 +53,8 @@ describe('migrateCharacter', () => {
       const migrated = migrateCharacter(dataWithGameMode);
 
       expect(migrated.gameMode).toBe('narrative'); // Should preserve existing value
-      expect(migrated.version).toBe(2);
+      expect(migrated.version).toBe(3);
+      expect(migrated.stats.constitution).toBe(null); // New field
     });
 
     it('should not migrate data already at current version', () => {
@@ -60,8 +62,8 @@ describe('migrateCharacter', () => {
         id: '789-ghi',
         name: 'Gimli',
         gameMode: 'simplified' as const,
-        version: 2,
-        stats: { dexterite: 7, chance: 5, chanceInitiale: 5, pointsDeVieMax: 32, pointsDeVieActuels: 32 },
+        version: 3,
+        stats: { dexterite: 7, constitution: null, chance: 5, chanceInitiale: 5, pointsDeVieMax: 32, pointsDeVieActuels: 32 },
         inventory: { boulons: 0, items: [] },
         progress: { currentParagraph: 1, history: [1], lastSaved: '2024-01-01T00:00:00.000Z' },
         notes: '',

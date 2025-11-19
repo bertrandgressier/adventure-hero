@@ -44,8 +44,8 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
     onUpdate?.();
   };
 
-  const handleUpdateBoulons = async (newValue: number) => {
-    if (!character) return;
+  const handleUpdateBoulons = async (newValue: number | null) => {
+    if (newValue === null || !character) return; // Boulons ne peut pas être null
     const currentBoulons = character.getInventory().boulons;
     const diff = newValue - currentBoulons;
     

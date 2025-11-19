@@ -5,13 +5,14 @@ import { cn } from '@/lib/utils';
 
 interface EditableStatFieldProps {
   label: string;
-  value: number;
-  onSave: (value: number) => Promise<void>;
+  value: number | null;
+  onSave: (value: number | null) => Promise<void>;
   min?: number;
   colorClass?: string;
   title?: string;
   icon?: React.ReactNode;
   containerClassName?: string;
+  placeholder?: string;
 }
 
 /**
@@ -30,6 +31,7 @@ export default function EditableStatField({
   title = 'Cliquer pour modifier',
   icon,
   containerClassName,
+  placeholder = '-',
 }: EditableStatFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -44,11 +46,23 @@ export default function EditableStatField({
   }, [isEditing]);
 
   const startEdit = () => {
-    setInputValue(value.toString());
+    setInputValue(value?.toString() ?? '');
     setIsEditing(true);
   };
 
   const save = async () => {
+    // Si vide, sauvegarder null
+    if (inputValue.trim() === '') {
+      try {
+        await onSave(null);
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde:', error);
+        alert('Erreur lors de la sauvegarde');
+      }
+      return;
+    }
+    
     const newValue = parseInt(inputValue);
     
     if (isNaN(newValue)) {
@@ -107,7 +121,7 @@ export default function EditableStatField({
             className={`font-[var(--font-geist-mono)] text-2xl font-bold hover:text-yellow-300 cursor-pointer transition-colors ${colorClass}`}
             title={title}
           >
-            {value}
+            {value ?? placeholder}
           </div>
         )}
       </div>
@@ -152,7 +166,7 @@ export default function EditableStatField({
           className={`font-[var(--font-geist-mono)] text-4xl hover:text-yellow-300 cursor-pointer transition-colors ${colorClass}`}
           title={title}
         >
-          {value}
+          {value ?? placeholder}
         </div>
       )}
     </div>

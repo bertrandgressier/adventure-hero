@@ -11,7 +11,7 @@
  * 4. Test in data-migration.test.ts
  */
 
-export const CURRENT_VERSION = 2;
+export const CURRENT_VERSION = 3;
 
 /**
  * Migration interface
@@ -28,6 +28,10 @@ export interface Migration {
  * Migration v1 → v2: Add gameMode and version fields
  * - Legacy characters (no version field) get gameMode='mortal' (preserve current behavior)
  * - Add version=2 to track migration
+ * 
+ * Migration v2 → v3: Add optional constitution field to stats
+ * - New optional stat for tome 2 & 3
+ * - Default to null (not set)
  */
 export const migrations: Migration[] = [
   {
@@ -36,6 +40,17 @@ export const migrations: Migration[] = [
       ...data,
       gameMode: data.gameMode ?? 'mortal', // Default to mortal mode for legacy characters
       version: 2,
+    }),
+  },
+  {
+    version: 3,
+    migrate: (data) => ({
+      ...data,
+      stats: {
+        ...data.stats,
+        constitution: data.stats?.constitution ?? null, // Optional field, default null
+      },
+      version: 3,
     }),
   },
   // Future migrations here
@@ -51,7 +66,7 @@ export const migrations: Migration[] = [
  * // Legacy character (v1)
  * const legacyData = { id: '123', name: 'Aragorn', stats: { ... } };
  * const migrated = migrateCharacter(legacyData);
- * // migrated = { id: '123', name: 'Aragorn', gameMode: 'mortal', version: 2, stats: { ... } }
+ * // migrated = { id: '123', name: 'Aragorn', gameMode: 'mortal', version: 3, stats: { constitution: null, ... } }
  */
 export function migrateCharacter(data: any): any {
   const currentVersion = data.version ?? 1; // Default to v1 if no version field

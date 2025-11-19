@@ -22,7 +22,7 @@ describe('Character', () => {
       expect(character.book).toBe('La Harpe des Quatre Saisons');
       expect(character.talent).toBe('instinct');
       expect(character.gameMode).toBe('mortal');
-      expect(character.version).toBe(2);
+      expect(character.version).toBe(3);
       expect(character.id).toBeTruthy();
       expect(character.createdAt).toBeTruthy();
     });

@@ -1,6 +1,6 @@
 'use client';
 
-import { Hand, Clover, Heart } from 'lucide-react';
+import { Hand, Clover, Heart, Shield } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
 
@@ -83,15 +83,24 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
       <EditableStatField
         label="DEXT."
         value={statsData.dexterite}
-        onSave={(value) => handleUpdate({ dexterite: value })}
+        onSave={(value) => handleUpdate({ dexterite: value ?? 1 })}
         min={1}
         icon={<Hand className="size-4" />}
       />
 
       <EditableStatField
+        label="CONST."
+        value={statsData.constitution ?? null}
+        onSave={(value) => handleUpdate({ constitution: value === null ? undefined : value })}
+        min={0}
+        icon={<Shield className="size-4" />}
+        placeholder="-"
+      />
+
+      <EditableStatField
         label="CHANCE"
         value={statsData.chance}
-        onSave={(value) => handleUpdate({ chance: value })}
+        onSave={(value) => handleUpdate({ chance: value ?? 0 })}
         min={0}
         icon={<Clover className="size-4" />}
       />
@@ -99,7 +108,7 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
       <EditableStatField
         label="VIE MAX"
         value={statsData.pointsDeVieMax}
-        onSave={(value) => handleUpdate({ pointsDeVieMax: value })}
+        onSave={(value) => handleUpdate({ pointsDeVieMax: value ?? 1 })}
         min={1}
         icon={<Heart className="size-4" />}
       />
@@ -107,7 +116,7 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
       <EditableStatField
         label="VIE"
         value={statsData.pointsDeVieActuels}
-        onSave={(value) => handleUpdate({ pointsDeVieActuels: value })}
+        onSave={(value) => handleUpdate({ pointsDeVieActuels: value ?? 0 })}
         min={0}
         icon={<Heart className="size-4" />}
         colorClass={pvStyles.text}
