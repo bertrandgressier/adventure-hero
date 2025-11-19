@@ -143,7 +143,7 @@ export class Stats {
     return {
       dexterite: this.dexterite,
       constitution: this.constitution ?? undefined,
-      reputation: this.reputation ?? undefined,
+      reputation: this.reputation !== null ? this.reputation : undefined,
       chance: this.chance,
       chanceInitiale: this.chanceInitiale,
       pointsDeVieMax: this.maxHealth,

@@ -13,7 +13,7 @@
 
 import { BOURSE_ITEM_NAME } from '@/src/domain/value-objects/Inventory';
 
-export const CURRENT_VERSION = 6;
+export const CURRENT_VERSION = 7;
 
 /**
  * Migration interface
@@ -45,6 +45,14 @@ export interface Migration {
  * Migration v4 → v5: Add reputation field to stats
  * - New stat for tome 2
  * - Default to 0 if book is 2, else null
+ * 
+ * Migration v5 → v6: Add mandatory Bourse item to inventory
+ * - Ensure all characters have the Bourse item
+ * - Add it at the beginning if missing
+ * 
+ * Migration v6 → v7: Fix reputation for book 2
+ * - Ensure reputation is 0 (not undefined) for book 2
+ * - Keep null for other books
  */
 export const migrations: Migration[] = [
   {
@@ -108,6 +116,25 @@ export const migrations: Migration[] = [
             : [{ name: BOURSE_ITEM_NAME, possessed: true }, ...items],
         },
         version: 6,
+      };
+    },
+  },
+  {
+    version: 7,
+    migrate: (data) => {
+      // Fix reputation for book 2: ensure it's 0 if undefined, keep null for other books
+      const currentReputation = data.stats?.reputation;
+      const fixedReputation = data.book === 2 
+        ? (currentReputation ?? 0) 
+        : (currentReputation ?? null);
+      
+      return {
+        ...data,
+        stats: {
+          ...data.stats,
+          reputation: fixedReputation,
+        },
+        version: 7,
       };
     },
   },

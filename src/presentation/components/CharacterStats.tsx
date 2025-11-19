@@ -135,7 +135,7 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
       </div>
 
       {/* Ligne 3 : Réputation (Tome 2 uniquement) */}
-      {showReputation && statsData.reputation !== undefined && (
+      {showReputation && statsData.reputation !== null && statsData.reputation !== undefined && (
         <div className="mt-2 bg-card/50 p-3 rounded-lg border border-border/50">
           <ReputationControl
             value={statsData.reputation}

@@ -521,7 +521,7 @@ export class Character {
       data.book,
       data.talent,
       data.gameMode,
-      6, // CURRENT_VERSION
+      7, // CURRENT_VERSION
       now,
       now,
       Stats.fromData(statsData),

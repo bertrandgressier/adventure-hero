@@ -104,6 +104,7 @@ export default function NewCharacterPage() {
           chanceInitiale: stats.chance,
           pointsDeVieMax: stats.pointsDeVieMax,
           pointsDeVieActuels: stats.pointsDeVieMax,
+          reputation: 0, // Initialiser la réputation à 0 pour tous les tomes
         },
       });
       
