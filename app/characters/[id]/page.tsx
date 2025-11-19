@@ -212,22 +212,22 @@ export default function CharacterDetail() {
         </div>
 
         {/* Actions principales */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <button
             onClick={() => setShowCombatSetup(true)}
-            className="bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            className="bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-[var(--font-uncial)] font-bold px-3 py-3 sm:px-6 sm:py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/50 hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3"
             title="Lancer un combat"
           >
-            <span className="text-2xl">⚔️</span>
-            <span>Combat</span>
+            <span className="text-xl sm:text-2xl">⚔️</span>
+            <span className="leading-tight">Combat</span>
           </button>
           <button
             onClick={() => setShowDiceModal(true)}
-            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-3 py-3 sm:px-6 sm:py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3"
             title="Lancer les dés"
           >
-            <span className="text-2xl">🎲</span>
-            <span>Lancer les dés</span>
+            <span className="text-xl sm:text-2xl">🎲</span>
+            <span className="leading-tight">Lancer les dés</span>
           </button>
         </div>
 
