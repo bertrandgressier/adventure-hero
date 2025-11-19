@@ -98,14 +98,15 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
             />
             <div className="absolute inset-0 flex items-center justify-evenly px-4">
               {[1, 2, 3, 4].map((day) => (
-                <div
+                <button
                   key={day}
-                  className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center ${
+                  onClick={() => handleUpdateDays(day)}
+                  className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center hover:scale-110 active:scale-95 ${
                     day <= daysElapsed
-                      ? 'border-primary-foreground bg-primary-foreground/20 shadow-md'
-                      : 'border-muted-light/40 bg-background/50'
+                      ? 'border-primary-foreground bg-primary-foreground/20 shadow-md hover:bg-primary-foreground/40'
+                      : 'border-muted-light/40 bg-background/50 hover:border-primary/50 hover:bg-primary/10'
                   }`}
-                  title={`Jour ${day}`}
+                  title={`Définir à ${day} jour${day > 1 ? 's' : ''}`}
                 >
                   <span className={`text-xs font-bold ${
                     day <= daysElapsed 
@@ -114,12 +115,12 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
                   }`}>
                     {day}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
           </div>
           <p className="text-xs text-muted-light mt-1 italic">
-            Cliquez sur le compteur ci-dessus pour modifier
+            Cliquez sur un jour pour définir le nombre de jours écoulés
           </p>
         </div>
 
