@@ -56,6 +56,11 @@ for (const line of lines) {
   
   // Capturer les items de la section courante
   if (currentSection && line.startsWith('* ')) {
+    // Ignorer les scopes techniques
+    if (/\*\*(ci|test|build|chore|refactor|style|docs|lint|analytics):\*\*/.test(line)) {
+      continue;
+    }
+
     // Nettoyer le message : retirer les références techniques
     let message = line
       .replace(/\*\*[^:]+:\*\* /, '') // Retirer le scope (ex: **analytics:** )
