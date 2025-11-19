@@ -79,49 +79,55 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
   const pvStyles = getPvStyles();
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-      <EditableStatField
-        label="DEXT."
-        value={statsData.dexterite}
-        onSave={(value) => handleUpdate({ dexterite: value ?? 1 })}
-        min={1}
-        icon={<Hand className="size-4" />}
-      />
+    <div className="flex flex-col gap-2">
+      {/* Ligne 1 : Vie */}
+      <div className="grid grid-cols-2 gap-2">
+        <EditableStatField
+          label="VIE MAX"
+          value={statsData.pointsDeVieMax}
+          onSave={(value) => handleUpdate({ pointsDeVieMax: value ?? 1 })}
+          min={1}
+          icon={<Heart className="size-4" />}
+        />
 
-      <EditableStatField
-        label="CONST."
-        value={statsData.constitution ?? null}
-        onSave={(value) => handleUpdate({ constitution: value === null ? undefined : value })}
-        min={0}
-        icon={<Shield className="size-4" />}
-        placeholder="-"
-      />
+        <EditableStatField
+          label="VIE"
+          value={statsData.pointsDeVieActuels}
+          onSave={(value) => handleUpdate({ pointsDeVieActuels: value ?? 0 })}
+          min={0}
+          icon={<Heart className="size-4" />}
+          colorClass={pvStyles.text}
+          containerClassName={pvStyles.container}
+        />
+      </div>
 
-      <EditableStatField
-        label="CHANCE"
-        value={statsData.chance}
-        onSave={(value) => handleUpdate({ chance: value ?? 0 })}
-        min={0}
-        icon={<Clover className="size-4" />}
-      />
+      {/* Ligne 2 : Caractéristiques */}
+      <div className="grid grid-cols-3 gap-2">
+        <EditableStatField
+          label="DEXT."
+          value={statsData.dexterite}
+          onSave={(value) => handleUpdate({ dexterite: value ?? 1 })}
+          min={1}
+          icon={<Hand className="size-4" />}
+        />
 
-      <EditableStatField
-        label="VIE MAX"
-        value={statsData.pointsDeVieMax}
-        onSave={(value) => handleUpdate({ pointsDeVieMax: value ?? 1 })}
-        min={1}
-        icon={<Heart className="size-4" />}
-      />
+        <EditableStatField
+          label="CONST."
+          value={statsData.constitution ?? null}
+          onSave={(value) => handleUpdate({ constitution: value === null ? undefined : value })}
+          min={0}
+          icon={<Shield className="size-4" />}
+          placeholder="-"
+        />
 
-      <EditableStatField
-        label="VIE"
-        value={statsData.pointsDeVieActuels}
-        onSave={(value) => handleUpdate({ pointsDeVieActuels: value ?? 0 })}
-        min={0}
-        icon={<Heart className="size-4" />}
-        colorClass={pvStyles.text}
-        containerClassName={pvStyles.container}
-      />
+        <EditableStatField
+          label="CHANCE"
+          value={statsData.chance}
+          onSave={(value) => handleUpdate({ chance: value ?? 0 })}
+          min={0}
+          icon={<Clover className="size-4" />}
+        />
+      </div>
     </div>
   );
 }
