@@ -69,20 +69,21 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
             <label className="font-[var(--font-merriweather)] text-muted-light text-sm">
               Jours écoulés
             </label>
-            <div
-              onClick={() => {
-                const newValue = prompt('Jours écoulés (0-4):', daysElapsed.toString());
-                if (newValue !== null) {
-                  const parsed = parseInt(newValue);
-                  if (!isNaN(parsed) && parsed >= 0 && parsed <= 4) {
-                    handleUpdateDays(parsed);
-                  }
-                }
-              }}
-              className="font-[var(--font-geist-mono)] text-2xl text-primary hover:text-yellow-300 cursor-pointer transition-colors"
-              title="Cliquer pour modifier"
-            >
-              {daysElapsed}/4
+            <div className="flex items-center gap-2">
+              <div
+                className="font-[var(--font-geist-mono)] text-2xl text-primary"
+              >
+                {daysElapsed}/4
+              </div>
+              {daysElapsed > 0 && (
+                <button
+                  onClick={() => handleUpdateDays(0)}
+                  className="text-xs px-2 py-1 rounded bg-red-600/20 hover:bg-red-600/40 text-red-400 hover:text-red-300 border border-red-600/30 transition-colors"
+                  title="Remettre à zéro"
+                >
+                  Réinitialiser
+                </button>
+              )}
             </div>
           </div>
 
@@ -99,21 +100,19 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
               style={{ width: `${(daysElapsed / 4) * 100}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-evenly px-4">
-              {[0, 1, 2, 3, 4].map((day) => (
+              {[1, 2, 3, 4].map((day) => (
                 <button
                   key={day}
                   onClick={() => handleUpdateDays(day)}
                   className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center hover:scale-110 active:scale-95 ${
-                    day <= daysElapsed && day > 0
+                    day <= daysElapsed
                       ? 'border-primary-foreground bg-primary-foreground/20 shadow-md hover:bg-primary-foreground/40'
-                      : day === 0 && daysElapsed === 0
-                      ? 'border-green-500 bg-green-500/20 shadow-md hover:bg-green-500/40'
                       : 'border-muted-light/40 bg-background/50 hover:border-primary/50 hover:bg-primary/10'
                   }`}
-                  title={day === 0 ? 'Remettre à zéro' : `Définir à ${day} jour${day > 1 ? 's' : ''}`}
+                  title={`Définir à ${day} jour${day > 1 ? 's' : ''}`}
                 >
                   <span className={`text-xs font-bold ${
-                    (day <= daysElapsed && day > 0) || (day === 0 && daysElapsed === 0)
+                    day <= daysElapsed 
                       ? 'text-primary-foreground' 
                       : 'text-muted-light'
                   }`}>
@@ -124,7 +123,7 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
             </div>
           </div>
           <p className="text-xs text-muted-light mt-1 italic">
-            Cliquez sur un jour pour définir le nombre de jours écoulés (0 pour remettre à zéro)
+            Cliquez sur un jour pour définir le nombre de jours écoulés
           </p>
         </div>
 
