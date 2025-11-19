@@ -3,7 +3,7 @@
 [![Déploiement](https://img.shields.io/badge/🚀_Démo_Live-dagda.chtibox.ovh-blue?style=for-the-badge)](https://dagda.chtibox.ovh/)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/bertrandgressier/adventure-tome/ci.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/bertrandgressier/adventure-tome/actions/workflows/ci.yml)
 [![codecov](https://img.shields.io/codecov/c/github/bertrandgressier/adventure-tome?style=for-the-badge&logo=codecov)](https://codecov.io/gh/bertrandgressier/adventure-tome)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Donate](https://img.shields.io/badge/☕_Soutenir-PayPal-orange?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=Q5EPDFZEEXQHJ)
 
 Application PWA mobile pour gérer vos personnages des livres "Le jeu dont tu es le héro" de la collection [La Saga de Dagda](https://www.lasagadedagda.fr/).
@@ -242,4 +242,22 @@ Merci pour votre soutien ! ❤️
 
 ## 📄 Licence
 
-MIT
+Ce projet est sous licence **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
+
+### ✅ Ce que vous POUVEZ faire :
+- Utiliser l'application pour un usage personnel
+- Modifier le code source
+- Créer des forks et contribuer via Pull Request
+- Partager l'application en citant l'auteur
+
+### ❌ Ce que vous NE POUVEZ PAS faire :
+- Utiliser l'application à des fins commerciales
+- Vendre ou revendre l'application
+- Intégrer l'application dans un produit commercial
+
+### 💼 Usage commercial
+Pour toute utilisation commerciale, veuillez me contacter pour obtenir une licence commerciale.
+
+[![License: CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+**Copyright © 2025 Bertrand Gressier** - Tous droits réservés pour l'usage commercial.
