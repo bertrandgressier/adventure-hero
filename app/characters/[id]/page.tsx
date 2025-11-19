@@ -11,6 +11,7 @@ import CharacterStats from '@/src/presentation/components/CharacterStats';
 import CharacterProgress from '@/src/presentation/components/CharacterProgress';
 import CharacterWeapon from '@/src/presentation/components/CharacterWeapon';
 import CharacterInventory from '@/src/presentation/components/CharacterInventory';
+import CharacterNotes from '@/src/presentation/components/CharacterNotes';
 import DiceRoller from '@/components/character/DiceRoller';
 import AddWeaponModal from '@/components/character/AddWeaponModal';
 import AddItemModal from '@/components/character/AddItemModal';
@@ -247,12 +248,7 @@ export default function CharacterDetail() {
         />
 
         {/* Notes Section */}
-        {character.notes && (
-          <div className="bg-card glow-border rounded-lg p-6">
-            <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Notes</h2>
-            <p className="font-[var(--font-merriweather)] text-light whitespace-pre-wrap">{character.notes}</p>
-          </div>
-        )}
+        <CharacterNotes characterId={id} />
 
         {/* Modals */}
         {showWeaponModal && (
