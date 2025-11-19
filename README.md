@@ -2,7 +2,7 @@
 
 [![Déploiement](https://img.shields.io/badge/🚀_Démo_Live-dagda.chtibox.ovh-blue?style=for-the-badge)](https://dagda.chtibox.ovh/)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/bertrandgressier/adventure-tome/ci.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/bertrandgressier/adventure-tome/actions/workflows/ci.yml)
-[![codecov](https://img.shields.io/codecov/c/github/bertrandgressier/adventure-tome?style=for-the-badge&token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/bertrandgressier/adventure-tome)
+[![codecov](https://img.shields.io/codecov/c/github/bertrandgressier/adventure-tome?style=for-the-badge&logo=codecov)](https://codecov.io/gh/bertrandgressier/adventure-tome)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Donate](https://img.shields.io/badge/☕_Soutenir-PayPal-orange?style=for-the-badge)](https://www.paypal.com/donate/?hosted_button_id=Q5EPDFZEEXQHJ)
 
@@ -50,7 +50,13 @@ Adventure Tome est votre compagnon mobile pour vivre vos aventures épiques ! Cr
 - **Vitest** - Framework de tests unitaires
 - **Clean Architecture** - Séparation logique métier / présentation
 
-## 📋 Prérequis
+## � Couverture de code
+
+[![Codecov Coverage](https://codecov.io/gh/bertrandgressier/adventure-tome/branch/main/graphs/sunburst.svg)](https://codecov.io/gh/bertrandgressier/adventure-tome)
+
+La couverture de tests est automatiquement mesurée et rapportée sur chaque Pull Request. L'architecture Clean permet une couverture élevée avec **71 tests unitaires** couvrant la logique métier (Domain & Application layers).
+
+## �📋 Prérequis
 
 - Node.js 18+ 
 - pnpm (recommandé)
