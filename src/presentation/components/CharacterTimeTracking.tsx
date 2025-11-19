@@ -69,22 +69,6 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
             <label className="font-[var(--font-merriweather)] text-muted-light text-sm">
               Jours écoulés
             </label>
-            <div className="flex items-center gap-2">
-              <div
-                className="font-[var(--font-geist-mono)] text-2xl text-primary"
-              >
-                {daysElapsed}/4
-              </div>
-              {daysElapsed > 0 && (
-                <button
-                  onClick={() => handleUpdateDays(0)}
-                  className="text-xs px-2 py-1 rounded bg-red-600/20 hover:bg-red-600/40 text-red-400 hover:text-red-300 border border-red-600/30 transition-colors"
-                  title="Remettre à zéro"
-                >
-                  Réinitialiser
-                </button>
-              )}
-            </div>
           </div>
 
           {/* Jauge visuelle */}
@@ -103,13 +87,13 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
               {[1, 2, 3, 4].map((day) => (
                 <button
                   key={day}
-                  onClick={() => handleUpdateDays(day)}
+                  onClick={() => handleUpdateDays(day === daysElapsed ? 0 : day)}
                   className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center hover:scale-110 active:scale-95 ${
                     day <= daysElapsed
                       ? 'border-primary-foreground bg-primary-foreground/20 shadow-md hover:bg-primary-foreground/40'
                       : 'border-muted-light/40 bg-background/50 hover:border-primary/50 hover:bg-primary/10'
                   }`}
-                  title={`Définir à ${day} jour${day > 1 ? 's' : ''}`}
+                  title={day === daysElapsed ? "Cliquer pour remettre à zéro" : `Définir à ${day} jour${day > 1 ? 's' : ''}`}
                 >
                   <span className={`text-xs font-bold ${
                     day <= daysElapsed 
@@ -122,9 +106,6 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
               ))}
             </div>
           </div>
-          <p className="text-xs text-muted-light mt-1 italic">
-            Cliquez sur un jour pour définir le nombre de jours écoulés
-          </p>
         </div>
 
         {/* Prochain réveil */}
