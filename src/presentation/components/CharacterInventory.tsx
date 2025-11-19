@@ -1,6 +1,6 @@
 'use client';
 
-import { Trash2 } from 'lucide-react';
+import { Trash2, Plus } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import { MAX_ITEMS, BOURSE_ITEM_NAME } from '@/src/domain/value-objects/Inventory';
 
@@ -73,14 +73,14 @@ export default function CharacterInventory({
         <button
           onClick={onOpenAddItemModal}
           disabled={isFull}
-          className={`text-2xl transition-colors rounded-lg px-3 py-1 ${
+          className={`transition-colors rounded-lg p-2 ${
             isFull 
               ? 'text-muted-light bg-muted cursor-not-allowed opacity-50' 
               : 'text-primary hover:text-yellow-300 bg-primary/10 hover:bg-primary/20'
           }`}
           title={isFull ? "Inventaire plein" : "Ajouter un objet"}
         >
-          ➕
+          <Plus className="w-5 h-5" />
         </button>
       </div>
       {items.length === 0 ? (
