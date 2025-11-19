@@ -70,7 +70,7 @@ for (const line of lines) {
     let message = line
       .replace(/\*\*[^:]+:\*\* /, '') // Retirer le scope (ex: **analytics:** )
       .replace(/ \(\[[a-f0-9]+\].*?\)$/, '') // Retirer le hash de commit
-      .replace(/^\* /, '• '); // Remplacer * par •
+      .replace(/^\* /, '- '); // Remplacer * par -
     
     userChanges[currentSection].push(message);
   }
