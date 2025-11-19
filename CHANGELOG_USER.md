@@ -17,10 +17,10 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• correct user changelog generation regex for header levels
-• improve character list design for mobile
-• improve visual distinction for critical health and death states
-• update character detail stats to match home screen design
+- correct user changelog generation regex for header levels
+- improve character list design for mobile
+- improve visual distinction for critical health and death states
+- update character detail stats to match home screen design
 
 ---
 
@@ -29,8 +29,8 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### ✨ Nouvelles fonctionnalités
 
-• add character notebook feature with persistence
-• improve user changelog generation and link
+- add character notebook feature with persistence
+- improve user changelog generation and link
 
 ---
 
@@ -39,11 +39,11 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• translate error messages to French
+- translate error messages to French
 
 ### ✨ Nouvelles fonctionnalités
 
-• allow changing book from paragraph section with dialog
+- allow changing book from paragraph section with dialog
 
 ---
 
@@ -52,7 +52,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### ✨ Nouvelles fonctionnalités
 
-• implémentation de Zustand pour la gestion d'état centralisée
+- implémentation de Zustand pour la gestion d'état centralisée
 
 ---
 
@@ -61,8 +61,8 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### ✨ Nouvelles fonctionnalités
 
-• affichage fantomatique des personnages morts et simplification popup défaite
-• ajout composant BookTag pour identifier les 3 livres de la saga
+- affichage fantomatique des personnages morts et simplification popup défaite
+- ajout composant BookTag pour identifier les 3 livres de la saga
 
 ---
 
@@ -71,7 +71,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### ✨ Nouvelles fonctionnalités
 
-• ajout du lien de donation PayPal
+- ajout du lien de donation PayPal
 
 ---
 
@@ -80,7 +80,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• retirer autoFocus du formulaire de combat pour mobile
+- retirer autoFocus du formulaire de combat pour mobile
 
 ---
 
@@ -89,7 +89,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• prevent incorrect playing state on first load
+- prevent incorrect playing state on first load
 
 ---
 
@@ -98,7 +98,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• preserve NEXT_PUBLIC_GA_ID in .env.production
+- preserve NEXT_PUBLIC_GA_ID in .env.production
 
 ---
 
@@ -107,7 +107,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• wrap GoogleAnalytics in Suspense for useSearchParams
+- wrap GoogleAnalytics in Suspense for useSearchParams
 
 ---
 
@@ -116,7 +116,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### ⚡ Améliorations de performance
 
-• optimize CI build caching
+- optimize CI build caching
 
 ---
 
@@ -125,7 +125,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• icône musique affichée correctement au démarrage
+- icône musique affichée correctement au démarrage
 
 ---
 
@@ -134,11 +134,11 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• génération correcte des tags Docker avec version
+- génération correcte des tags Docker avec version
 
 ### ✨ Nouvelles fonctionnalités
 
-• support Google Analytics avec injection runtime
+- support Google Analytics avec injection runtime
 
 ---
 
@@ -147,8 +147,8 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### ✨ Nouvelles fonctionnalités
 
-• ajout lien vers CHANGELOG depuis la version
-• release uniquement sur changements du code applicatif
+- ajout lien vers CHANGELOG depuis la version
+- release uniquement sur changements du code applicatif
 
 ---
 
@@ -157,7 +157,7 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• séparation des workflows release et docker
+- séparation des workflows release et docker
 
 ---
 
@@ -166,12 +166,12 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• correction des titres en double et nettoyage
-• corrections UI et ESLint
+- correction des titres en double et nettoyage
+- corrections UI et ESLint
 
 ### ✨ Nouvelles fonctionnalités
 
-• ajout liens GitHub et signalement de bugs
+- ajout liens GitHub et signalement de bugs
 
 ---
 
@@ -180,22 +180,22 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ### 🐛 Corrections de bugs
 
-• apply dark theme to InstallPrompt component
-• correct collection name to 'La Saga Dadga'
-• improve button readability with bold font and larger text
-• make button visible with proper background and border
-• recreate character creation page from scratch
-• remove duplicate code causing parsing error
-• remove starting equipment (not in book rules)
-• use explicit golden color for button background
-• use pure black text on golden button for maximum contrast
+- apply dark theme to InstallPrompt component
+- correct collection name to 'La Saga Dadga'
+- improve button readability with bold font and larger text
+- make button visible with proper background and border
+- recreate character creation page from scratch
+- remove duplicate code causing parsing error
+- remove starting equipment (not in book rules)
+- use explicit golden color for button background
+- use pure black text on golden button for maximum contrast
 
 ### ✨ Nouvelles fonctionnalités
 
-• add character creation page with dice rolling
-• character creation with correct talents and stats rules + manual mode
-• implement dark sepia theme with medieval styling
-• improve character list presentation with better visibility
-• IndexedDB storage for characters + display character list
-• mise en place semantic-release et CI/CD automatique
-• update character creation with correct stats and talent selection
+- add character creation page with dice rolling
+- character creation with correct talents and stats rules + manual mode
+- implement dark sepia theme with medieval styling
+- improve character list presentation with better visibility
+- IndexedDB storage for characters + display character list
+- mise en place semantic-release et CI/CD automatique
+- update character creation with correct stats and talent selection
