@@ -48,6 +48,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -72,6 +73,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -99,6 +101,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'narrative',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -112,6 +115,7 @@ describe('CharacterService', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'discretion',
+        gameMode: 'mortal',
         stats: {
           dexterite: 8,
           chance: 6,
@@ -133,6 +137,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -161,6 +166,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -192,6 +198,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'narrative',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -219,6 +226,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -238,6 +246,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -259,6 +268,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'narrative',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -286,6 +296,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -313,6 +324,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -339,6 +351,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'narrative',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -366,6 +379,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -392,6 +406,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -418,6 +433,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'narrative',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -437,6 +453,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -459,6 +476,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -482,6 +500,7 @@ describe('CharacterService', () => {
         name: 'Gandalf',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'narrative',
         stats: {
           dexterite: 7,
           chance: 5,

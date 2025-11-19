@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { trackCharacterCreation, trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
 import { BookTag, type BookTitle } from '@/components/ui/book-tag';
+import type { GameMode } from '@/src/domain/entities/Character';
 
 const BOOKS: BookTitle[] = [
   "La Harpe des Quatre Saisons",
@@ -23,12 +24,34 @@ const TALENTS = [
   { id: 'empratique', name: 'Empratique', description: 'Capacité à comprendre et ressentir les émotions d\'autrui' },
 ];
 
+const GAME_MODES: Array<{ id: GameMode; name: string; description: string; icon: string }> = [
+  { 
+    id: 'narrative', 
+    name: 'Narratif', 
+    description: 'Mode histoire : victoire automatique des combats, focus sur l\'aventure',
+    icon: '📖'
+  },
+  { 
+    id: 'simplified', 
+    name: 'Simplifié', 
+    description: 'Mode normal : combats réels avec possibilité de sauvegarder manuellement',
+    icon: '⚔️'
+  },
+  { 
+    id: 'mortal', 
+    name: 'Mortel', 
+    description: 'Mode hardcore : une seule vie, pas de sauvegarde manuelle possible',
+    icon: '💀'
+  },
+];
+
 export default function NewCharacterPage() {
   const router = useRouter();
   const createCharacter = useCharacterStore((state) => state.createCharacter);
-  const [step, setStep] = useState<'book' | 'name' | 'talent' | 'stats'>('book');
+  const [step, setStep] = useState<'book' | 'name' | 'gameMode' | 'talent' | 'stats'>('book');
   const [selectedBook, setSelectedBook] = useState<BookTitle>('La Harpe des Quatre Saisons');
   const [name, setName] = useState('');
+  const [selectedGameMode, setSelectedGameMode] = useState<GameMode>('mortal');
   const [selectedTalent, setSelectedTalent] = useState('');
   const [manualMode, setManualMode] = useState(false);
   
@@ -78,6 +101,7 @@ export default function NewCharacterPage() {
         name,
         book: selectedBook,
         talent: selectedTalent,
+        gameMode: selectedGameMode,
         stats: {
           dexterite: stats.dexterite,
           chance: stats.chance,
@@ -190,7 +214,7 @@ export default function NewCharacterPage() {
               />
 
               <button
-                onClick={() => setStep('talent')}
+                onClick={() => setStep('gameMode')}
                 disabled={!name.trim()}
                 className="w-full bg-primary hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg disabled:hover:scale-100 disabled:hover:shadow-none"
               >
@@ -200,7 +224,54 @@ export default function NewCharacterPage() {
           </div>
         )}
 
-        {/* Étape 2 : Choix du talent */}
+        {/* Étape 2 : Choix du mode de jeu */}
+        {step === 'gameMode' && (
+          <div className="bg-card glow-border rounded-lg p-8 space-y-6">
+            <div className="space-y-2">
+              <h2 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
+                Mode de jeu
+              </h2>
+              <p className="font-[var(--font-merriweather)] text-sm text-muted-light">
+                Choisissez la difficulté de votre aventure
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {GAME_MODES.map((mode) => (
+                <button
+                  key={mode.id}
+                  onClick={() => setSelectedGameMode(mode.id)}
+                  className={`w-full text-left bg-background border-2 rounded-lg p-4 transition-all ${
+                    selectedGameMode === mode.id
+                      ? 'border-primary shadow-[0_0_10px_hsl(var(--primary)/0.4)]'
+                      : 'border-primary/30 hover:border-primary/50'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl mt-0.5">{mode.icon}</span>
+                    <div className="flex-1">
+                      <div className="font-[var(--font-uncial)] text-lg tracking-wide text-light mb-1">
+                        {mode.name}
+                      </div>
+                      <div className="font-[var(--font-merriweather)] text-sm text-muted-light">
+                        {mode.description}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setStep('talent')}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg"
+            >
+              Continuer
+            </button>
+          </div>
+        )}
+
+        {/* Étape 3 : Choix du talent */}
         {step === 'talent' && (
           <div className="bg-card glow-border rounded-lg p-8 space-y-6">
             <div className="space-y-2">
@@ -243,7 +314,7 @@ export default function NewCharacterPage() {
           </div>
         )}
 
-        {/* Étape 3 : Génération des statistiques */}
+        {/* Étape 4 : Génération des statistiques */}
         {step === 'stats' && (
           <div className="space-y-6">
             {/* Instructions */}

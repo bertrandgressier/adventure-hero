@@ -35,6 +35,7 @@ export default function CharactersPage() {
         name: `${characterData.name} (Copie)`,
         book: characterData.book,
         talent: characterData.talent,
+        gameMode: characterData.gameMode,
         stats: characterData.stats,
       });
     } catch (error) {

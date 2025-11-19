@@ -1,4 +1,4 @@
-import { Character } from '@/src/domain/entities/Character';
+import { Character, type GameMode } from '@/src/domain/entities/Character';
 import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
 import { StatsData } from '@/src/domain/value-objects/Stats';
 import { CharacterNotFoundError } from '@/src/domain/errors/DomainErrors';
@@ -31,6 +31,7 @@ export class CharacterService {
     name: string;
     book: string;
     talent: string;
+    gameMode: GameMode;
     stats: StatsData;
   }): Promise<Character> {
     // La logique métier est dans Character.create()
@@ -286,6 +287,7 @@ export class CharacterService {
       name: `${original.name} (Copie)`,
       book: original.book,
       talent: original.talent,
+      gameMode: original.gameMode,
       stats: original.getStats(),
     });
 

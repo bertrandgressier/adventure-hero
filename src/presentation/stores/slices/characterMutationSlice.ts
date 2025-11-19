@@ -1,4 +1,4 @@
-import type { Character } from '@/src/domain/entities/Character';
+import type { Character, GameMode } from '@/src/domain/entities/Character';
 import type { CharacterService } from '@/src/application/services/CharacterService';
 import type { StatsData } from '@/src/domain/value-objects/Stats';
 import type { CharacterListSlice } from './characterListSlice';
@@ -8,6 +8,7 @@ export interface CharacterMutationSlice {
     name: string;
     book: string;
     talent: string;
+    gameMode: GameMode;
     stats: StatsData;
   }) => Promise<Character>;
   deleteCharacter: (id: string) => Promise<void>;

@@ -11,6 +11,8 @@ export interface CharacterDTO {
   name: string;
   book: string;
   talent: string;
+  gameMode?: 'narrative' | 'simplified' | 'mortal'; // Optional for legacy data
+  version?: number; // Optional for legacy data
   createdAt: string;
   updatedAt: string;
   
