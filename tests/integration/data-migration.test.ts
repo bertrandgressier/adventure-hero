@@ -10,6 +10,7 @@
 import { describe, it, expect } from 'vitest';
 import { Character } from '@/src/domain/entities/Character';
 import type { CharacterDTO as LegacyCharacter } from '@/src/infrastructure/dto/CharacterDTO';
+import { migrateCharacter } from '@/src/infrastructure/persistence/migrations';
 
 describe('Migration des données - Compatibilité', () => {
   it('devrait lire les données legacy sans perte', () => {
@@ -17,10 +18,10 @@ describe('Migration des données - Compatibilité', () => {
     const legacyData: any = {
       id: 'abc-123',
       name: 'Gandalf le Gris',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
       gameMode: 'mortal',
-      version: 2,
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-15T14:30:00.000Z',
       stats: {
@@ -58,7 +59,7 @@ describe('Migration des données - Compatibilité', () => {
     expect(character.book).toBe(legacyData.book);
     expect(character.talent).toBe(legacyData.talent);
     expect(character.gameMode).toBe('mortal');
-    expect(character.version).toBe(2);
+    expect(character.version).toBe(4); // Version automatically migrated
     expect(character.createdAt).toBe(legacyData.createdAt);
     expect(character.notes).toBe(legacyData.notes);
 
@@ -84,7 +85,7 @@ describe('Migration des données - Compatibilité', () => {
     // Créer un personnage avec nouvelle architecture
     const character = Character.create({
       name: 'Aragorn',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
       gameMode: 'simplified',
       stats: {
@@ -143,7 +144,7 @@ describe('Migration des données - Compatibilité', () => {
 
     // VÉRIFICATION: gameMode et version
     expect(data.gameMode).toBe('simplified');
-    expect(data.version).toBe(3);
+    expect(data.version).toBe(4);
 
     // VÉRIFICATION: Structure stats
     expect(data.stats).toHaveProperty('dexterite');
@@ -179,10 +180,10 @@ describe('Migration des données - Compatibilité', () => {
     const minimalData: LegacyCharacter = {
       id: 'min-123',
       name: 'Frodon',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
       gameMode: 'mortal',
-      version: 2,
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -206,7 +207,8 @@ describe('Migration des données - Compatibilité', () => {
     };
 
     // Doit fonctionner sans erreur
-    const character = Character.fromData(minimalData);
+    const migratedMinimalData = migrateCharacter(minimalData);
+    const character = Character.fromData(migratedMinimalData);
     
     expect(character.name).toBe('Frodon');
     expect(character.getInventory().weapon).toBeUndefined();
@@ -218,10 +220,10 @@ describe('Migration des données - Compatibilité', () => {
     const data: LegacyCharacter = {
       id: 'hist-123',
       name: 'Test',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
       gameMode: 'mortal',
-      version: 2,
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -243,7 +245,8 @@ describe('Migration des données - Compatibilité', () => {
       notes: '',
     };
 
-    const character = Character.fromData(data);
+    const migratedData = migrateCharacter(data);
+    const character = Character.fromData(migratedData);
     const progress = character.getProgress();
 
     // VÉRIFICATION: Historique préservé
@@ -255,10 +258,10 @@ describe('Migration des données - Compatibilité', () => {
     const data: LegacyCharacter = {
       id: 'items-123',
       name: 'Test',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
       gameMode: 'mortal',
-      version: 2,
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -284,7 +287,8 @@ describe('Migration des données - Compatibilité', () => {
       notes: '',
     };
 
-    const character = Character.fromData(data);
+    const migratedData = migrateCharacter(data);
+    const character = Character.fromData(migratedData);
     const inventory = character.getInventory();
 
     // VÉRIFICATION: Types préservés
@@ -298,10 +302,10 @@ describe('Migration des données - Compatibilité', () => {
     const originalData: LegacyCharacter = {
       id: 'roundtrip-123',
       name: 'Test Complet',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
       gameMode: 'mortal',
-      version: 2,
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-15T14:30:00.000Z',
       stats: {
@@ -331,8 +335,9 @@ describe('Migration des données - Compatibilité', () => {
       notes: 'Notes importantes\navec plusieurs lignes\net caractères spéciaux: é à ç',
     };
 
-    // Round-trip: Legacy → Entity → Legacy
-    const character = Character.fromData(originalData);
+    // Round-trip: Legacy → Migration → Entity → Legacy
+    const migratedData = migrateCharacter(originalData);
+    const character = Character.fromData(migratedData);
     const serialized = character.toData();
 
     // VÉRIFICATION: Toutes les données sont identiques (sauf updatedAt qui est mis à jour)
@@ -348,5 +353,61 @@ describe('Migration des données - Compatibilité', () => {
     expect(serialized.inventory).toEqual(originalData.inventory);
     expect(serialized.progress).toEqual(originalData.progress);
     expect(serialized.notes).toBe(originalData.notes);
+  });
+
+  it('devrait migrer les données v3 (book string) vers v4 (book number)', () => {
+    // Données v3 avec book en string
+    const v3Data: any = {
+      id: 'v3-migration-123',
+      name: 'Personnage Legacy',
+      book: 'La Harpe des Quatre Saisons', // string (v3)
+      talent: 'instinct',
+      gameMode: 'mortal',
+      version: 3,
+      createdAt: '2025-01-01T10:00:00.000Z',
+      updatedAt: '2025-01-01T10:00:00.000Z',
+      stats: {
+        dexterite: 7,
+        chance: 5,
+        chanceInitiale: 5,
+        pointsDeVieMax: 28,
+        pointsDeVieActuels: 28,
+      },
+      inventory: {
+        boulons: 50,
+        items: [],
+      },
+      progress: {
+        currentParagraph: 1,
+        history: [1],
+        lastSaved: '2025-01-01T10:00:00.000Z',
+      },
+      notes: '',
+    };
+
+    // La migration doit être appelée explicitement
+    const migratedData = migrateCharacter(v3Data);
+    const character = Character.fromData(migratedData);
+    
+    // VÉRIFICATION: book converti en number
+    expect(character.book).toBe(1); // "La Harpe des Quatre Saisons" → 1
+    expect(character.version).toBe(4); // Version mise à jour
+    
+    // Test avec autres titres
+    const v3DataBook2: any = { ...v3Data, book: 'La Confrérie de NUADA', id: 'v3-2' };
+    const migratedData2 = migrateCharacter(v3DataBook2);
+    const characterBook2 = Character.fromData(migratedData2);
+    expect(characterBook2.book).toBe(2);
+    
+    const v3DataBook3: any = { ...v3Data, book: 'Les Entrailles du temps', id: 'v3-3' };
+    const migratedData3 = migrateCharacter(v3DataBook3);
+    const characterBook3 = Character.fromData(migratedData3);
+    expect(characterBook3.book).toBe(3);
+    
+    // Test avec un titre inconnu (fallback à 1)
+    const v3DataUnknown: any = { ...v3Data, book: 'Livre Inconnu', id: 'v3-unknown' };
+    const migratedDataUnknown = migrateCharacter(v3DataUnknown);
+    const characterUnknown = Character.fromData(migratedDataUnknown);
+    expect(characterUnknown.book).toBe(1);
   });
 });

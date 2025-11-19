@@ -29,7 +29,7 @@ export class CharacterService {
    */
   async createCharacter(data: {
     name: string;
-    book: string;
+    book: number;
     talent: string;
     gameMode: GameMode;
     stats: StatsData;
@@ -299,7 +299,7 @@ export class CharacterService {
   /**
    * Met à jour le livre d'un personnage
    */
-  async updateBook(id: string, newBook: string): Promise<Character> {
+  async updateBook(id: string, newBook: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
       throw new CharacterNotFoundError(id);

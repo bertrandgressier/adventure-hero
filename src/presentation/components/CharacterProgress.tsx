@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Coins } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
-import { BookTag, type BookTitle } from '@/components/ui/book-tag';
+import { BookTag, BOOK_TITLES } from '@/components/ui/book-tag';
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const BOOKS: BookTitle[] = [
-  "La Harpe des Quatre Saisons",
-  "La Confrérie de NUADA",
-  "Les Entrailles du temps",
-];
+const BOOKS = [1, 2, 3];
 
 interface CharacterProgressProps {
   characterId: string;
@@ -134,23 +130,23 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
                 </DialogTitle>
               </DialogHeader>
               <div className="flex flex-col gap-3">
-                {BOOKS.map((book) => (
+                {BOOKS.map((bookId) => (
                   <button
-                    key={book}
+                    key={bookId}
                     onClick={() => {
-                      updateBook(book);
+                      updateBook(bookId);
                       setIsBookDialogOpen(false);
                     }}
                     className={`p-4 rounded-lg border-2 transition-all text-left ${
-                      characterData.book === book
+                      characterData.book === bookId
                         ? 'border-primary bg-primary/10'
                         : 'border-transparent hover:border-primary/50 bg-card'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <BookTag book={book} />
+                      <BookTag book={bookId} />
                       <span className="font-[var(--font-merriweather)] text-sm text-light">
-                        {book}
+                        {BOOK_TITLES[bookId]}
                       </span>
                     </div>
                   </button>

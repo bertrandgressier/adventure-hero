@@ -5,14 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { trackCharacterCreation, trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
-import { BookTag, type BookTitle } from '@/components/ui/book-tag';
+import { BookTag, BOOK_TITLES } from '@/components/ui/book-tag';
 import type { GameMode } from '@/src/domain/entities/Character';
 
-const BOOKS: BookTitle[] = [
-  "La Harpe des Quatre Saisons",
-  "La Confrérie de NUADA",
-  "Les Entrailles du temps",
-];
+const BOOKS = [1, 2, 3];
 
 const TALENTS = [
   { id: 'instinct', name: 'Instinct', description: 'Capacité à pressentir le danger et prendre les bonnes décisions' },
@@ -49,7 +45,7 @@ export default function NewCharacterPage() {
   const router = useRouter();
   const createCharacter = useCharacterStore((state) => state.createCharacter);
   const [step, setStep] = useState<'book' | 'name' | 'gameMode' | 'talent' | 'stats'>('book');
-  const [selectedBook, setSelectedBook] = useState<BookTitle>('La Harpe des Quatre Saisons');
+  const [selectedBook, setSelectedBook] = useState<number>(1);
   const [name, setName] = useState('');
   const [selectedGameMode, setSelectedGameMode] = useState<GameMode>('mortal');
   const [selectedTalent, setSelectedTalent] = useState('');
@@ -161,20 +157,20 @@ export default function NewCharacterPage() {
             </div>
 
             <div className="space-y-3">
-              {BOOKS.map((book) => (
+              {BOOKS.map((bookId) => (
                 <button
-                  key={book}
-                  onClick={() => setSelectedBook(book)}
+                  key={bookId}
+                  onClick={() => setSelectedBook(bookId)}
                   className={`w-full text-left bg-background border-2 rounded-lg p-4 transition-all ${
-                    selectedBook === book
+                    selectedBook === bookId
                       ? 'border-primary shadow-[0_0_10px_hsl(var(--primary)/0.4)]'
                       : 'border-primary/30 hover:border-primary/50'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <BookTag book={book} className="text-base px-3 py-1" />
+                    <BookTag book={bookId} className="text-base px-3 py-1" />
                     <div className="font-[var(--font-uncial)] text-lg tracking-wide text-light">
-                      {book}
+                      {BOOK_TITLES[bookId]}
                     </div>
                   </div>
                 </button>

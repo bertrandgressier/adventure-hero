@@ -55,6 +55,7 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
 
   const stats = character.getStatsObject();
   const statsData = stats.toData();
+  const showConstitution = character.book > 1;
 
   // Styles dynamiques pour les PV actuels
   const getPvStyles = () => {
@@ -102,7 +103,7 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
       </div>
 
       {/* Ligne 2 : Caractéristiques */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className={`grid ${showConstitution ? 'grid-cols-3' : 'grid-cols-2'} gap-2`}>
         <EditableStatField
           label="DEXT."
           value={statsData.dexterite}
@@ -111,14 +112,16 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
           icon={<Hand className="size-4" />}
         />
 
-        <EditableStatField
-          label="CONST."
-          value={statsData.constitution ?? null}
-          onSave={(value) => handleUpdate({ constitution: value === null ? undefined : value })}
-          min={0}
-          icon={<Shield className="size-4" />}
-          placeholder="-"
-        />
+        {showConstitution && (
+          <EditableStatField
+            label="CONST."
+            value={statsData.constitution ?? null}
+            onSave={(value) => handleUpdate({ constitution: value === null ? undefined : value })}
+            min={0}
+            icon={<Shield className="size-4" />}
+            placeholder="-"
+          />
+        )}
 
         <EditableStatField
           label="CHANCE"

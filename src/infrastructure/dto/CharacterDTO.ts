@@ -9,7 +9,7 @@
 export interface CharacterDTO {
   id: string;
   name: string;
-  book: string;
+  book: number;
   talent: string;
   gameMode?: 'narrative' | 'simplified' | 'mortal'; // Optional for legacy data
   version?: number; // Optional for legacy data

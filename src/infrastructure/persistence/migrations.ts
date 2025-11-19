@@ -11,7 +11,7 @@
  * 4. Test in data-migration.test.ts
  */
 
-export const CURRENT_VERSION = 3;
+export const CURRENT_VERSION = 4;
 
 /**
  * Migration interface
@@ -32,6 +32,12 @@ export interface Migration {
  * Migration v2 → v3: Add optional constitution field to stats
  * - New optional stat for tome 2 & 3
  * - Default to null (not set)
+ * 
+ * Migration v3 → v4: Convert book title to book number
+ * - "La Harpe des Quatre Saisons" -> 1
+ * - "La Confrérie de NUADA" -> 2
+ * - "Les Entrailles du temps" -> 3
+ * - Default to 1 if unknown
  */
 export const migrations: Migration[] = [
   {
@@ -53,6 +59,21 @@ export const migrations: Migration[] = [
       version: 3,
     }),
   },
+  {
+    version: 4,
+    migrate: (data) => {
+      const bookMapping: Record<string, number> = {
+        "La Harpe des Quatre Saisons": 1,
+        "La Confrérie de NUADA": 2,
+        "Les Entrailles du temps": 3,
+      };
+      return {
+        ...data,
+        book: typeof data.book === 'string' ? (bookMapping[data.book] ?? 1) : data.book,
+        version: 4,
+      };
+    },
+  },
   // Future migrations here
 ];
 
@@ -66,7 +87,7 @@ export const migrations: Migration[] = [
  * // Legacy character (v1)
  * const legacyData = { id: '123', name: 'Aragorn', stats: { ... } };
  * const migrated = migrateCharacter(legacyData);
- * // migrated = { id: '123', name: 'Aragorn', gameMode: 'mortal', version: 3, stats: { constitution: null, ... } }
+ * // migrated = { id: '123', name: 'Aragorn', gameMode: 'mortal', version: 4, book: 1, stats: { constitution: null, ... } }
  */
 export function migrateCharacter(data: any): any {
   const currentVersion = data.version ?? 1; // Default to v1 if no version field

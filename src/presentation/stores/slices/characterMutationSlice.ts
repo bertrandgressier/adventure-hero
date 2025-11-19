@@ -6,7 +6,7 @@ import type { CharacterListSlice } from './characterListSlice';
 export interface CharacterMutationSlice {
   createCharacter: (data: {
     name: string;
-    book: string;
+    book: number;
     talent: string;
     gameMode: GameMode;
     stats: StatsData;

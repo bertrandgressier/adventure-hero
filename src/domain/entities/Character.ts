@@ -62,7 +62,7 @@ export class Progress {
 export interface CharacterData {
   id: string;
   name: string;
-  book: string;
+  book: number;
   talent: string;
   gameMode: GameMode;
   version: number;
@@ -78,7 +78,7 @@ export class Character {
   constructor(
     public readonly id: string,
     private _name: string,
-    public readonly book: string,
+    public readonly book: number,
     public readonly talent: string,
     public readonly gameMode: GameMode,
     public readonly version: number,
@@ -134,7 +134,7 @@ export class Character {
   /**
    * Met à jour le livre du personnage
    */
-  updateBook(newBook: string): Character {
+  updateBook(newBook: number): Character {
     return new Character(
       this.id,
       this._name,
@@ -523,7 +523,7 @@ export class Character {
    */
   static create(data: {
     name: string;
-    book: string;
+    book: number;
     talent: string;
     gameMode: GameMode;
     stats: StatsData;
@@ -537,7 +537,7 @@ export class Character {
       data.book,
       data.talent,
       data.gameMode,
-      3, // CURRENT_VERSION
+      4, // CURRENT_VERSION
       now,
       now,
       Stats.fromData(data.stats),

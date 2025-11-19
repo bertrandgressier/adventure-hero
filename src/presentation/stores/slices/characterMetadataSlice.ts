@@ -1,12 +1,12 @@
 import type { CharacterService } from '@/src/application/services/CharacterService';
 import type { CharacterListSlice } from './characterListSlice';
 
-export interface CharacterMetadataSlice {
+export type CharacterMetadataSlice = {
   updateName: (id: string, name: string) => Promise<void>;
-  updateBook: (id: string, book: string) => Promise<void>;
   updateNotes: (id: string, notes: string) => Promise<void>;
   goToParagraph: (id: string, paragraph: number) => Promise<void>;
-}
+  updateBook: (id: string, book: number) => Promise<void>;
+};
 
 type StoreState = CharacterMetadataSlice & CharacterListSlice;
 type SetState = (partial: Partial<StoreState> | ((state: StoreState) => Partial<StoreState>)) => void;
@@ -29,7 +29,7 @@ export const createCharacterMetadataSlice = (service: CharacterService) => {
       }
     },
 
-    updateBook: async (id: string, book: string) => {
+    updateBook: async (id: string, book: number) => {
       const character = get().characters[id];
       if (!character) return;
 
