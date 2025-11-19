@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
 import { Hand, Clover, Heart } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
@@ -8,76 +7,6 @@ import EditableStatField from '@/src/presentation/components/EditableStatField';
 interface CharacterStatsProps {
   characterId: string;
   onUpdate?: () => void; // Callback optionnel pour notifier le parent
-}
-
-interface EditableNumberProps {
-  value: number;
-  onSave: (value: number) => Promise<void>;
-  min?: number;
-  className?: string;
-  editClassName?: string;
-}
-
-function EditableNumber({ value, onSave, min = 0, className, editClassName }: EditableNumberProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const startEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setInputValue(value.toString());
-    setIsEditing(true);
-  };
-
-  const save = async () => {
-    const newValue = parseInt(inputValue);
-    if (isNaN(newValue) || newValue < min) return;
-    
-    try {
-      await onSave(newValue);
-      setIsEditing(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') save();
-    if (e.key === 'Escape') setIsEditing(false);
-  };
-
-  if (isEditing) {
-    return (
-      <input
-        ref={inputRef}
-        type="number"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={save}
-        className={`bg-card border border-primary/50 rounded px-1 py-0.5 text-center font-[var(--font-geist-mono)] text-primary focus:outline-none focus:border-primary ${editClassName || 'w-12 text-xl'}`}
-        min={min}
-        onClick={(e) => e.stopPropagation()}
-      />
-    );
-  }
-
-  return (
-    <span
-      onClick={startEdit}
-      className={`cursor-pointer hover:text-yellow-300 transition-colors ${className}`}
-      title="Cliquer pour modifier"
-    >
-      {value}
-    </span>
-  );
 }
 
 /**
@@ -127,8 +56,30 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
   const stats = character.getStatsObject();
   const statsData = stats.toData();
 
+  // Styles dynamiques pour les PV actuels
+  const getPvStyles = () => {
+    if (stats.isDead()) {
+      return {
+        text: 'text-red-600 drop-shadow-[0_0_2px_rgba(220,38,38,0.8)]',
+        container: 'border-red-600 bg-red-950/30 shadow-[0_0_10px_rgba(220,38,38,0.2)]'
+      };
+    }
+    if (stats.isCriticalHealth()) {
+      return {
+        text: 'text-orange-500 drop-shadow-[0_0_2px_rgba(249,115,22,0.8)]',
+        container: 'border-orange-500 bg-orange-950/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]'
+      };
+    }
+    return {
+      text: 'text-primary',
+      container: ''
+    };
+  };
+
+  const pvStyles = getPvStyles();
+
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
       <EditableStatField
         label="DEXT."
         value={statsData.dexterite}
@@ -145,29 +96,23 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
         icon={<Clover className="size-4" />}
       />
 
-      <div className="bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]">
-        <div className="flex items-center gap-1.5 text-muted-light mb-1">
-          <Heart className="size-4" />
-          <span className="text-[10px] uppercase font-bold tracking-wider">VIE</span>
-        </div>
-        <div className="font-[var(--font-geist-mono)] font-bold text-light flex items-baseline justify-center gap-0.5">
-          <EditableNumber
-            value={statsData.pointsDeVieActuels}
-            onSave={(value) => handleUpdate({ pointsDeVieActuels: value })}
-            min={0}
-            className="text-2xl"
-            editClassName="w-12 text-xl"
-          />
-          <span className="text-sm text-muted-light">/</span>
-          <EditableNumber
-            value={statsData.pointsDeVieMax}
-            onSave={(value) => handleUpdate({ pointsDeVieMax: value })}
-            min={1}
-            className="text-sm text-muted-light"
-            editClassName="w-10 text-sm"
-          />
-        </div>
-      </div>
+      <EditableStatField
+        label="VIE MAX"
+        value={statsData.pointsDeVieMax}
+        onSave={(value) => handleUpdate({ pointsDeVieMax: value })}
+        min={1}
+        icon={<Heart className="size-4" />}
+      />
+
+      <EditableStatField
+        label="VIE"
+        value={statsData.pointsDeVieActuels}
+        onSave={(value) => handleUpdate({ pointsDeVieActuels: value })}
+        min={0}
+        icon={<Heart className="size-4" />}
+        colorClass={pvStyles.text}
+        containerClassName={pvStyles.container}
+      />
     </div>
   );
 }

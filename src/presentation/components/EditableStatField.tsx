@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface EditableStatFieldProps {
   label: string;
@@ -10,6 +11,7 @@ interface EditableStatFieldProps {
   colorClass?: string;
   title?: string;
   icon?: React.ReactNode;
+  containerClassName?: string;
 }
 
 /**
@@ -27,6 +29,7 @@ export default function EditableStatField({
   colorClass = 'text-primary',
   title = 'Cliquer pour modifier',
   icon,
+  containerClassName,
 }: EditableStatFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -78,7 +81,7 @@ export default function EditableStatField({
 
   if (icon) {
     return (
-      <div className="bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]">
+      <div className={cn("bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]", containerClassName)}>
         <div className="flex items-center gap-1.5 text-muted-light mb-1">
           {icon}
           <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
@@ -112,7 +115,7 @@ export default function EditableStatField({
   }
 
   return (
-    <div className="bg-background glow-border rounded-lg p-4 text-center">
+    <div className={cn("bg-background glow-border rounded-lg p-4 text-center", containerClassName)}>
       <div className="font-[var(--font-merriweather)] text-sm text-muted-light mb-2">
         {label}
       </div>
