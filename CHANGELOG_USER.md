@@ -12,6 +12,43 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ---
 
+## Version 3.0.0
+*19 novembre 2025*
+
+### ✨ Nouvelles fonctionnalités
+
+- add reputation system for Tome 2
+- add reset button (0) to time tracking gauge
+- add time tracking for Tome 2 (days elapsed and next wake up)
+- migrate book from string to number + conditional Constitution display
+- add gameMode and version to Character entity
+- add optional constitution stat for tome 2 & 3
+- add data migration system
+- integrate auto-migration in repository
+- make day circles clickable in time tracking gauge
+- add game mode selection in character creation
+- add interactive game mode info dialog on character list
+- display game mode badge on character list and detail pages
+- remove 'Caractéristiques' title from character detail page
+- reorganize character stats layout
+- Items no longer have toggleable possession state
+- Existing characters with book strings will be auto-migrated to numbers on load
+
+### 🐛 Corrections de bugs
+
+- add aria-describedby to DialogContent for accessibility compliance
+- correct reputation initialization and serialization
+- improve mobile responsiveness for book selection dialog
+- improve mobile responsiveness for Combat and Dice buttons
+- improve reset UX for time tracking gauge
+- improve time tracking gauge UX
+- replace "Modifier" text with Pencil icon in CharacterNotes
+- replace emoji + buttons with lucide-react Plus icon
+- use standard markdown list syntax in user changelog
+- remove item possession toggle feature
+
+---
+
 ## Version 2.2.1
 *19 novembre 2025*
 

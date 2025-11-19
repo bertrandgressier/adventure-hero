@@ -1,3 +1,49 @@
+# [3.0.0](https://github.com/bertrandgressier/adventure-tome/compare/v2.2.1...v3.0.0) (2025-11-19)
+
+
+### Bug Fixes
+
+* add aria-describedby to DialogContent for accessibility compliance ([c8494cd](https://github.com/bertrandgressier/adventure-tome/commit/c8494cdc11b33b9bf65b1c8d3a333cf79442ffac))
+* correct reputation initialization and serialization ([cbf61c9](https://github.com/bertrandgressier/adventure-tome/commit/cbf61c9532b1377bf4ca262e3c70938ba4ab9092))
+* improve mobile responsiveness for book selection dialog ([165f9fe](https://github.com/bertrandgressier/adventure-tome/commit/165f9fe3a0e6bca5609e3dc3286fb943dd88b943))
+* improve mobile responsiveness for Combat and Dice buttons ([606002b](https://github.com/bertrandgressier/adventure-tome/commit/606002b062cf3d80fb232d3ab636268516ce1d5d))
+* improve reset UX for time tracking gauge ([302b87e](https://github.com/bertrandgressier/adventure-tome/commit/302b87e993272dd6eac1032807a47d24b205d433))
+* improve time tracking gauge UX ([91fa686](https://github.com/bertrandgressier/adventure-tome/commit/91fa686b14f01170caa13599dddcfb76f32472bb))
+* **lint:** add eslint-disable for necessary any types in migrations ([ffba496](https://github.com/bertrandgressier/adventure-tome/commit/ffba496f75b83d4b4fc67cc2e2f3417627926147))
+* **lint:** ignore coverage and test-results in ESLint config ([2bf2fec](https://github.com/bertrandgressier/adventure-tome/commit/2bf2fec7eb1deedbdb18324841bb462e9c5f2428))
+* replace "Modifier" text with Pencil icon in CharacterNotes ([fdb21c6](https://github.com/bertrandgressier/adventure-tome/commit/fdb21c617d57d8b4b684da38f0bd7bb780020fd2))
+* replace emoji + buttons with lucide-react Plus icon ([2da9823](https://github.com/bertrandgressier/adventure-tome/commit/2da98238fa7e7635ead022b3a1ddf252e88945e7))
+* use standard markdown list syntax in user changelog ([edd6163](https://github.com/bertrandgressier/adventure-tome/commit/edd6163b5b2db5d7ae1001ffe998529e33427d21))
+
+
+### Code Refactoring
+
+* **inventory:** remove item possession toggle feature ([3aeb559](https://github.com/bertrandgressier/adventure-tome/commit/3aeb55930586fff819a0f9b3df5575bfab9e30a1))
+
+
+### Features
+
+* add reputation system for Tome 2 ([d949108](https://github.com/bertrandgressier/adventure-tome/commit/d9491085d1ba53ef20f9f09933ef77ecf267a6f3))
+* add reset button (0) to time tracking gauge ([1b7c3a4](https://github.com/bertrandgressier/adventure-tome/commit/1b7c3a476dd5823110e81cceace5237e24915992))
+* add time tracking for Tome 2 (days elapsed and next wake up) ([a7062d8](https://github.com/bertrandgressier/adventure-tome/commit/a7062d8082afc435a2fb9cccc675208d82457c21))
+* **data:** migrate book from string to number + conditional Constitution display ([c1dd952](https://github.com/bertrandgressier/adventure-tome/commit/c1dd9527bd676164c96690f9908d02a50bfc1bac))
+* **domain:** add gameMode and version to Character entity ([cf91a94](https://github.com/bertrandgressier/adventure-tome/commit/cf91a949a6c1c0875f6193afd3c63a7faa17d8b3))
+* **domain:** add optional constitution stat for tome 2 & 3 ([0e2f140](https://github.com/bertrandgressier/adventure-tome/commit/0e2f140f91f2e14f012971679c6a409b3dcb2a1e))
+* **infrastructure:** add data migration system ([0b2a0ff](https://github.com/bertrandgressier/adventure-tome/commit/0b2a0ff2119b79340b8e08825df6286aabea915e))
+* **infrastructure:** integrate auto-migration in repository ([b478797](https://github.com/bertrandgressier/adventure-tome/commit/b478797dd4d6e56db3e2e4cd2debe1dcded8e63d))
+* make day circles clickable in time tracking gauge ([48c4593](https://github.com/bertrandgressier/adventure-tome/commit/48c4593ac6443e4a4fa1e2bb603ac23b998f063e))
+* **ui:** add game mode selection in character creation ([a170622](https://github.com/bertrandgressier/adventure-tome/commit/a170622aa3dc6d8b525f9f28b89975daa2558f3c))
+* **ui:** add interactive game mode info dialog on character list ([7afb20f](https://github.com/bertrandgressier/adventure-tome/commit/7afb20f5e70e2de8987b03619240ec737e577bfc))
+* **ui:** display game mode badge on character list and detail pages ([c03e9e8](https://github.com/bertrandgressier/adventure-tome/commit/c03e9e884c138b5e93c1f8cef66a07471236465c))
+* **ui:** remove 'Caractéristiques' title from character detail page ([9c3fe40](https://github.com/bertrandgressier/adventure-tome/commit/9c3fe4056483b23d838a3f3dd967615d58048619))
+* **ui:** reorganize character stats layout ([bda336a](https://github.com/bertrandgressier/adventure-tome/commit/bda336a1dc23a7a50e1a54ebd1b8415dd514aaec))
+
+
+### BREAKING CHANGES
+
+* **inventory:** Items no longer have toggleable possession state
+* **data:** Existing characters with book strings will be auto-migrated to numbers on load
+
 ## [2.2.1](https://github.com/bertrandgressier/adventure-tome/compare/v2.2.0...v2.2.1) (2025-11-19)
 
 
