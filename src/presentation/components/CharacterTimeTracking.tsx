@@ -87,7 +87,7 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
           </div>
 
           {/* Jauge visuelle */}
-          <div className="relative h-8 bg-background rounded-lg overflow-hidden border border-primary/30">
+          <div className="relative h-10 bg-background rounded-lg overflow-hidden border border-primary/30">
             <div
               className={`h-full transition-all duration-300 ${
                 daysElapsed === 4 
@@ -96,19 +96,31 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
               }`}
               style={{ width: `${(daysElapsed / 4) * 100}%` }}
             />
-            <div className="absolute inset-0 flex items-center justify-center gap-1">
+            <div className="absolute inset-0 flex items-center justify-evenly px-4">
               {[1, 2, 3, 4].map((day) => (
                 <div
                   key={day}
-                  className={`w-6 h-6 rounded-full border-2 transition-all ${
+                  className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center ${
                     day <= daysElapsed
-                      ? 'border-primary-foreground bg-primary-foreground/20'
-                      : 'border-muted-light/30 bg-transparent'
+                      ? 'border-primary-foreground bg-primary-foreground/20 shadow-md'
+                      : 'border-muted-light/40 bg-background/50'
                   }`}
-                />
+                  title={`Jour ${day}`}
+                >
+                  <span className={`text-xs font-bold ${
+                    day <= daysElapsed 
+                      ? 'text-primary-foreground' 
+                      : 'text-muted-light'
+                  }`}>
+                    {day}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
+          <p className="text-xs text-muted-light mt-1 italic">
+            Cliquez sur le compteur ci-dessus pour modifier
+          </p>
         </div>
 
         {/* Prochain réveil */}
