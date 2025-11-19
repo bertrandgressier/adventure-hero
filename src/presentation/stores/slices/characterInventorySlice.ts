@@ -10,7 +10,6 @@ export interface CharacterInventorySlice {
     id: string,
     item: { name: string; possessed: boolean; type?: 'item' | 'special' }
   ) => Promise<void>;
-  toggleItem: (id: string, itemIndex: number) => Promise<void>;
   removeItem: (id: string, itemIndex: number) => Promise<void>;
   addBoulons: (id: string, amount: number) => Promise<void>;
   removeBoulons: (id: string, amount: number) => Promise<void>;
@@ -51,21 +50,6 @@ export const createCharacterInventorySlice = (service: CharacterService) => {
 
       try {
         const updated = await service.addItemToInventory(id, item);
-        set((state) => ({
-          characters: { ...state.characters, [id]: updated },
-        }));
-      } catch (error) {
-        set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
-        throw error;
-      }
-    },
-
-    toggleItem: async (id: string, itemIndex: number) => {
-      const character = get().characters[id];
-      if (!character) return;
-
-      try {
-        const updated = await service.toggleItemPossession(id, itemIndex);
         set((state) => ({
           characters: { ...state.characters, [id]: updated },
         }));

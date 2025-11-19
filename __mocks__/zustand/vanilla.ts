@@ -23,8 +23,6 @@ const createStoreUncurried = <T>(
 export const createStore = (<T>(
   stateCreator: Parameters<typeof actualCreateStore<T>>[0],
 ) => {
-  console.log('zustand/vanilla createStore mock');
-
   // Support de la version curried de createStore
   return typeof stateCreator === 'function'
     ? createStoreUncurried(stateCreator)

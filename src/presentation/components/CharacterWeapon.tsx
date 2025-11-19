@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import type { Weapon } from '@/src/domain/value-objects/Inventory';
 
@@ -109,10 +110,10 @@ export default function CharacterWeapon({
         ) : (
           <button
             onClick={onOpenAddWeaponModal}
-            className="text-primary hover:text-yellow-300 text-2xl transition-colors bg-primary/10 hover:bg-primary/20 rounded-lg px-3 py-1"
+            className="text-primary hover:text-yellow-300 transition-colors bg-primary/10 hover:bg-primary/20 rounded-lg p-2"
             title="Ajouter une arme"
           >
-            ➕
+            <Plus className="w-5 h-5" />
           </button>
         )}
       </div>

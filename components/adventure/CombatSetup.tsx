@@ -51,7 +51,7 @@ export default function CombatSetup({ onStartCombat, onCancel }: CombatSetupProp
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
             ⚔️ Nouveau Combat

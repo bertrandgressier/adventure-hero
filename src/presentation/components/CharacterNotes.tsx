@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Pencil } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 
 interface CharacterNotesProps {
@@ -42,9 +43,10 @@ export default function CharacterNotes({ characterId }: CharacterNotesProps) {
         {!isEditing && (
           <button
             onClick={handleStartEditing}
-            className="text-primary hover:text-yellow-300 text-sm transition-colors bg-primary/10 hover:bg-primary/20 rounded-lg px-3 py-1 font-[var(--font-uncial)]"
+            className="text-primary hover:text-yellow-300 transition-colors bg-primary/10 hover:bg-primary/20 rounded-lg p-2"
+            title="Modifier"
           >
-            Modifier
+            <Pencil className="w-5 h-5" />
           </button>
         )}
       </div>

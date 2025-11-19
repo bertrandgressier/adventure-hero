@@ -9,12 +9,14 @@ import CombatInterface from '@/components/adventure/CombatInterface';
 import CombatEndModal from '@/components/adventure/CombatEndModal';
 import CharacterStats from '@/src/presentation/components/CharacterStats';
 import CharacterProgress from '@/src/presentation/components/CharacterProgress';
+import CharacterTimeTracking from '@/src/presentation/components/CharacterTimeTracking';
 import CharacterWeapon from '@/src/presentation/components/CharacterWeapon';
 import CharacterInventory from '@/src/presentation/components/CharacterInventory';
 import CharacterNotes from '@/src/presentation/components/CharacterNotes';
 import DiceRoller from '@/components/character/DiceRoller';
 import AddWeaponModal from '@/components/character/AddWeaponModal';
 import AddItemModal from '@/components/character/AddItemModal';
+import { GameModeBadge } from '@/components/ui/game-mode-badge';
 
 export default function CharacterDetail() {
   const router = useRouter();
@@ -200,40 +202,48 @@ export default function CharacterDetail() {
                 {character.name}
               </h1>
             )}
-            <p className="font-[var(--font-merriweather)] text-muted-light">
-              Talent : <span className="text-primary">{character.talent}</span>
-            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="font-[var(--font-merriweather)] text-muted-light">
+                Talent : <span className="text-primary">{character.talent}</span>
+              </p>
+              <span className="text-muted-light">•</span>
+              <GameModeBadge gameMode={character.gameMode} showLabel />
+            </div>
           </div>
         </div>
 
         {/* Actions principales */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <button
             onClick={() => setShowCombatSetup(true)}
-            className="bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            className="bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-[var(--font-uncial)] font-bold px-3 py-3 sm:px-6 sm:py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/50 hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3"
             title="Lancer un combat"
           >
-            <span className="text-2xl">⚔️</span>
-            <span>Combat</span>
+            <span className="text-xl sm:text-2xl">⚔️</span>
+            <span className="leading-tight">Combat</span>
           </button>
           <button
             onClick={() => setShowDiceModal(true)}
-            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-3 py-3 sm:px-6 sm:py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3"
             title="Lancer les dés"
           >
-            <span className="text-2xl">🎲</span>
-            <span>Lancer les dés</span>
+            <span className="text-xl sm:text-2xl">🎲</span>
+            <span className="leading-tight">Lancer les dés</span>
           </button>
         </div>
 
         {/* Stats Section */}
         <div className="bg-card glow-border rounded-lg p-6">
-          <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Caractéristiques</h2>
           <CharacterStats characterId={id} />
         </div>
 
         {/* Progress Section */}
         <CharacterProgress characterId={id} />
+
+        {/* Time Tracking Section (Tome 2 only) */}
+        {character.book === 2 && (
+          <CharacterTimeTracking characterId={id} />
+        )}
 
         {/* Weapon Section */}
         <CharacterWeapon

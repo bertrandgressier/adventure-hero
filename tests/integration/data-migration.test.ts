@@ -2,7 +2,7 @@
  * Tests de migration des données
  * 
  * Vérifie que les données existantes en IndexedDB sont 100% compatibles
- * avec la nouvelle architecture Clean Architecture.
+ * avec la nouvelle architecture Clean Architecture et le système de versioning.
  * 
  * GARANTIE: Aucune perte de données lors de la migration.
  */
@@ -10,15 +10,19 @@
 import { describe, it, expect } from 'vitest';
 import { Character } from '@/src/domain/entities/Character';
 import type { CharacterDTO as LegacyCharacter } from '@/src/infrastructure/dto/CharacterDTO';
+import { migrateCharacter } from '@/src/infrastructure/persistence/migrations';
 
 describe('Migration des données - Compatibilité', () => {
   it('devrait lire les données legacy sans perte', () => {
     // Données existantes dans IndexedDB (format legacy)
-    const legacyData: LegacyCharacter = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const legacyData: any = {
       id: 'abc-123',
       name: 'Gandalf le Gris',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-15T14:30:00.000Z',
       stats: {
@@ -55,6 +59,8 @@ describe('Migration des données - Compatibilité', () => {
     expect(character.name).toBe(legacyData.name);
     expect(character.book).toBe(legacyData.book);
     expect(character.talent).toBe(legacyData.talent);
+    expect(character.gameMode).toBe('mortal');
+    expect(character.version).toBe(4); // Version automatically migrated
     expect(character.createdAt).toBe(legacyData.createdAt);
     expect(character.notes).toBe(legacyData.notes);
 
@@ -80,8 +86,9 @@ describe('Migration des données - Compatibilité', () => {
     // Créer un personnage avec nouvelle architecture
     const character = Character.create({
       name: 'Aragorn',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'simplified',
       stats: {
         dexterite: 8,
         chance: 6,
@@ -127,12 +134,18 @@ describe('Migration des données - Compatibilité', () => {
     expect(data).toHaveProperty('name');
     expect(data).toHaveProperty('book');
     expect(data).toHaveProperty('talent');
+    expect(data).toHaveProperty('gameMode');
+    expect(data).toHaveProperty('version');
     expect(data).toHaveProperty('createdAt');
     expect(data).toHaveProperty('updatedAt');
     expect(data).toHaveProperty('stats');
     expect(data).toHaveProperty('inventory');
     expect(data).toHaveProperty('progress');
     expect(data).toHaveProperty('notes');
+
+    // VÉRIFICATION: gameMode et version
+    expect(data.gameMode).toBe('simplified');
+    expect(data.version).toBe(8);
 
     // VÉRIFICATION: Structure stats
     expect(data.stats).toHaveProperty('dexterite');
@@ -150,7 +163,7 @@ describe('Migration des données - Compatibilité', () => {
       name: 'Andúril',
       attackPoints: 4,
     });
-    expect(data.inventory.items).toHaveLength(2);
+    expect(data.inventory.items).toHaveLength(3); // Bourse + Torche + Parchemin
 
     // VÉRIFICATION: Structure progress
     expect(data.progress).toHaveProperty('currentParagraph');
@@ -168,8 +181,10 @@ describe('Migration des données - Compatibilité', () => {
     const minimalData: LegacyCharacter = {
       id: 'min-123',
       name: 'Frodon',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -193,11 +208,12 @@ describe('Migration des données - Compatibilité', () => {
     };
 
     // Doit fonctionner sans erreur
-    const character = Character.fromData(minimalData);
+    const migratedMinimalData = migrateCharacter(minimalData);
+    const character = Character.fromData(migratedMinimalData);
     
     expect(character.name).toBe('Frodon');
     expect(character.getInventory().weapon).toBeUndefined();
-    expect(character.getInventory().items).toEqual([]);
+    expect(character.getInventory().items).toEqual([{ name: 'Bourse', possessed: true }]);
     expect(character.notes).toBe('');
   });
 
@@ -205,8 +221,10 @@ describe('Migration des données - Compatibilité', () => {
     const data: LegacyCharacter = {
       id: 'hist-123',
       name: 'Test',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -228,7 +246,8 @@ describe('Migration des données - Compatibilité', () => {
       notes: '',
     };
 
-    const character = Character.fromData(data);
+    const migratedData = migrateCharacter(data);
+    const character = Character.fromData(migratedData);
     const progress = character.getProgress();
 
     // VÉRIFICATION: Historique préservé
@@ -240,8 +259,10 @@ describe('Migration des données - Compatibilité', () => {
     const data: LegacyCharacter = {
       id: 'items-123',
       name: 'Test',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 4,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -267,13 +288,15 @@ describe('Migration des données - Compatibilité', () => {
       notes: '',
     };
 
-    const character = Character.fromData(data);
+    const migratedData = migrateCharacter(data);
+    const character = Character.fromData(migratedData);
     const inventory = character.getInventory();
 
     // VÉRIFICATION: Types préservés
-    expect(inventory.items[0]).toEqual({ name: 'Potion', possessed: true, type: 'item' });
-    expect(inventory.items[1]).toEqual({ name: 'Clé magique', possessed: false, type: 'special' });
-    expect(inventory.items[2]).toEqual({ name: 'Pain', possessed: true });
+    expect(inventory.items[0]).toEqual({ name: 'Bourse', possessed: true });
+    expect(inventory.items[1]).toEqual({ name: 'Potion', possessed: true, type: 'item' });
+    expect(inventory.items[2]).toEqual({ name: 'Clé magique', possessed: false, type: 'special' });
+    expect(inventory.items[3]).toEqual({ name: 'Pain', possessed: true });
   });
 
   it('devrait gérer la sérialisation round-trip sans perte', () => {
@@ -281,8 +304,10 @@ describe('Migration des données - Compatibilité', () => {
     const originalData: LegacyCharacter = {
       id: 'roundtrip-123',
       name: 'Test Complet',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'mortal',
+      version: 7,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-15T14:30:00.000Z',
       stats: {
@@ -299,6 +324,7 @@ describe('Migration des données - Compatibilité', () => {
           attackPoints: 6,
         },
         items: [
+          { name: 'Bourse', possessed: true },
           { name: 'A', possessed: true, type: 'item' },
           { name: 'B', possessed: false, type: 'special' },
           { name: 'C', possessed: true },
@@ -312,8 +338,9 @@ describe('Migration des données - Compatibilité', () => {
       notes: 'Notes importantes\navec plusieurs lignes\net caractères spéciaux: é à ç',
     };
 
-    // Round-trip: Legacy → Entity → Legacy
-    const character = Character.fromData(originalData);
+    // Round-trip: Legacy → Migration → Entity → Legacy
+    const migratedData = migrateCharacter(originalData);
+    const character = Character.fromData(migratedData);
     const serialized = character.toData();
 
     // VÉRIFICATION: Toutes les données sont identiques (sauf updatedAt qui est mis à jour)
@@ -327,7 +354,115 @@ describe('Migration des données - Compatibilité', () => {
     
     expect(serialized.stats).toEqual(originalData.stats);
     expect(serialized.inventory).toEqual(originalData.inventory);
-    expect(serialized.progress).toEqual(originalData.progress);
+    expect(serialized.progress).toEqual({
+      ...originalData.progress,
+      daysElapsed: 0,
+      nextWakeUpParagraph: undefined,
+    });
     expect(serialized.notes).toBe(originalData.notes);
+  });
+
+  it('devrait migrer les données v3 (book string) vers v4 (book number)', () => {
+    // Données v3 avec book en string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const v3Data: any = {
+      id: 'v3-migration-123',
+      name: 'Personnage Legacy',
+      book: 'La Harpe des Quatre Saisons', // string (v3)
+      talent: 'instinct',
+      gameMode: 'mortal',
+      version: 3,
+      createdAt: '2025-01-01T10:00:00.000Z',
+      updatedAt: '2025-01-01T10:00:00.000Z',
+      stats: {
+        dexterite: 7,
+        chance: 5,
+        chanceInitiale: 5,
+        pointsDeVieMax: 28,
+        pointsDeVieActuels: 28,
+      },
+      inventory: {
+        boulons: 50,
+        items: [],
+      },
+      progress: {
+        currentParagraph: 1,
+        history: [1],
+        lastSaved: '2025-01-01T10:00:00.000Z',
+      },
+      notes: '',
+    };
+
+    // La migration doit être appelée explicitement
+    const migratedData = migrateCharacter(v3Data);
+    const character = Character.fromData(migratedData);
+    
+    // VÉRIFICATION: book converti en number
+    expect(character.book).toBe(1); // "La Harpe des Quatre Saisons" → 1
+    expect(character.version).toBe(8); // Version mise à jour
+    
+    // Test avec autres titres
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const v3DataBook2: any = { ...v3Data, book: 'La Confrérie de NUADA', id: 'v3-2' };
+    const migratedData2 = migrateCharacter(v3DataBook2);
+    const characterBook2 = Character.fromData(migratedData2);
+    expect(characterBook2.book).toBe(2);
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const v3DataBook3: any = { ...v3Data, book: 'Les Entrailles du temps', id: 'v3-3' };
+    const migratedData3 = migrateCharacter(v3DataBook3);
+    const characterBook3 = Character.fromData(migratedData3);
+    expect(characterBook3.book).toBe(3);
+    
+    // Test avec un titre inconnu (fallback à 1)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const v3DataUnknown: any = { ...v3Data, book: 'Livre Inconnu', id: 'v3-unknown' };
+    const migratedDataUnknown = migrateCharacter(v3DataUnknown);
+    const characterUnknown = Character.fromData(migratedDataUnknown);
+    expect(characterUnknown.book).toBe(1);
+  });
+
+  it('devrait ajouter la Bourse si elle est manquante (migration v6)', () => {
+    // Données v5 sans Bourse
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const v5Data: any = {
+      id: 'v5-migration-123',
+      name: 'Sans Bourse',
+      book: 1,
+      talent: 'instinct',
+      gameMode: 'mortal',
+      version: 5,
+      createdAt: '2025-01-01T10:00:00.000Z',
+      updatedAt: '2025-01-01T10:00:00.000Z',
+      stats: {
+        dexterite: 7,
+        chance: 5,
+        chanceInitiale: 5,
+        pointsDeVieMax: 28,
+        pointsDeVieActuels: 28,
+      },
+      inventory: {
+        boulons: 50,
+        items: [
+          { name: 'Potion', possessed: true, type: 'item' },
+        ],
+      },
+      progress: {
+        currentParagraph: 1,
+        history: [1],
+        lastSaved: '2025-01-01T10:00:00.000Z',
+      },
+      notes: '',
+    };
+
+    const migratedData = migrateCharacter(v5Data);
+    const character = Character.fromData(migratedData);
+    const items = character.getInventory().items;
+
+    // VÉRIFICATION: Bourse ajoutée
+    expect(character.version).toBe(8);
+    expect(items).toHaveLength(2);
+    expect(items[0].name).toBe('Bourse');
+    expect(items[1].name).toBe('Potion');
   });
 });

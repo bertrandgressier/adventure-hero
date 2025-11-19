@@ -151,7 +151,7 @@ export default function CombatInterface({
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose && onClose()}>
-      <DialogContent className="max-w-4xl w-full bg-card border-2 border-primary p-4 h-[90vh] flex flex-col sm:max-w-4xl">
+      <DialogContent className="max-w-4xl w-full bg-card border-2 border-primary p-4 h-[90vh] flex flex-col sm:max-w-4xl" aria-describedby={undefined}>
         <DialogHeader className="shrink-0">
           <DialogTitle className="font-[var(--font-uncial)] text-2xl text-primary text-center mb-2">
             ⚔️ COMBAT EN COURS ⚔️

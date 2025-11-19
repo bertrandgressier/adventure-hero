@@ -1,5 +1,10 @@
 import { Stats, StatsData } from '../value-objects/Stats';
-import { Inventory, InventoryData } from '../value-objects/Inventory';
+import { Inventory, InventoryData, BOURSE_ITEM_NAME } from '../value-objects/Inventory';
+
+/**
+ * Game Mode Types
+ */
+export type GameMode = 'narrative' | 'simplified' | 'mortal';
 
 /**
  * Progress - Value Object
@@ -9,14 +14,51 @@ export interface ProgressData {
   currentParagraph: number;
   history: number[];
   lastSaved: string;
+  // Tome 2: Système de jours écoulés (1-4)
+  daysElapsed?: number;
+  nextWakeUpParagraph?: number;
 }
 
 export class Progress {
   constructor(
     public readonly currentParagraph: number,
     public readonly history: readonly number[],
-    public readonly lastSaved: string
+    public readonly lastSaved: string,
+    public readonly daysElapsed?: number,
+    public readonly nextWakeUpParagraph?: number
   ) {}
+
+  /**
+   * Met à jour les jours écoulés (Tome 2)
+   */
+  updateDaysElapsed(days: number): Progress {
+    if (days < 0 || days > 4) {
+      throw new Error('Les jours écoulés doivent être entre 0 et 4');
+    }
+    return new Progress(
+      this.currentParagraph,
+      this.history,
+      new Date().toISOString(),
+      days,
+      this.nextWakeUpParagraph
+    );
+  }
+
+  /**
+   * Met à jour le paragraphe de prochain réveil (Tome 2)
+   */
+  updateNextWakeUpParagraph(paragraph: number | undefined): Progress {
+    if (paragraph !== undefined && paragraph < 1) {
+      throw new Error('Le numéro de paragraphe doit être >= 1');
+    }
+    return new Progress(
+      this.currentParagraph,
+      this.history,
+      new Date().toISOString(),
+      this.daysElapsed,
+      paragraph
+    );
+  }
 
   /**
    * Change le paragraphe actuel
@@ -29,7 +71,9 @@ export class Progress {
     return new Progress(
       paragraph,
       [...this.history, paragraph],
-      new Date().toISOString()
+      new Date().toISOString(),
+      this.daysElapsed,
+      this.nextWakeUpParagraph
     );
   }
 
@@ -38,6 +82,8 @@ export class Progress {
       currentParagraph: this.currentParagraph,
       history: [...this.history],
       lastSaved: this.lastSaved,
+      daysElapsed: this.daysElapsed,
+      nextWakeUpParagraph: this.nextWakeUpParagraph,
     };
   }
 
@@ -45,7 +91,9 @@ export class Progress {
     return new Progress(
       data.currentParagraph,
       data.history,
-      data.lastSaved
+      data.lastSaved,
+      data.daysElapsed,
+      data.nextWakeUpParagraph
     );
   }
 }
@@ -57,8 +105,10 @@ export class Progress {
 export interface CharacterData {
   id: string;
   name: string;
-  book: string;
+  book: number;
   talent: string;
+  gameMode: GameMode;
+  version: number;
   createdAt: string;
   updatedAt: string;
   stats: StatsData;
@@ -71,8 +121,10 @@ export class Character {
   constructor(
     public readonly id: string,
     private _name: string,
-    public readonly book: string,
+    public readonly book: number,
     public readonly talent: string,
+    public readonly gameMode: GameMode,
+    public readonly version: number,
     public readonly createdAt: string,
     public readonly updatedAt: string,
     private stats: Stats,
@@ -111,6 +163,8 @@ export class Character {
       newName.trim(),
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -123,12 +177,14 @@ export class Character {
   /**
    * Met à jour le livre du personnage
    */
-  updateBook(newBook: string): Character {
+  updateBook(newBook: number): Character {
     return new Character(
       this.id,
       this._name,
       newBook,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -149,6 +205,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -169,6 +227,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -189,6 +249,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -209,6 +271,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -229,6 +293,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -249,6 +315,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -269,6 +337,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -289,26 +359,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
-      this.createdAt,
-      new Date().toISOString(),
-      this.stats,
-      updatedInventory,
-      this.progress,
-      this._notes
-    );
-  }
-
-  /**
-   * Change l'état de possession d'un objet
-   */
-  toggleItemPossession(index: number): Character {
-    const updatedInventory = this.inventory.toggleItemPossession(index);
-    
-    return new Character(
-      this.id,
-      this._name,
-      this.book,
-      this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -329,6 +381,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -349,6 +403,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -369,6 +425,52 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
+      this.createdAt,
+      new Date().toISOString(),
+      this.stats,
+      this.inventory,
+      updatedProgress,
+      this._notes
+    );
+  }
+
+  /**
+   * Met à jour les jours écoulés (Tome 2 uniquement)
+   */
+  updateDaysElapsed(days: number): Character {
+    const updatedProgress = this.progress.updateDaysElapsed(days);
+    
+    return new Character(
+      this.id,
+      this._name,
+      this.book,
+      this.talent,
+      this.gameMode,
+      this.version,
+      this.createdAt,
+      new Date().toISOString(),
+      this.stats,
+      this.inventory,
+      updatedProgress,
+      this._notes
+    );
+  }
+
+  /**
+   * Met à jour le paragraphe de prochain réveil (Tome 2 uniquement)
+   */
+  updateNextWakeUpParagraph(paragraph: number | undefined): Character {
+    const updatedProgress = this.progress.updateNextWakeUpParagraph(paragraph);
+    
+    return new Character(
+      this.id,
+      this._name,
+      this.book,
+      this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -387,6 +489,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -448,6 +552,8 @@ export class Character {
       name: this._name,
       book: this.book,
       talent: this.talent,
+      gameMode: this.gameMode,
+      version: this.version,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       stats: this.stats.toData(),
@@ -466,6 +572,8 @@ export class Character {
       data.name,
       data.book,
       data.talent,
+      data.gameMode,
+      data.version,
       data.createdAt,
       data.updatedAt,
       Stats.fromData(data.stats),
@@ -480,23 +588,32 @@ export class Character {
    */
   static create(data: {
     name: string;
-    book: string;
+    book: number;
     talent: string;
+    gameMode: GameMode;
     stats: StatsData;
   }): Character {
     const now = new Date().toISOString();
     const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
+    // Initialiser la réputation à 0 pour le tome 2 si non fournie
+    const statsData = { ...data.stats };
+    if (data.book === 2 && statsData.reputation === undefined) {
+      statsData.reputation = 0;
+    }
+
     return new Character(
       id,
       data.name.trim(),
       data.book,
       data.talent,
+      data.gameMode,
+      8, // CURRENT_VERSION
       now,
       now,
-      Stats.fromData(data.stats),
-      new Inventory(0, undefined, []),
-      new Progress(1, [1], now),
+      Stats.fromData(statsData),
+      new Inventory(0, undefined, [{ name: BOURSE_ITEM_NAME, possessed: true }]),
+      new Progress(1, [1], now, 0, undefined), // Initialiser daysElapsed à 0
       ''
     );
   }

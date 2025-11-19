@@ -6,8 +6,9 @@ describe('Character', () => {
     it('devrait créer un nouveau personnage', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -18,8 +19,9 @@ describe('Character', () => {
       });
 
       expect(character.name).toBe('Aragorn');
-      expect(character.book).toBe('La Harpe des Quatre Saisons');
+      expect(character.book).toBe(1);
       expect(character.talent).toBe('instinct');
+      expect(character.gameMode).toBe('mortal');
       expect(character.id).toBeTruthy();
       expect(character.createdAt).toBeTruthy();
     });
@@ -27,8 +29,9 @@ describe('Character', () => {
     it('devrait trimmer le nom', () => {
       const character = Character.create({
         name: '  Aragorn  ',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -45,8 +48,9 @@ describe('Character', () => {
       expect(() =>
         Character.create({
           name: '   ',
-          book: 'La Harpe des Quatre Saisons',
+          book: 1,
           talent: 'instinct',
+          gameMode: 'narrative',
           stats: {
             dexterite: 7,
             chance: 5,
@@ -63,8 +67,9 @@ describe('Character', () => {
     it('devrait mettre à jour le nom', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -83,8 +88,9 @@ describe('Character', () => {
     it('devrait rejeter un nom vide', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -104,8 +110,9 @@ describe('Character', () => {
     it('devrait mettre à jour les stats', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -126,8 +133,9 @@ describe('Character', () => {
     it('devrait appliquer des dégâts', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -145,8 +153,9 @@ describe('Character', () => {
     it('devrait soigner le personnage', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -166,8 +175,9 @@ describe('Character', () => {
     it('devrait équiper une arme', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -191,8 +201,9 @@ describe('Character', () => {
     it('devrait retirer l\'arme équipée', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -212,8 +223,9 @@ describe('Character', () => {
     it('devrait ajouter un objet', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -229,15 +241,16 @@ describe('Character', () => {
         type: 'item',
       });
 
-      expect(withItem.getInventory().items).toHaveLength(1);
-      expect(withItem.getInventory().items[0].name).toBe('Potion de soin');
+      expect(withItem.getInventory().items).toHaveLength(2);
+      expect(withItem.getInventory().items[1].name).toBe('Potion de soin');
     });
 
     it('devrait retirer un objet', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -249,10 +262,10 @@ describe('Character', () => {
         .addItem({ name: 'Potion de soin', possessed: true })
         .addItem({ name: 'Corde', possessed: true });
 
-      const removed = character.removeItem(0);
+      const removed = character.removeItem(1);
 
-      expect(removed.getInventory().items).toHaveLength(1);
-      expect(removed.getInventory().items[0].name).toBe('Corde');
+      expect(removed.getInventory().items).toHaveLength(2);
+      expect(removed.getInventory().items[1].name).toBe('Corde');
     });
   });
 
@@ -260,8 +273,9 @@ describe('Character', () => {
     it('devrait ajouter des boulons', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -279,8 +293,9 @@ describe('Character', () => {
     it('devrait retirer des boulons', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -300,8 +315,9 @@ describe('Character', () => {
     it('devrait changer le paragraphe actuel', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -322,8 +338,9 @@ describe('Character', () => {
     it('devrait détecter un personnage mort', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -339,8 +356,9 @@ describe('Character', () => {
     it('devrait détecter une santé critique', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -358,8 +376,9 @@ describe('Character', () => {
     it('devrait sérialiser et désérialiser correctement', () => {
       const original = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -380,8 +399,9 @@ describe('Character', () => {
     it('devrait ajouter updatedAt lors de la sérialisation', () => {
       const character = Character.create({
         name: 'Aragorn',
-        book: 'La Harpe des Quatre Saisons',
+        book: 1,
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,

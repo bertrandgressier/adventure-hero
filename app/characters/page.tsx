@@ -1,20 +1,31 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { Copy, Trash2, Swords, Hand, Clover, Heart } from 'lucide-react';
 import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { BookTag } from '@/components/ui/book-tag';
+import { GameModeBadge, GAME_MODE_CONFIG } from '@/components/ui/game-mode-badge';
 import { Button } from '@/components/ui/button';
-import type { Character } from '@/src/domain/entities/Character';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import type { Character, GameMode } from '@/src/domain/entities/Character';
 
 export default function CharactersPage() {
   const characters = useCharacterStore((state) => state.getAllCharacters());
   const isLoading = useCharacterStore((state) => state.isLoading);
   const deleteCharacter = useCharacterStore((state) => state.deleteCharacter);
   const createCharacter = useCharacterStore((state) => state.createCharacter);
+  
+  const [gameModeInfoOpen, setGameModeInfoOpen] = useState(false);
+  const [selectedGameMode, setSelectedGameMode] = useState<GameMode | null>(null);
 
   const isDead = useCallback((character: Character) => character.isDead(), []);
+  
+  const handleGameModeClick = useCallback((gameMode: GameMode, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation to character detail
+    setSelectedGameMode(gameMode);
+    setGameModeInfoOpen(true);
+  }, []);
 
   const handleDelete = useCallback(
     async (id: string, name: string) => {
@@ -35,6 +46,7 @@ export default function CharactersPage() {
         name: `${characterData.name} (Copie)`,
         book: characterData.book,
         talent: characterData.talent,
+        gameMode: characterData.gameMode,
         stats: characterData.stats,
       });
     } catch (error) {
@@ -123,6 +135,11 @@ export default function CharactersPage() {
                         </span>
                       )}
                       <BookTag book={characterData.book} />
+                      <GameModeBadge 
+                        gameMode={characterData.gameMode} 
+                        clickable 
+                        onClick={(e) => handleGameModeClick(characterData.gameMode, e)} 
+                      />
                       <span className="whitespace-nowrap">
                         • <span className="font-[var(--font-geist-mono)] text-primary">§{progress.currentParagraph}</span>
                       </span>
@@ -205,6 +222,33 @@ export default function CharactersPage() {
           ← Retour à l&apos;accueil
         </Link>
       </div>
+      
+      {/* Dialog d'information sur le mode de jeu */}
+      <Dialog open={gameModeInfoOpen} onOpenChange={setGameModeInfoOpen}>
+        <DialogContent className="bg-card border-2 border-primary/50 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-[var(--font-uncial)] text-2xl tracking-wide text-primary flex items-center gap-2">
+              {selectedGameMode && (
+                <>
+                  <span className="text-3xl">{GAME_MODE_CONFIG[selectedGameMode].icon}</span>
+                  Mode {GAME_MODE_CONFIG[selectedGameMode].label}
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription className="font-[var(--font-merriweather)] text-light pt-2">
+              {selectedGameMode && GAME_MODE_CONFIG[selectedGameMode].details}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button
+              onClick={() => setGameModeInfoOpen(false)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] tracking-wider"
+            >
+              Fermer
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

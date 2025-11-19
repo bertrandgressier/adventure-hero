@@ -38,7 +38,7 @@ export default function AddWeaponModal({ onAdd, onClose }: AddWeaponModalProps) 
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full">
+      <DialogContent className="bg-card border-2 border-primary/50 rounded-lg p-6 max-w-md w-full" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="font-[var(--font-uncial)] text-3xl tracking-wide text-primary mb-6 text-center">
             ⚔️ Nouvelle arme

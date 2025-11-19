@@ -1,8 +1,9 @@
 'use client';
 
-import { Hand, Clover, Heart } from 'lucide-react';
+import { Hand, Clover, Heart, Shield } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
+import { ReputationControl } from '@/components/adventure/ReputationControl';
 
 interface CharacterStatsProps {
   characterId: string;
@@ -55,6 +56,8 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
 
   const stats = character.getStatsObject();
   const statsData = stats.toData();
+  const showConstitution = character.book > 1;
+  const showReputation = character.book === 2;
 
   // Styles dynamiques pour les PV actuels
   const getPvStyles = () => {
@@ -79,40 +82,67 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
   const pvStyles = getPvStyles();
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-      <EditableStatField
-        label="DEXT."
-        value={statsData.dexterite}
-        onSave={(value) => handleUpdate({ dexterite: value })}
-        min={1}
-        icon={<Hand className="size-4" />}
-      />
+    <div className="flex flex-col gap-2">
+      {/* Ligne 1 : Vie */}
+      <div className="grid grid-cols-2 gap-2">
+        <EditableStatField
+          label="VIE MAX"
+          value={statsData.pointsDeVieMax}
+          onSave={(value) => handleUpdate({ pointsDeVieMax: value ?? 1 })}
+          min={1}
+          icon={<Heart className="size-4" />}
+        />
 
-      <EditableStatField
-        label="CHANCE"
-        value={statsData.chance}
-        onSave={(value) => handleUpdate({ chance: value })}
-        min={0}
-        icon={<Clover className="size-4" />}
-      />
+        <EditableStatField
+          label="VIE"
+          value={statsData.pointsDeVieActuels}
+          onSave={(value) => handleUpdate({ pointsDeVieActuels: value ?? 0 })}
+          min={0}
+          icon={<Heart className="size-4" />}
+          colorClass={pvStyles.text}
+          containerClassName={pvStyles.container}
+        />
+      </div>
 
-      <EditableStatField
-        label="VIE MAX"
-        value={statsData.pointsDeVieMax}
-        onSave={(value) => handleUpdate({ pointsDeVieMax: value })}
-        min={1}
-        icon={<Heart className="size-4" />}
-      />
+      {/* Ligne 2 : Caractéristiques */}
+      <div className={`grid ${showConstitution ? 'grid-cols-3' : 'grid-cols-2'} gap-2`}>
+        <EditableStatField
+          label="DEXT."
+          value={statsData.dexterite}
+          onSave={(value) => handleUpdate({ dexterite: value ?? 1 })}
+          min={1}
+          icon={<Hand className="size-4" />}
+        />
 
-      <EditableStatField
-        label="VIE"
-        value={statsData.pointsDeVieActuels}
-        onSave={(value) => handleUpdate({ pointsDeVieActuels: value })}
-        min={0}
-        icon={<Heart className="size-4" />}
-        colorClass={pvStyles.text}
-        containerClassName={pvStyles.container}
-      />
+        {showConstitution && (
+          <EditableStatField
+            label="CONST."
+            value={statsData.constitution ?? null}
+            onSave={(value) => handleUpdate({ constitution: value === null ? undefined : value })}
+            min={0}
+            icon={<Shield className="size-4" />}
+            placeholder="-"
+          />
+        )}
+
+        <EditableStatField
+          label="CHANCE"
+          value={statsData.chance}
+          onSave={(value) => handleUpdate({ chance: value ?? 0 })}
+          min={0}
+          icon={<Clover className="size-4" />}
+        />
+      </div>
+
+      {/* Ligne 3 : Réputation (Tome 2 uniquement) */}
+      {showReputation && statsData.reputation !== null && statsData.reputation !== undefined && (
+        <div className="mt-2 bg-card/50 p-3 rounded-lg border border-border/50">
+          <ReputationControl
+            value={statsData.reputation}
+            onChange={(value) => handleUpdate({ reputation: value })}
+          />
+        </div>
+      )}
     </div>
   );
 }

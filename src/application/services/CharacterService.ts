@@ -1,4 +1,4 @@
-import { Character } from '@/src/domain/entities/Character';
+import { Character, type GameMode } from '@/src/domain/entities/Character';
 import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
 import { StatsData } from '@/src/domain/value-objects/Stats';
 import { CharacterNotFoundError } from '@/src/domain/errors/DomainErrors';
@@ -29,8 +29,9 @@ export class CharacterService {
    */
   async createCharacter(data: {
     name: string;
-    book: string;
+    book: number;
     talent: string;
+    gameMode: GameMode;
     stats: StatsData;
   }): Promise<Character> {
     // La logique métier est dans Character.create()
@@ -209,22 +210,6 @@ export class CharacterService {
   }
 
   /**
-   * Basculer la possession d'un objet
-   */
-  async toggleItemPossession(id: string, itemIndex: number): Promise<Character> {
-    const character = await this.repository.findById(id);
-    if (!character) {
-      throw new CharacterNotFoundError(id);
-    }
-
-    const updated = character.toggleItemPossession(itemIndex);
-    
-    await this.repository.save(updated);
-    
-    return updated;
-  }
-
-  /**
    * Supprimer un objet de l'inventaire
    */
   async removeItemFromInventory(id: string, itemIndex: number): Promise<Character> {
@@ -286,6 +271,7 @@ export class CharacterService {
       name: `${original.name} (Copie)`,
       book: original.book,
       talent: original.talent,
+      gameMode: original.gameMode,
       stats: original.getStats(),
     });
 
@@ -297,13 +283,45 @@ export class CharacterService {
   /**
    * Met à jour le livre d'un personnage
    */
-  async updateBook(id: string, newBook: string): Promise<Character> {
+  async updateBook(id: string, newBook: number): Promise<Character> {
     const character = await this.repository.findById(id);
     if (!character) {
       throw new CharacterNotFoundError(id);
     }
 
     const updated = character.updateBook(newBook);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Met à jour les jours écoulés (Tome 2)
+   */
+  async updateDaysElapsed(id: string, days: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new CharacterNotFoundError(id);
+    }
+
+    const updated = character.updateDaysElapsed(days);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Met à jour le paragraphe de prochain réveil (Tome 2)
+   */
+  async updateNextWakeUpParagraph(id: string, paragraph: number | undefined): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new CharacterNotFoundError(id);
+    }
+
+    const updated = character.updateNextWakeUpParagraph(paragraph);
     
     await this.repository.save(updated);
     

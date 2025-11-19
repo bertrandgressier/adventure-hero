@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Coins } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
-import { BookTag, type BookTitle } from '@/components/ui/book-tag';
+import { BookTag, BOOK_TITLES } from '@/components/ui/book-tag';
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const BOOKS: BookTitle[] = [
-  "La Harpe des Quatre Saisons",
-  "La Confrérie de NUADA",
-  "Les Entrailles du temps",
-];
+const BOOKS = [1, 2, 3];
 
 interface CharacterProgressProps {
   characterId: string;
@@ -44,8 +40,8 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
     onUpdate?.();
   };
 
-  const handleUpdateBoulons = async (newValue: number) => {
-    if (!character) return;
+  const handleUpdateBoulons = async (newValue: number | null) => {
+    if (newValue === null || !character) return; // Boulons ne peut pas être null
     const currentBoulons = character.getInventory().boulons;
     const diff = newValue - currentBoulons;
     
@@ -127,30 +123,30 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
                 <BookTag book={characterData.book} />
               </button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md" aria-describedby={undefined}>
               <DialogHeader>
-                <DialogTitle className="font-[var(--font-uncial)] text-2xl text-center mb-4">
+                <DialogTitle className="font-[var(--font-uncial)] text-xl sm:text-2xl text-center mb-2 sm:mb-4">
                   Changer de livre
                 </DialogTitle>
               </DialogHeader>
-              <div className="flex flex-col gap-3">
-                {BOOKS.map((book) => (
+              <div className="flex flex-col gap-2 sm:gap-3">
+                {BOOKS.map((bookId) => (
                   <button
-                    key={book}
+                    key={bookId}
                     onClick={() => {
-                      updateBook(book);
+                      updateBook(bookId);
                       setIsBookDialogOpen(false);
                     }}
-                    className={`p-4 rounded-lg border-2 transition-all text-left ${
-                      characterData.book === book
+                    className={`p-3 sm:p-4 rounded-lg border-2 transition-all text-left ${
+                      characterData.book === bookId
                         ? 'border-primary bg-primary/10'
                         : 'border-transparent hover:border-primary/50 bg-card'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <BookTag book={book} />
-                      <span className="font-[var(--font-merriweather)] text-sm text-light">
-                        {book}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                      <BookTag book={bookId} className="flex-shrink-0" />
+                      <span className="font-[var(--font-merriweather)] text-xs sm:text-sm text-light leading-tight">
+                        {BOOK_TITLES[bookId]}
                       </span>
                     </div>
                   </button>
