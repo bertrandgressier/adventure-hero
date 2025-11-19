@@ -123,7 +123,7 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
                 <BookTag book={characterData.book} />
               </button>
             </DialogTrigger>
-            <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
+            <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md" aria-describedby={undefined}>
               <DialogHeader>
                 <DialogTitle className="font-[var(--font-uncial)] text-xl sm:text-2xl text-center mb-2 sm:mb-4">
                   Changer de livre

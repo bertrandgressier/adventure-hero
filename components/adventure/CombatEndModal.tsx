@@ -44,7 +44,7 @@ export default function CombatEndModal({
   if (status === 'victory') {
     return (
       <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="bg-card border-4 border-primary rounded-lg p-6 sm:p-8 max-w-md w-full text-center">
+        <DialogContent className="bg-card border-4 border-primary rounded-lg p-6 sm:p-8 max-w-md w-full text-center" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="font-[var(--font-uncial)] text-3xl sm:text-4xl text-primary mb-3">
               VICTOIRE !
@@ -74,7 +74,7 @@ export default function CombatEndModal({
   // Défaite
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-card border-4 border-red-500 rounded-lg p-6 sm:p-8 max-w-md w-full text-center">
+      <DialogContent className="bg-card border-4 border-red-500 rounded-lg p-6 sm:p-8 max-w-md w-full text-center" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="font-[var(--font-uncial)] text-3xl sm:text-4xl text-red-400 mb-3">
             DÉFAITE
