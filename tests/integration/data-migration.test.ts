@@ -2,7 +2,7 @@
  * Tests de migration des données
  * 
  * Vérifie que les données existantes en IndexedDB sont 100% compatibles
- * avec la nouvelle architecture Clean Architecture.
+ * avec la nouvelle architecture Clean Architecture et le système de versioning.
  * 
  * GARANTIE: Aucune perte de données lors de la migration.
  */
@@ -14,11 +14,13 @@ import type { CharacterDTO as LegacyCharacter } from '@/src/infrastructure/dto/C
 describe('Migration des données - Compatibilité', () => {
   it('devrait lire les données legacy sans perte', () => {
     // Données existantes dans IndexedDB (format legacy)
-    const legacyData: LegacyCharacter = {
+    const legacyData: any = {
       id: 'abc-123',
       name: 'Gandalf le Gris',
       book: 'La Harpe des Quatre Saisons',
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 2,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-15T14:30:00.000Z',
       stats: {
@@ -55,6 +57,8 @@ describe('Migration des données - Compatibilité', () => {
     expect(character.name).toBe(legacyData.name);
     expect(character.book).toBe(legacyData.book);
     expect(character.talent).toBe(legacyData.talent);
+    expect(character.gameMode).toBe('mortal');
+    expect(character.version).toBe(2);
     expect(character.createdAt).toBe(legacyData.createdAt);
     expect(character.notes).toBe(legacyData.notes);
 
@@ -82,6 +86,7 @@ describe('Migration des données - Compatibilité', () => {
       name: 'Aragorn',
       book: 'La Harpe des Quatre Saisons',
       talent: 'discretion',
+      gameMode: 'simplified',
       stats: {
         dexterite: 8,
         chance: 6,
@@ -127,12 +132,18 @@ describe('Migration des données - Compatibilité', () => {
     expect(data).toHaveProperty('name');
     expect(data).toHaveProperty('book');
     expect(data).toHaveProperty('talent');
+    expect(data).toHaveProperty('gameMode');
+    expect(data).toHaveProperty('version');
     expect(data).toHaveProperty('createdAt');
     expect(data).toHaveProperty('updatedAt');
     expect(data).toHaveProperty('stats');
     expect(data).toHaveProperty('inventory');
     expect(data).toHaveProperty('progress');
     expect(data).toHaveProperty('notes');
+
+    // VÉRIFICATION: gameMode et version
+    expect(data.gameMode).toBe('simplified');
+    expect(data.version).toBe(2);
 
     // VÉRIFICATION: Structure stats
     expect(data.stats).toHaveProperty('dexterite');
@@ -170,6 +181,8 @@ describe('Migration des données - Compatibilité', () => {
       name: 'Frodon',
       book: 'La Harpe des Quatre Saisons',
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 2,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -207,6 +220,8 @@ describe('Migration des données - Compatibilité', () => {
       name: 'Test',
       book: 'La Harpe des Quatre Saisons',
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 2,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -242,6 +257,8 @@ describe('Migration des données - Compatibilité', () => {
       name: 'Test',
       book: 'La Harpe des Quatre Saisons',
       talent: 'instinct',
+      gameMode: 'mortal',
+      version: 2,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
       stats: {
@@ -283,6 +300,8 @@ describe('Migration des données - Compatibilité', () => {
       name: 'Test Complet',
       book: 'La Harpe des Quatre Saisons',
       talent: 'discretion',
+      gameMode: 'mortal',
+      version: 2,
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-15T14:30:00.000Z',
       stats: {

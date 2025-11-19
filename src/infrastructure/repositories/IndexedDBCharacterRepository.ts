@@ -1,12 +1,14 @@
 import { ICharacterRepository } from '@/src/domain/repositories/ICharacterRepository';
 import { Character } from '@/src/domain/entities/Character';
 import { getDB } from '@/src/infrastructure/persistence/indexeddb';
+import { migrateCharacter } from '@/src/infrastructure/persistence/migrations';
 
 /**
  * Implémentation IndexedDB du repository Character.
  * 
  * Adapter qui connecte la couche Domain à la couche Infrastructure.
  * Gère la conversion entre Character (entité) et CharacterData (persistance).
+ * Applique automatiquement les migrations de données au chargement.
  */
 export class IndexedDBCharacterRepository implements ICharacterRepository {
   /**
@@ -22,27 +24,51 @@ export class IndexedDBCharacterRepository implements ICharacterRepository {
   /**
    * Récupère un personnage par son ID.
    * Retourne null si non trouvé.
+   * Applique automatiquement les migrations si nécessaire.
    */
   async findById(id: string): Promise<Character | null> {
     const db = await getDB();
-    const data = await db.get('characters', id);
+    const rawData = await db.get('characters', id);
     
-    if (!data) {
+    if (!rawData) {
       return null;
     }
 
-    return Character.fromData(data);
+    // Migrate data if needed
+    const migratedData = migrateCharacter(rawData);
+    
+    // Save migrated data back to DB if version changed
+    if (migratedData.version !== rawData.version) {
+      await db.put('characters', migratedData);
+    }
+
+    return Character.fromData(migratedData);
   }
 
   /**
    * Récupère tous les personnages.
    * Retourne un tableau vide si aucun personnage.
+   * Applique automatiquement les migrations si nécessaire.
    */
   async findAll(): Promise<Character[]> {
     const db = await getDB();
-    const allData = await db.getAll('characters');
+    const allRawData = await db.getAll('characters');
     
-    return allData.map(data => Character.fromData(data));
+    const characters: Character[] = [];
+    
+    for (const rawData of allRawData) {
+      // Migrate data if needed
+      const migratedData = migrateCharacter(rawData);
+      
+      // Save migrated data back to DB if version changed
+      if (migratedData.version !== rawData.version) {
+        await db.put('characters', migratedData);
+      }
+      
+      characters.push(Character.fromData(migratedData));
+    }
+    
+    return characters;
   }
 
   /**
