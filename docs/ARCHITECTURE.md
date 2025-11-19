@@ -147,6 +147,8 @@ interface Character {
   name: string;
   book: string;
   talent: string;  // Artisan, Explorateur, Guerrier, Magicien, Négociant, Voleur
+  gameMode: 'narrative' | 'simplified' | 'mortal';  // Mode de jeu
+  version: number;           // Version du modèle de données (migration)
   createdAt: string;
   updatedAt: string;
   
@@ -183,6 +185,15 @@ interface Character {
   // Notes
   notes: string;
 }
+```
+
+### Modes de Jeu
+
+- **Narratif** (`narrative`) : Mode histoire sans combat, victoire automatique
+- **Simplifié** (`simplified`) : Mode normal avec sauvegardes manuelles autorisées (copie de personnage)
+- **Mortel** (`mortal`) : Mode hardcore, une seule vie, pas de sauvegarde manuelle
+
+```typescript
 ```
 
 ### Combat
@@ -332,3 +343,98 @@ Save Updated Character → Show End Modal
 - Contraste des couleurs
 - Tailles de touch targets (44x44px minimum)
 - Screen reader support
+
+## Migration de Données
+
+### Versioning Pattern
+
+Le projet utilise un système de versioning et migration inspiré du pattern de Zustand `persist` middleware. Chaque personnage possède un champ `version: number` permettant de migrer automatiquement les données lors de changements de structure.
+
+### Architecture de Migration
+
+```typescript
+// src/infrastructure/persistence/migrations.ts
+export const CURRENT_VERSION = 2;
+
+interface Migration {
+  version: number;
+  migrate: (data: any) => any;
+}
+
+// Registre des migrations (ordre chronologique)
+export const migrations: Migration[] = [
+  {
+    version: 2,
+    migrate: (data) => ({
+      ...data,
+      gameMode: data.gameMode ?? 'mortal',
+      version: 2,
+    }),
+  },
+  // Futures migrations ici
+];
+
+export function migrateCharacter(data: any): any {
+  const currentVersion = data.version ?? 1;
+  
+  if (currentVersion >= CURRENT_VERSION) {
+    return data;
+  }
+  
+  // Applique toutes les migrations nécessaires
+  return migrations
+    .filter(m => m.version > currentVersion)
+    .sort((a, b) => a.version - b.version)
+    .reduce((acc, migration) => migration.migrate(acc), data);
+}
+```
+
+### Flux de Migration
+
+```text
+IndexedDB Read → Raw Data (version 1 ou undefined)
+    ↓
+migrateCharacter(data)
+    ↓
+Apply migrations v1→v2, v2→v3, etc.
+    ↓
+Return migrated data (version: CURRENT_VERSION)
+    ↓
+CharacterDTO.fromPersistence()
+    ↓
+Domain Entity (Character)
+```
+
+### Exemple de Migration v1 → v2
+
+**Avant (v1)** :
+
+```json
+{
+  "id": "123",
+  "name": "Aragorn",
+  "stats": { "dexterite": 7, "chance": 4 }
+  // Pas de champ gameMode ni version
+}
+```
+
+**Après (v2)** :
+
+```json
+{
+  "id": "123",
+  "name": "Aragorn",
+  "stats": { "dexterite": 7, "chance": 4 },
+  "gameMode": "mortal",
+  "version": 2
+}
+```
+
+### Règles de Migration
+
+1. **Toujours incrémenter `CURRENT_VERSION`** quand la structure `Character` change
+2. **Créer une migration** dans `migrations.ts` avec fonction `migrate()`
+3. **Rétrocompatibilité** : Assigner des valeurs par défaut pour nouveaux champs
+4. **Tests obligatoires** : Tester migration avec données legacy dans `data-migration.test.ts`
+5. **Documentation** : Mettre à jour `CHANGELOG_USER.md` pour changements breaking
+
