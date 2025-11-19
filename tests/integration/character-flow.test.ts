@@ -206,6 +206,28 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
     expect(progress?.history).toEqual([1, 42, 105]);
   });
 
+  it('devrait persister les notes', async () => {
+    const character = await service.createCharacter({
+      name: 'Bilbo',
+      book: 'La Harpe des Quatre Saisons',
+      talent: 'discretion',
+      stats: {
+        dexterite: 6,
+        chance: 9,
+        chanceInitiale: 9,
+        pointsDeVieMax: 24,
+        pointsDeVieActuels: 24,
+      },
+    });
+
+    // Mettre à jour les notes
+    await service.updateNotes(character.id, 'Attention aux dragons !');
+
+    // Vérifier persistance
+    const retrieved = await service.getCharacter(character.id);
+    expect(retrieved?.notes).toBe('Attention aux dragons !');
+  });
+
   it('devrait lister plusieurs personnages', async () => {
     // Créer 3 personnages
     await service.createCharacter({
