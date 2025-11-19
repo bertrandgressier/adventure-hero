@@ -2,6 +2,11 @@ import { Stats, StatsData } from '../value-objects/Stats';
 import { Inventory, InventoryData } from '../value-objects/Inventory';
 
 /**
+ * Game Mode Types
+ */
+export type GameMode = 'narrative' | 'simplified' | 'mortal';
+
+/**
  * Progress - Value Object
  * Représente la progression dans le livre
  */
@@ -59,6 +64,8 @@ export interface CharacterData {
   name: string;
   book: string;
   talent: string;
+  gameMode: GameMode;
+  version: number;
   createdAt: string;
   updatedAt: string;
   stats: StatsData;
@@ -73,6 +80,8 @@ export class Character {
     private _name: string,
     public readonly book: string,
     public readonly talent: string,
+    public readonly gameMode: GameMode,
+    public readonly version: number,
     public readonly createdAt: string,
     public readonly updatedAt: string,
     private stats: Stats,
@@ -111,6 +120,8 @@ export class Character {
       newName.trim(),
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -129,6 +140,8 @@ export class Character {
       this._name,
       newBook,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -149,6 +162,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -169,6 +184,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -189,6 +206,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -209,6 +228,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       updatedStats,
@@ -229,6 +250,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -249,6 +272,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -269,6 +294,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -289,6 +316,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -309,6 +338,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -329,6 +360,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -349,6 +382,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -369,6 +404,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -387,6 +424,8 @@ export class Character {
       this._name,
       this.book,
       this.talent,
+      this.gameMode,
+      this.version,
       this.createdAt,
       new Date().toISOString(),
       this.stats,
@@ -448,6 +487,8 @@ export class Character {
       name: this._name,
       book: this.book,
       talent: this.talent,
+      gameMode: this.gameMode,
+      version: this.version,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       stats: this.stats.toData(),
@@ -466,6 +507,8 @@ export class Character {
       data.name,
       data.book,
       data.talent,
+      data.gameMode,
+      data.version,
       data.createdAt,
       data.updatedAt,
       Stats.fromData(data.stats),
@@ -482,6 +525,7 @@ export class Character {
     name: string;
     book: string;
     talent: string;
+    gameMode: GameMode;
     stats: StatsData;
   }): Character {
     const now = new Date().toISOString();
@@ -492,6 +536,8 @@ export class Character {
       data.name.trim(),
       data.book,
       data.talent,
+      data.gameMode,
+      2, // CURRENT_VERSION
       now,
       now,
       Stats.fromData(data.stats),

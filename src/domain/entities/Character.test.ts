@@ -8,6 +8,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -20,6 +21,8 @@ describe('Character', () => {
       expect(character.name).toBe('Aragorn');
       expect(character.book).toBe('La Harpe des Quatre Saisons');
       expect(character.talent).toBe('instinct');
+      expect(character.gameMode).toBe('mortal');
+      expect(character.version).toBe(2);
       expect(character.id).toBeTruthy();
       expect(character.createdAt).toBeTruthy();
     });
@@ -29,6 +32,7 @@ describe('Character', () => {
         name: '  Aragorn  ',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'simplified',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -47,6 +51,7 @@ describe('Character', () => {
           name: '   ',
           book: 'La Harpe des Quatre Saisons',
           talent: 'instinct',
+          gameMode: 'narrative',
           stats: {
             dexterite: 7,
             chance: 5,
@@ -65,6 +70,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -85,6 +91,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -106,6 +113,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -128,6 +136,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -147,6 +156,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -168,6 +178,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -193,6 +204,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -214,6 +226,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -238,6 +251,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -262,6 +276,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -281,6 +296,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -302,6 +318,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -324,6 +341,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -341,6 +359,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -360,6 +379,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
@@ -382,6 +402,7 @@ describe('Character', () => {
         name: 'Aragorn',
         book: 'La Harpe des Quatre Saisons',
         talent: 'instinct',
+        gameMode: 'mortal',
         stats: {
           dexterite: 7,
           chance: 5,
