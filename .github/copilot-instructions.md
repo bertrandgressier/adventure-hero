@@ -26,6 +26,8 @@
 **Character Model** - Based on official book character sheet:
 ```typescript
 interface Character {
+  gameMode: 'narrative' | 'simplified' | 'mortal';  // Game difficulty mode
+  version: number;                                   // Data model version (migration)
   stats: {
     habilete: number;           // Combat skill
     endurance: number;          // Health points
@@ -46,6 +48,12 @@ interface Character {
     history: number[];
   };
 }
+```
+
+**Game Modes**:
+- **Narrative** (`narrative`): Story mode, auto-win combats
+- **Simplified** (`simplified`): Normal mode with manual saves allowed (character copy)
+- **Mortal** (`mortal`): Hardcore mode, one life, no manual saves
 ```
 
 ### Combat System (see `docs/COMBAT.md`)
@@ -178,6 +186,13 @@ When adding features, update:
 - `docs/COMBAT.md` or `docs/CHARACTER_SHEET.md` - Game mechanics (if applicable)
 
 ## Common Patterns
+
+### Data Migration
+1. **Increment `CURRENT_VERSION`** in `src/infrastructure/persistence/migrations.ts` when `Character` structure changes
+2. **Create migration** in `migrations` array with `migrate()` function
+3. **Default values** for backward compatibility (e.g., `gameMode: 'mortal'` for v1 characters)
+4. **Test migration** in `tests/integration/data-migration.test.ts` with legacy data
+5. **Update `CHANGELOG_USER.md`** for breaking changes
 
 ### Adding a New Character Stat
 1. Update `Character` interface in `lib/types/character.ts`
