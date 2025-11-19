@@ -2,8 +2,10 @@
 
 import { useCallback } from 'react';
 import Link from 'next/link';
+import { Copy, Trash2, Swords, Hand, Clover, Heart } from 'lucide-react';
 import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { BookTag } from '@/components/ui/book-tag';
+import { Button } from '@/components/ui/button';
 import type { Character } from '@/src/domain/entities/Character';
 
 export default function CharactersPage() {
@@ -109,90 +111,85 @@ export default function CharactersPage() {
                     : 'bg-card glow-border hover:bg-card/80'
                 }`}
               >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
-                        {characterData.name}
-                      </h3>
+                <div className="flex items-start justify-between gap-2 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="truncate font-[var(--font-uncial)] text-2xl tracking-wide text-light mb-1" title={characterData.name}>
+                      {characterData.name}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-1.5 text-sm text-muted-light font-[var(--font-merriweather)]">
                       {isDead(character) && (
-                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-600 text-white rounded-full text-sm font-bold shadow-lg">
-                          <span className="text-lg">💀</span> DÉCÉDÉ
+                        <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 bg-destructive text-destructive-foreground rounded-full text-xs shadow-sm" title="Décédé">
+                          💀
                         </span>
                       )}
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="font-[var(--font-merriweather)] text-light font-semibold">
-                        Talent : <span className="text-primary">{characterData.talent}</span>
-                      </span>
-                      <span className="text-muted-light">•</span>
                       <BookTag book={characterData.book} />
+                      <span className="whitespace-nowrap">
+                        • <span className="font-[var(--font-geist-mono)] text-primary">§{progress.currentParagraph}</span>
+                      </span>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDuplicate(character)}
-                      className="text-xl hover:scale-110 transition-transform text-muted-light hover:text-primary"
+                      className="h-11 w-11 text-muted-light hover:text-primary hover:bg-primary/10 transition-all hover:scale-110"
                       title="Dupliquer le personnage"
                     >
-                      📋
-                    </button>
-                    <button
+                      <Copy className="size-5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDelete(character.id, character.name)}
-                      className="text-xl hover:scale-110 transition-transform text-muted-light hover:text-destructive"
+                      className="h-11 w-11 text-muted-light hover:text-destructive hover:bg-destructive/10 transition-all hover:scale-110"
                       title="Supprimer le personnage"
                     >
-                      🗑️
-                    </button>
-                    <Link
-                      href={`/characters/${character.id}`}
-                      className="text-3xl hover:scale-110 transition-transform"
+                      <Trash2 className="size-5" />
+                    </Button>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="h-11 w-11 text-muted-light hover:text-primary hover:bg-primary/10 transition-all hover:scale-110"
                       title="Voir la fiche"
                     >
-                      ⚔️
-                    </Link>
+                      <Link href={`/characters/${character.id}`}>
+                        <Swords className="size-6" />
+                      </Link>
+                    </Button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="bg-background border border-primary/20 rounded-lg p-4 text-center">
-                    <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
-                      DEXTÉRITÉ
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]">
+                    <div className="flex items-center gap-1.5 text-muted-light mb-1">
+                      <Hand className="size-4" />
+                      <span className="text-[10px] uppercase font-bold tracking-wider">Dext.</span>
                     </div>
-                    <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
+                    <div className="font-[var(--font-geist-mono)] text-2xl font-bold text-light">
                       {stats.dexterite}
                     </div>
                   </div>
-                  <div className="bg-background border border-primary/20 rounded-lg p-4 text-center">
-                    <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
-                      CHANCE
+                  <div className="bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]">
+                    <div className="flex items-center gap-1.5 text-muted-light mb-1">
+                      <Clover className="size-4" />
+                      <span className="text-[10px] uppercase font-bold tracking-wider">Chance</span>
                     </div>
-                    <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
+                    <div className="font-[var(--font-geist-mono)] text-2xl font-bold text-light">
                       {stats.chance}
                     </div>
                   </div>
-                  <div className="bg-background border border-primary/20 rounded-lg p-4 text-center">
-                    <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
-                      POINTS DE VIE
+                  <div className="bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]">
+                    <div className="flex items-center gap-1.5 text-muted-light mb-1">
+                      <Heart className="size-4" />
+                      <span className="text-[10px] uppercase font-bold tracking-wider">Vie</span>
                     </div>
-                    <div className="font-[var(--font-geist-mono)] text-3xl font-bold text-light">
-                      {stats.pointsDeVieActuels}<span className="text-xl text-muted-light">/{stats.pointsDeVieMax}</span>
+                    <div className="font-[var(--font-geist-mono)] font-bold text-light flex items-baseline justify-center gap-0.5">
+                      <span className="text-2xl">{stats.pointsDeVieActuels}</span>
+                      <span className="text-sm text-muted-light">/{stats.pointsDeVieMax}</span>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-primary/20">
-                  <div className="flex items-center gap-2 text-sm text-muted-light">
-                    <span className="font-[var(--font-geist-mono)]">§{progress.currentParagraph}</span>
-                    <span>•</span>
-                    <span>{new Date(characterData.updatedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                  </div>
-                  <Link
-                    href={`/characters/${character.id}`}
-                    className="font-[var(--font-merriweather)] text-sm text-light hover:text-primary transition-colors font-semibold"
-                  >
-                    Voir la fiche →
-                  </Link>
                 </div>
               </div>
             );
