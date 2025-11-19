@@ -143,7 +143,7 @@ export default function CharacterDetail() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#1a140f] p-4">
+      <main className="min-h-screen bg-background p-4">
         <div className="max-w-4xl mx-auto py-8">
           <p className="text-muted-light text-center py-8">Chargement...</p>
         </div>
@@ -156,7 +156,7 @@ export default function CharacterDetail() {
   }
 
   return (
-    <main className="min-h-screen bg-[#1a140f] p-4">
+    <main className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto py-8 space-y-6">
         {/* En-tête */}
         <div className="flex items-center justify-between">
@@ -176,7 +176,7 @@ export default function CharacterDetail() {
                   onKeyDown={handleNameKeyDown}
                   autoFocus
                   onFocus={(e) => e.target.select()}
-                  className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] bg-[#1a140f] border-2 border-primary rounded px-2 py-1 focus:outline-none focus:border-yellow-400"
+                  className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-primary bg-background border-2 border-primary rounded px-2 py-1 focus:outline-none focus:border-primary"
                 />
                 <button
                   onClick={handleNameSave}
@@ -194,7 +194,7 @@ export default function CharacterDetail() {
             ) : (
               <h1 
                 onClick={handleNameClick}
-                className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-2 cursor-pointer hover:text-yellow-400 transition-colors"
+                className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-primary mb-2 cursor-pointer hover:text-primary/80 transition-colors"
               >
                 {character.name}
               </h1>
@@ -217,7 +217,7 @@ export default function CharacterDetail() {
           </button>
           <button
             onClick={() => setShowDiceModal(true)}
-            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-[#000000] font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
+            className="bg-gradient-to-br from-primary to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3"
             title="Lancer les dés"
           >
             <span className="text-2xl">🎲</span>
@@ -226,7 +226,7 @@ export default function CharacterDetail() {
         </div>
 
         {/* Stats Section */}
-        <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+        <div className="bg-card glow-border rounded-lg p-6">
           <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Caractéristiques</h2>
           <CharacterStats characterId={id} />
         </div>
@@ -248,7 +248,7 @@ export default function CharacterDetail() {
 
         {/* Notes Section */}
         {character.notes && (
-          <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+          <div className="bg-card glow-border rounded-lg p-6">
             <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Notes</h2>
             <p className="font-[var(--font-merriweather)] text-light whitespace-pre-wrap">{character.notes}</p>
           </div>
@@ -287,6 +287,7 @@ export default function CharacterDetail() {
             mode={combatMode}
             firstAttacker={firstAttacker}
             onCombatEnd={handleCombatEnd}
+            onClose={() => setShowCombat(false)}
           />
         )}
 

@@ -47,7 +47,7 @@ export default function CharacterInventory({
 
   if (isLoading) {
     return (
-      <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+      <div className="bg-card glow-border rounded-lg p-6">
         <p className="text-muted-light text-center">Chargement...</p>
       </div>
     );
@@ -55,7 +55,7 @@ export default function CharacterInventory({
 
   if (error) {
     return (
-      <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+      <div className="bg-card glow-border rounded-lg p-6">
         <p className="text-red-400 text-center">Erreur: {error}</p>
       </div>
     );
@@ -63,7 +63,7 @@ export default function CharacterInventory({
 
   if (!character) {
     return (
-      <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+      <div className="bg-card glow-border rounded-lg p-6">
         <p className="text-muted-light text-center">Personnage non trouvé</p>
       </div>
     );
@@ -73,7 +73,7 @@ export default function CharacterInventory({
   const items = inventory.items;
 
   return (
-    <div className="bg-[#2a1e17] glow-border rounded-lg p-6">
+    <div className="bg-card glow-border rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light">
           Inventaire
@@ -93,13 +93,13 @@ export default function CharacterInventory({
           {items.map((item, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 bg-[#1a140f] rounded-lg p-3 group hover:bg-[#1a140f]/80 transition-colors"
+              className="flex items-center gap-3 bg-background rounded-lg p-3 group hover:bg-background/80 transition-colors"
             >
               <input
                 type="checkbox"
                 checked={item.possessed}
                 onChange={() => handleToggleItem(index)}
-                className="w-5 h-5 rounded border-2 border-primary/30 bg-[#2a1e17] checked:bg-primary checked:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
+                className="w-5 h-5 rounded border-2 border-primary/30 bg-card checked:bg-primary checked:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
               />
               <span
                 className={`flex-1 font-[var(--font-merriweather)] ${

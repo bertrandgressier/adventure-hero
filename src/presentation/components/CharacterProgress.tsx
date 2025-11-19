@@ -1,7 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
+import { BookTag, type BookTitle } from '@/components/ui/book-tag';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+const BOOKS: BookTitle[] = [
+  "La Harpe des Quatre Saisons",
+  "La Confrérie de NUADA",
+  "Les Entrailles du temps",
+];
 
 interface CharacterProgressProps {
   characterId: string;
@@ -20,7 +35,8 @@ interface CharacterProgressProps {
  * - Date de dernière mise à jour
  */
 export default function CharacterProgress({ characterId, onUpdate }: CharacterProgressProps) {
-  const { character, isLoading, error, goToParagraph, addBoulons, removeBoulons } = useCharacter(characterId);
+  const { character, isLoading, error, goToParagraph, addBoulons, removeBoulons, updateBook } = useCharacter(characterId);
+  const [isBookDialogOpen, setIsBookDialogOpen] = useState(false);
 
   const handleUpdateProgress = async (paragraph: number) => {
     await goToParagraph(paragraph);
@@ -71,8 +87,8 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Paragraphe actuel */}
-      <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-2">
+      <div className="bg-background border border-primary/20 rounded-lg p-4">
+        <div className="flex items-center justify-between mb-4">
           <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light">
             PARAGRAPHE
           </div>
@@ -86,35 +102,71 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
             })}
           </div>
         </div>
-        <div
-          onClick={() => {
-            const newParagraph = prompt('Nouveau paragraphe:', progressData.currentParagraph.toString());
-            if (newParagraph) {
-              const value = parseInt(newParagraph);
-              if (!isNaN(value) && value >= 1) {
-                handleUpdateProgress(value);
+
+        <div className="flex items-center justify-between gap-4">
+          <div
+            onClick={() => {
+              const newParagraph = prompt('Nouveau paragraphe:', progressData.currentParagraph.toString());
+              if (newParagraph) {
+                const value = parseInt(newParagraph);
+                if (!isNaN(value) && value >= 1) {
+                  handleUpdateProgress(value);
+                }
               }
-            }
-          }}
-          className="font-[var(--font-geist-mono)] text-3xl text-primary hover:text-yellow-300 cursor-pointer transition-colors"
-          title="Cliquer pour modifier"
-        >
-          #{progressData.currentParagraph}
+            }}
+            className="font-[var(--font-geist-mono)] text-4xl text-primary hover:text-yellow-300 cursor-pointer transition-colors"
+            title="Cliquer pour modifier"
+          >
+            #{progressData.currentParagraph}
+          </div>
+
+          <Dialog open={isBookDialogOpen} onOpenChange={setIsBookDialogOpen}>
+            <DialogTrigger asChild>
+              <button className="hover:scale-105 transition-transform">
+                <BookTag book={characterData.book} />
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="font-[var(--font-uncial)] text-2xl text-center mb-4">
+                  Changer de livre
+                </DialogTitle>
+              </DialogHeader>
+              <div className="flex flex-col gap-3">
+                {BOOKS.map((book) => (
+                  <button
+                    key={book}
+                    onClick={() => {
+                      updateBook(book);
+                      setIsBookDialogOpen(false);
+                    }}
+                    className={`p-4 rounded-lg border-2 transition-all text-left ${
+                      characterData.book === book
+                        ? 'border-primary bg-primary/10'
+                        : 'border-transparent hover:border-primary/50 bg-card'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <BookTag book={book} />
+                      <span className="font-[var(--font-merriweather)] text-sm text-light">
+                        {book}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
       {/* Boulons */}
-      <div className="bg-[#1a140f] glow-border rounded-lg p-4">
-        <div className="font-[var(--font-merriweather)] text-sm text-muted-light mb-2">
-          Boulons 🪙
-        </div>
-        <EditableStatField
-          label=""
-          value={inventoryData.boulons}
-          onSave={handleUpdateBoulons}
-          min={0}
-        />
-      </div>
+      <EditableStatField
+        label="Boulons 🪙"
+        value={inventoryData.boulons}
+        onSave={handleUpdateBoulons}
+        min={0}
+      />
     </div>
   );
 }

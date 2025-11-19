@@ -6,6 +6,12 @@ import type { Enemy, CombatState, CombatMode } from '@/src/domain/types/combat';
 import { CombatService } from '@/src/domain/services/CombatService';
 import CombatRoundDisplay from './CombatRoundDisplay';
 import { trackCombatStart } from '@/src/infrastructure/analytics/tracking';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CombatInterfaceProps {
   character: CharacterDTO;
@@ -13,14 +19,16 @@ interface CombatInterfaceProps {
   mode: CombatMode;
   firstAttacker: 'player' | 'enemy';
   onCombatEnd: (status: 'victory' | 'defeat', finalEndurance: number, roundsCount: number) => void;
+  onClose?: () => void;
 }
 
 export default function CombatInterface({
   character,
   enemy: initialEnemy,
-  mode,
+  mode: initialMode,
   firstAttacker,
-  onCombatEnd
+  onCombatEnd,
+  onClose
 }: CombatInterfaceProps) {
   const [combatState, setCombatState] = useState<CombatState>({
     enemy: { ...initialEnemy },
@@ -31,10 +39,21 @@ export default function CombatInterface({
     nextAttacker: firstAttacker
   });
 
+  const [currentMode, setCurrentMode] = useState<CombatMode>(initialMode);
   const [isRolling, setIsRolling] = useState(false);
   const [showEndButton, setShowEndButton] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
   const combatTrackedRef = useRef(false); // Pour tracker le début une seule fois
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Nettoyage des timers au démontage
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // Tracker le début du combat
   useEffect(() => {
@@ -51,7 +70,9 @@ export default function CombatInterface({
     setIsRolling(true);
 
     // Simuler un délai pour l'animation des dés
-    setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
       const playerWeaponPoints = character.inventory.weapon?.attackPoints || 0;
       const roundNumber = combatState.rounds.length + 1;
 
@@ -81,66 +102,75 @@ export default function CombatInterface({
       }));
       
       setIsRolling(false);
-    }, mode === 'auto' ? 1500 : 0);
+    }, currentMode === 'auto' ? 1000 : 0);
   };
 
   // Scroll automatique vers le bas à chaque nouveau round
   useEffect(() => {
     if (historyRef.current && combatState.rounds.length > 0) {
-      historyRef.current.scrollTop = historyRef.current.scrollHeight;
+      // Utiliser setTimeout pour s'assurer que le DOM est mis à jour
+      setTimeout(() => {
+        if (historyRef.current) {
+          historyRef.current.scrollTop = historyRef.current.scrollHeight;
+        }
+      }, 100);
     }
   }, [combatState.rounds.length]);
 
   // Mode automatique : lancer les rounds automatiquement
   useEffect(() => {
-    if (mode === 'auto' && combatState.status === 'ongoing' && !isRolling && !showEndButton) {
+    if (currentMode === 'auto' && combatState.status === 'ongoing' && !isRolling && !showEndButton) {
       const timer = setTimeout(() => {
         executeRound();
       }, 1000);
       return () => clearTimeout(timer);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, combatState.status, combatState.rounds.length, isRolling, showEndButton]);
+  }, [currentMode, combatState.status, combatState.rounds.length, isRolling, showEndButton]);
 
   // Vérifier la fin du combat
   useEffect(() => {
     if (combatState.playerEndurance <= 0 || combatState.enemyEndurance <= 0) {
       setShowEndButton(true);
+      setCurrentMode('manual'); // Stop auto mode on end
     }
   }, [combatState.playerEndurance, combatState.enemyEndurance]);
 
   const playerWeaponName = character.inventory.weapon?.name || 'Aucune';
   const playerWeaponPoints = character.inventory.weapon?.attackPoints || 0;
 
-  return (
-    <div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-[#2a1e17] border-2 border-primary rounded-lg p-6 max-w-4xl w-full my-4">
-        {/* En-tête */}
-        <h2 className="font-[var(--font-uncial)] text-3xl text-primary text-center mb-6">
-          ⚔️ COMBAT EN COURS ⚔️
-        </h2>
+  const handleEndCombat = () => {
+    if (combatState.playerEndurance <= 0) {
+      setCombatState(prev => ({ ...prev, status: 'defeat' }));
+      onCombatEnd('defeat', 0, combatState.rounds.length);
+    } else if (combatState.enemyEndurance <= 0) {
+      setCombatState(prev => ({ ...prev, status: 'victory' }));
+      onCombatEnd('victory', combatState.playerEndurance, combatState.rounds.length);
+    }
+  };
 
-        {/* Indicateur de tour */}
-        {combatState.status === 'ongoing' && (
-          <div className="text-center mb-4">
-            <p className="font-[var(--font-uncial)] text-lg">
-              {combatState.nextAttacker === 'player' ? (
-                <span className="text-green-400">🛡️ Votre tour</span>
-              ) : (
-                <span className="text-red-400">⚔️ Tour de {combatState.enemy.name}</span>
-              )}
-            </p>
-          </div>
-        )}
+  return (
+    <Dialog open={true} onOpenChange={(open) => !open && onClose && onClose()}>
+      <DialogContent className="max-w-4xl w-full bg-card border-2 border-primary p-4 h-[90vh] flex flex-col sm:max-w-4xl">
+        <DialogHeader className="shrink-0">
+          <DialogTitle className="font-[var(--font-uncial)] text-2xl text-primary text-center mb-2">
+            ⚔️ COMBAT EN COURS ⚔️
+          </DialogTitle>
+        </DialogHeader>
 
         {/* Stats des combattants */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-3 mb-4 shrink-0">
           {/* Joueur */}
-          <div className="bg-[#1a140f] border-2 border-green-500/50 rounded-lg p-4">
-            <h3 className="font-[var(--font-uncial)] text-xl text-primary mb-3">
+          <div className={`bg-background border-2 rounded-lg p-3 transition-all duration-300 ${
+            combatState.nextAttacker === 'player' && combatState.status === 'ongoing'
+              ? 'border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)] scale-[1.02] z-10' 
+              : 'border-green-500/30 opacity-70 grayscale-[0.3]'
+          }`}>
+            <h3 className="font-[var(--font-uncial)] text-lg text-primary mb-2 truncate flex items-center gap-2">
+              {combatState.nextAttacker === 'player' && combatState.status === 'ongoing' && <span className="text-green-500 animate-pulse">▶</span>}
               {character.name}
             </h3>
-            <div className="space-y-2 font-[var(--font-geist-mono)] text-sm">
+            <div className="space-y-1 font-[var(--font-geist-mono)] text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-light">DEXTÉRITÉ:</span>
                 <span className="text-light font-bold">{character.stats.dexterite}</span>
@@ -157,7 +187,7 @@ export default function CombatInterface({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-light">ARME:</span>
-                <span className="text-primary font-bold">
+                <span className="text-primary font-bold truncate ml-2">
                   {playerWeaponName} (+{playerWeaponPoints})
                 </span>
               </div>
@@ -165,11 +195,16 @@ export default function CombatInterface({
           </div>
 
           {/* Ennemi */}
-          <div className="bg-[#1a140f] border-2 border-red-500/50 rounded-lg p-4">
-            <h3 className="font-[var(--font-uncial)] text-xl text-primary mb-3">
+          <div className={`bg-background border-2 rounded-lg p-3 transition-all duration-300 ${
+            combatState.nextAttacker === 'enemy' && combatState.status === 'ongoing'
+              ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)] scale-[1.02] z-10' 
+              : 'border-red-500/30 opacity-70 grayscale-[0.3]'
+          }`}>
+            <h3 className="font-[var(--font-uncial)] text-lg text-primary mb-2 truncate flex items-center gap-2 justify-end">
               {combatState.enemy.name}
+              {combatState.nextAttacker === 'enemy' && combatState.status === 'ongoing' && <span className="text-red-500 animate-pulse">◀</span>}
             </h3>
-            <div className="space-y-2 font-[var(--font-geist-mono)] text-sm">
+            <div className="space-y-1 font-[var(--font-geist-mono)] text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-light">DEXTÉRITÉ:</span>
                 <span className="text-light font-bold">{combatState.enemy.dexterite}</span>
@@ -194,96 +229,98 @@ export default function CombatInterface({
           </div>
         </div>
 
-        {/* Historique des rounds */}
-        <div ref={historyRef} className="bg-[#1a140f] rounded-lg p-4 mb-4 max-h-96 overflow-y-auto scroll-smooth">
-          <h3 className="font-[var(--font-uncial)] text-lg text-primary mb-3 flex items-center justify-between">
-            <span>Historique des rounds</span>
+        {/* Historique des rounds - Zone flexible avec scroll */}
+        <div className="flex-1 min-h-0 bg-background rounded-lg p-3 mb-4 flex flex-col border border-primary/20">
+          <h3 className="font-[var(--font-uncial)] text-base text-primary mb-2 flex items-center justify-between shrink-0">
+            <span>Historique</span>
             {combatState.rounds.length > 0 && (
-              <span className="text-sm font-[var(--font-geist-mono)] text-muted-light">
+              <span className="text-xs font-[var(--font-geist-mono)] text-muted-light">
                 {combatState.rounds.length} assaut{combatState.rounds.length > 1 ? 's' : ''}
               </span>
             )}
           </h3>
-          {combatState.rounds.length === 0 ? (
-            <p className="font-[var(--font-merriweather)] text-muted-light text-center py-4">
-              Aucun round pour le moment
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {combatState.rounds.map((round, index) => (
+          
+          <div ref={historyRef} className="flex-1 overflow-y-auto pr-1 space-y-2 scroll-smooth">
+            {combatState.rounds.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <p className="font-[var(--font-merriweather)] text-muted-light text-sm italic">
+                  Le combat commence...
+                </p>
+              </div>
+            ) : (
+              combatState.rounds.map((round, index) => (
                 <CombatRoundDisplay
                   key={index}
                   round={round}
                   playerName={character.name}
                   enemyName={combatState.enemy.name}
                 />
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </div>
 
-        {/* Boutons d'action */}
-        <div className="flex gap-3">
-          {mode === 'manual' ? (
+        {/* Boutons d'action - Fixe en bas */}
+        <div className="shrink-0 space-y-3">
+          {showEndButton ? (
             <button
-              onClick={() => {
-                if (showEndButton) {
-                  // Afficher le résultat
-                  if (combatState.playerEndurance <= 0) {
-                    setCombatState(prev => ({ ...prev, status: 'defeat' }));
-                    onCombatEnd('defeat', 0, combatState.rounds.length);
-                  } else if (combatState.enemyEndurance <= 0) {
-                    setCombatState(prev => ({ ...prev, status: 'victory' }));
-                    onCombatEnd('victory', combatState.playerEndurance, combatState.rounds.length);
-                  }
-                } else {
-                  // Lancer un round
-                  executeRound();
-                }
-              }}
-              disabled={isRolling || combatState.status !== 'ongoing'}
-              className={`flex-1 font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                showEndButton 
-                  ? 'bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#000000] shadow-lg shadow-[#FFBF00]/50 animate-bounce'
-                  : 'bg-gradient-to-r from-[#FFBF00] to-[#FFD700] hover:from-[#FFD700] hover:to-[#FFBF00] text-[#000000] shadow-md hover:shadow-lg'
-              }`}
-            >
-              {isRolling ? '⏳ Lancer en cours...' : showEndButton ? '✓ Voir le résultat' : '🎲 Lancer les dés'}
-            </button>
-          ) : (
-            <div className="flex-1 bg-[#1a140f] border border-primary/50 text-primary font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg text-center">
-              {isRolling ? '⏳ Round en cours...' : '⚡ Mode automatique actif'}
-            </div>
-          )}
-        </div>
-
-        {/* Info mode */}
-        <p className="text-xs text-muted-light text-center mt-3 font-[var(--font-merriweather)]">
-          Mode {mode === 'auto' ? 'automatique' : 'manuel'} • 
-          Round #{combatState.rounds.length + 1}
-        </p>
-
-        {/* Bouton pour afficher le résultat en mode auto */}
-        {showEndButton && mode === 'auto' && (
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={() => {
-                if (combatState.playerEndurance <= 0) {
-                  setCombatState(prev => ({ ...prev, status: 'defeat' }));
-                  onCombatEnd('defeat', 0, combatState.rounds.length);
-                } else if (combatState.enemyEndurance <= 0) {
-                  setCombatState(prev => ({ ...prev, status: 'victory' }));
-                  onCombatEnd('victory', combatState.playerEndurance, combatState.rounds.length);
-                }
-              }}
-              className="bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#000000] font-cinzel px-8 py-6 text-lg shadow-lg shadow-[#FFBF00]/50 animate-bounce"
+              onClick={handleEndCombat}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold px-6 py-4 rounded-lg text-xl shadow-lg shadow-primary/50 animate-bounce transition-all"
             >
               ✓ Voir le résultat
             </button>
-          </div>
-        )}
-      </div>
-    </div>
+          ) : (
+            <div className="flex gap-3">
+              {/* Bouton Toggle Auto */}
+              <button
+                onClick={() => setCurrentMode(prev => prev === 'auto' ? 'manual' : 'auto')}
+                disabled={combatState.status !== 'ongoing' || showEndButton}
+                className={`px-4 py-3 rounded-lg font-[var(--font-uncial)] font-bold text-sm transition-all border-2 flex flex-col items-center justify-center min-w-[80px] ${
+                  currentMode === 'auto'
+                    ? 'bg-primary/20 border-primary text-primary shadow-[0_0_10px_hsl(var(--primary)/0.3)]'
+                    : 'bg-background border-muted-light/30 text-muted-light hover:border-primary/50 hover:text-primary'
+                }`}
+              >
+                <span className="text-xl mb-1">{currentMode === 'auto' ? '⚡' : '🎲'}</span>
+                {currentMode === 'auto' ? 'AUTO' : 'MANUEL'}
+              </button>
+
+              {/* Bouton Principal d'Action */}
+              <button
+                onClick={() => executeRound()}
+                disabled={isRolling || combatState.status !== 'ongoing' || currentMode === 'auto'}
+                className={`flex-1 font-[var(--font-uncial)] font-bold px-6 py-3 rounded-lg text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
+                  currentMode === 'auto'
+                    ? 'bg-muted opacity-50 cursor-not-allowed text-muted-foreground'
+                    : 'bg-gradient-to-r from-primary to-yellow-400 hover:from-yellow-400 hover:to-primary text-primary-foreground hover:shadow-primary/50 hover:scale-[1.02] active:scale-[0.98]'
+                }`}
+              >
+                {currentMode === 'auto' ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    Combat automatique...
+                  </>
+                ) : isRolling ? (
+                  <>
+                    <span className="animate-spin">🎲</span>
+                    Lancer...
+                  </>
+                ) : (
+                  <>
+                    <span>🎲</span>
+                    Lancer les dés
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+          
+          <p className="text-[10px] text-muted-light text-center font-[var(--font-merriweather)]">
+            Round #{combatState.rounds.length + 1} • {currentMode === 'auto' ? 'Les dés sont lancés automatiquement' : 'Lancez les dés pour combattre'}
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

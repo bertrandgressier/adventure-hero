@@ -66,7 +66,7 @@ export default function MusicPlayer() {
   return (
     <button
       onClick={toggleMusic}
-      className="fixed top-4 right-4 z-50 bg-[#2a1e17] border-2 border-primary/50 hover:border-primary rounded-full p-2 transition-all hover:scale-110 shadow-lg"
+      className="fixed top-4 right-4 z-50 bg-card border-2 border-primary/50 hover:border-primary rounded-full p-2 transition-all hover:scale-110 shadow-lg"
       title={isMuted || !isPlaying ? 'Activer la musique' : 'Désactiver la musique'}
     >
       {isMuted || !isPlaying ? (

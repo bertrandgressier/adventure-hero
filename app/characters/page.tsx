@@ -43,9 +43,9 @@ export default function CharactersPage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#1a140f] p-4">
+      <main className="min-h-screen bg-background p-4">
         <div className="max-w-4xl mx-auto py-8">
-          <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-8">
+          <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-primary mb-8">
             Vos héros
           </h1>
           <p className="text-muted-light text-center py-8">Chargement...</p>
@@ -55,11 +55,11 @@ export default function CharactersPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#1a140f] p-4">
+    <main className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto py-8 space-y-6">
         {/* En-tête */}
         <div>
-          <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-2">
+          <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-primary mb-2">
             Vos héros
           </h1>
           <p className="font-[var(--font-merriweather)] text-muted-light">
@@ -70,14 +70,14 @@ export default function CharactersPage() {
         {/* Bouton créer */}
         <Link
           href="/characters/new"
-          className="block w-full bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-center text-lg"
+          className="block w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-center text-lg"
         >
           ✨ Créer un héros
         </Link>
 
         {/* Liste des personnages */}
         {characters.length === 0 ? (
-          <div className="relative bg-[#2a1e17] glow-border rounded-lg p-12 text-center">
+          <div className="relative bg-card glow-border rounded-lg p-12 text-center">
             <div className="max-w-sm mx-auto space-y-4">
               <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-amber-600/20 border-2 border-primary/50 flex items-center justify-center">
                 <span className="text-4xl">📜</span>
@@ -105,8 +105,8 @@ export default function CharactersPage() {
                 key={character.id}
                 className={`rounded-lg p-6 transition-all ${
                   isDead(character)
-                    ? 'bg-[#3d1f1f] border-2 border-destructive/50 opacity-50 grayscale hover:opacity-60'
-                    : 'bg-[#2a1e17] glow-border hover:bg-[#2a1e17]/80'
+                    ? 'bg-destructive/20 border-2 border-destructive/50 opacity-50 grayscale hover:opacity-60'
+                    : 'bg-card glow-border hover:bg-card/80'
                 }`}
               >
                 <div className="flex items-start justify-between mb-6">
@@ -155,7 +155,7 @@ export default function CharactersPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
+                  <div className="bg-background border border-primary/20 rounded-lg p-4 text-center">
                     <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
                       DEXTÉRITÉ
                     </div>
@@ -163,7 +163,7 @@ export default function CharactersPage() {
                       {stats.dexterite}
                     </div>
                   </div>
-                  <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
+                  <div className="bg-background border border-primary/20 rounded-lg p-4 text-center">
                     <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
                       CHANCE
                     </div>
@@ -171,7 +171,7 @@ export default function CharactersPage() {
                       {stats.chance}
                     </div>
                   </div>
-                  <div className="bg-[#1a140f] border border-primary/20 rounded-lg p-4 text-center">
+                  <div className="bg-background border border-primary/20 rounded-lg p-4 text-center">
                     <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
                       POINTS DE VIE
                     </div>
@@ -203,7 +203,7 @@ export default function CharactersPage() {
         {/* Bouton retour à l'accueil */}
         <Link
           href="/"
-          className="block w-full bg-[#2a1e17] hover:bg-[#2a1e17]/80 border border-primary/30 text-light font-[var(--font-uncial)] tracking-wider py-4 px-8 rounded-lg transition-all duration-300 hover:border-primary text-center"
+          className="block w-full bg-card hover:bg-card/80 border border-primary/30 text-light font-[var(--font-uncial)] tracking-wider py-4 px-8 rounded-lg transition-all duration-300 hover:border-primary text-center"
         >
           ← Retour à l&apos;accueil
         </Link>

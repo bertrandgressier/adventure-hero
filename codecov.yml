@@ -1,0 +1,63 @@
+# Configuration Codecov pour Adventure Tome
+# https://docs.codecov.com/docs/codecov-yaml
+
+codecov:
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    # Configuration pour le projet complet
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
+        if_ci_failed: error
+
+    # Configuration pour le code modifié (patch)
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+        informational: true
+
+# Configuration des commentaires sur les Pull Requests
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+  hide_project_coverage: false
+
+# Ignore certains fichiers/dossiers
+ignore:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/tests/**"
+  - "**/__mocks__/**"
+  - "**/coverage/**"
+  - "vitest.config.ts"
+  - "next.config.ts"
+  - "tailwind.config.ts"
+  - "postcss.config.mjs"
+
+# Définition de flags pour séparer différents types de tests
+flags:
+  unit:
+    paths:
+      - src/domain/
+      - src/application/
+    carryforward: true
+  
+  integration:
+    paths:
+      - src/infrastructure/
+      - src/presentation/
+    carryforward: true

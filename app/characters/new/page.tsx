@@ -3,21 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CharacterService } from '@/src/application/services/CharacterService';
-import { IndexedDBCharacterRepository } from '@/src/infrastructure/repositories/IndexedDBCharacterRepository';
+import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { trackCharacterCreation, trackDiceRoll } from '@/src/infrastructure/analytics/tracking';
 import { BookTag, type BookTitle } from '@/components/ui/book-tag';
-
-// Instance singleton du service (client-side only)
-let serviceInstance: CharacterService | null = null;
-
-function getService(): CharacterService {
-  if (!serviceInstance) {
-    const repository = new IndexedDBCharacterRepository();
-    serviceInstance = new CharacterService(repository);
-  }
-  return serviceInstance;
-}
 
 const BOOKS: BookTitle[] = [
   "La Harpe des Quatre Saisons",
@@ -37,6 +25,7 @@ const TALENTS = [
 
 export default function NewCharacterPage() {
   const router = useRouter();
+  const createCharacter = useCharacterStore((state) => state.createCharacter);
   const [step, setStep] = useState<'book' | 'name' | 'talent' | 'stats'>('book');
   const [selectedBook, setSelectedBook] = useState<BookTitle>('La Harpe des Quatre Saisons');
   const [name, setName] = useState('');
@@ -84,10 +73,8 @@ export default function NewCharacterPage() {
 
   const handleCreateCharacter = async () => {
     try {
-      const service = getService();
-      
-      // Utiliser CharacterService.createCharacter() de la Clean Architecture
-      await service.createCharacter({
+      // Utiliser le store pour créer le personnage (met à jour le state global)
+      const newCharacter = await createCharacter({
         name,
         book: selectedBook,
         talent: selectedTalent,
@@ -107,7 +94,8 @@ export default function NewCharacterPage() {
         pointsDeVieMax: stats.pointsDeVieMax,
       });
       
-      router.push('/characters');
+      // Rediriger vers la page du nouveau personnage
+      router.push(`/characters/${newCharacter.id}`);
     } catch (error) {
       console.error('Error saving character:', error);
       alert('Erreur lors de la sauvegarde du personnage');
@@ -115,12 +103,12 @@ export default function NewCharacterPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#1a140f] p-4">
+    <main className="min-h-screen bg-background p-4">
       <div className="max-w-2xl mx-auto py-8 space-y-6">
         {/* En-tête */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-[#FFBF00] mb-2">
+            <h1 className="font-[var(--font-uncial)] text-3xl sm:text-4xl tracking-wider text-primary mb-2">
               Créer un héros
             </h1>
             <div className="flex items-center gap-2">
@@ -138,7 +126,7 @@ export default function NewCharacterPage() {
 
         {/* Étape 0 : Choix du livre */}
         {step === 'book' && (
-          <div className="bg-[#2a1e17] glow-border rounded-lg p-8 space-y-6">
+          <div className="bg-card glow-border rounded-lg p-8 space-y-6">
             <div className="space-y-2">
               <h2 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
                 Choisissez votre livre
@@ -153,9 +141,9 @@ export default function NewCharacterPage() {
                 <button
                   key={book}
                   onClick={() => setSelectedBook(book)}
-                  className={`w-full text-left bg-[#1a140f] border-2 rounded-lg p-4 transition-all ${
+                  className={`w-full text-left bg-background border-2 rounded-lg p-4 transition-all ${
                     selectedBook === book
-                      ? 'border-primary shadow-[0_0_10px_rgba(255,191,0,0.4)]'
+                      ? 'border-primary shadow-[0_0_10px_hsl(var(--primary)/0.4)]'
                       : 'border-primary/30 hover:border-primary/50'
                   }`}
                 >
@@ -171,7 +159,7 @@ export default function NewCharacterPage() {
 
             <button
               onClick={() => setStep('name')}
-              className="w-full bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg"
             >
               Continuer
             </button>
@@ -180,7 +168,7 @@ export default function NewCharacterPage() {
 
         {/* Étape 1 : Nom du personnage */}
         {step === 'name' && (
-          <div className="bg-[#2a1e17] glow-border rounded-lg p-8 space-y-6">
+          <div className="bg-card glow-border rounded-lg p-8 space-y-6">
             <div className="space-y-2">
               <h2 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
                 Nom de votre héros
@@ -196,7 +184,7 @@ export default function NewCharacterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Entrez le nom du héros"
-                className="w-full bg-[#1a140f] border-2 border-primary/30 rounded-lg px-4 py-3 text-light font-[var(--font-merriweather)] text-lg focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-background border-2 border-primary/30 rounded-lg px-4 py-3 text-light font-[var(--font-merriweather)] text-lg focus:outline-none focus:border-primary transition-colors"
                 maxLength={50}
                 autoFocus
               />
@@ -204,7 +192,7 @@ export default function NewCharacterPage() {
               <button
                 onClick={() => setStep('talent')}
                 disabled={!name.trim()}
-                className="w-full bg-[#FFBF00] hover:bg-yellow-400 disabled:bg-muted disabled:cursor-not-allowed text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg disabled:hover:scale-100 disabled:hover:shadow-none"
+                className="w-full bg-primary hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg disabled:hover:scale-100 disabled:hover:shadow-none"
               >
                 Continuer
               </button>
@@ -214,7 +202,7 @@ export default function NewCharacterPage() {
 
         {/* Étape 2 : Choix du talent */}
         {step === 'talent' && (
-          <div className="bg-[#2a1e17] glow-border rounded-lg p-8 space-y-6">
+          <div className="bg-card glow-border rounded-lg p-8 space-y-6">
             <div className="space-y-2">
               <h2 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
                 Choisissez votre talent
@@ -229,9 +217,9 @@ export default function NewCharacterPage() {
                 <button
                   key={talent.id}
                   onClick={() => setSelectedTalent(talent.id)}
-                  className={`w-full text-left bg-[#1a140f] border-2 rounded-lg p-4 transition-all ${
+                  className={`w-full text-left bg-background border-2 rounded-lg p-4 transition-all ${
                     selectedTalent === talent.id
-                      ? 'border-primary shadow-[0_0_10px_rgba(255,191,0,0.4)]'
+                      ? 'border-primary shadow-[0_0_10px_hsl(var(--primary)/0.4)]'
                       : 'border-primary/30 hover:border-primary/50'
                   }`}
                 >
@@ -248,7 +236,7 @@ export default function NewCharacterPage() {
             <button
               onClick={() => setStep('stats')}
               disabled={!selectedTalent}
-              className="w-full bg-[#FFBF00] hover:bg-yellow-400 disabled:bg-muted disabled:cursor-not-allowed text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg disabled:hover:scale-100 disabled:hover:shadow-none"
+              className="w-full bg-primary hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg disabled:hover:scale-100 disabled:hover:shadow-none"
             >
               Continuer
             </button>
@@ -259,7 +247,7 @@ export default function NewCharacterPage() {
         {step === 'stats' && (
           <div className="space-y-6">
             {/* Instructions */}
-            <div className="bg-[#2a1e17]/60 border border-primary/30 rounded-lg p-6">
+            <div className="bg-card/60 border border-primary/30 rounded-lg p-6">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light">
                   📜 Règles de création
@@ -269,7 +257,7 @@ export default function NewCharacterPage() {
                     setManualMode(!manualMode);
                     setStats({ dexterite: 0, chance: 0, pointsDeVieMax: 0 });
                   }}
-                  className="text-sm font-[var(--font-merriweather)] bg-[#1a140f] border border-primary/50 text-light hover:bg-primary/20 hover:border-primary transition-colors px-3 py-1.5 rounded"
+                  className="text-sm font-[var(--font-merriweather)] bg-background border border-primary/50 text-light hover:bg-primary/20 hover:border-primary transition-colors px-3 py-1.5 rounded"
                 >
                   {manualMode ? '🎲 Mode dés' : '✏️ Mode manuel'}
                 </button>
@@ -282,7 +270,7 @@ export default function NewCharacterPage() {
             </div>
 
             {/* Carte des statistiques */}
-            <div className="bg-[#2a1e17] glow-border rounded-lg p-8 space-y-6">
+            <div className="bg-card glow-border rounded-lg p-8 space-y-6">
               <div className="text-center space-y-2">
                 <h2 className="font-[var(--font-uncial)] text-2xl tracking-wide text-light">
                   {name}
@@ -297,7 +285,7 @@ export default function NewCharacterPage() {
 
               {/* Grille des stats */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-[#1a140f] border-2 border-primary/30 rounded-lg p-4 text-center">
+                <div className="bg-background border-2 border-primary/30 rounded-lg p-4 text-center">
                   <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
                     DEXTÉRITÉ
                   </div>
@@ -318,7 +306,7 @@ export default function NewCharacterPage() {
                   )}
                 </div>
 
-                <div className="bg-[#1a140f] border-2 border-primary/30 rounded-lg p-4 text-center">
+                <div className="bg-background border-2 border-primary/30 rounded-lg p-4 text-center">
                   <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
                     CHANCE
                   </div>
@@ -339,7 +327,7 @@ export default function NewCharacterPage() {
                   )}
                 </div>
 
-                <div className="bg-[#1a140f] border-2 border-primary/30 rounded-lg p-4 text-center">
+                <div className="bg-background border-2 border-primary/30 rounded-lg p-4 text-center">
                   <div className="text-xs font-[var(--font-uncial)] tracking-wide text-muted-light mb-2">
                     PV MAX
                   </div>
@@ -366,7 +354,7 @@ export default function NewCharacterPage() {
                 {!manualMode && (
                   <button
                     onClick={generateStats}
-                    className="w-full bg-[#FFBF00] hover:bg-yellow-400 text-[#000000] font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,191,0,0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-[var(--font-uncial)] font-bold tracking-wider py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.6)] hover:scale-[1.02] active:scale-[0.98] text-lg"
                   >
                     🎲 Lancer les dés
                   </button>
