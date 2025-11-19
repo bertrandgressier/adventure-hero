@@ -22,6 +22,8 @@ interface UseCharacterResult {
   removeBoulons: (amount: number) => Promise<void>;
   goToParagraph: (paragraph: number) => Promise<void>;
   updateNotes: (notes: string) => Promise<void>;
+  updateDaysElapsed: (days: number) => Promise<void>;
+  updateNextWakeUpParagraph: (paragraph: number | undefined) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -51,6 +53,8 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
   const storeRemoveBoulons = useCharacterStore((state) => state.removeBoulons);
   const storeGoToParagraph = useCharacterStore((state) => state.goToParagraph);
   const storeUpdateNotes = useCharacterStore((state) => state.updateNotes);
+  const storeUpdateDaysElapsed = useCharacterStore((state) => state.updateDaysElapsed);
+  const storeUpdateNextWakeUpParagraph = useCharacterStore((state) => state.updateNextWakeUpParagraph);
   const storeLoadOne = useCharacterStore((state) => state.loadOne);
 
   // Charger le personnage si pas dans le cache
@@ -124,6 +128,16 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
     updateNotes: async (notes: string) => {
       if (!characterId) return;
       await storeUpdateNotes(characterId, notes);
+    },
+
+    updateDaysElapsed: async (days: number) => {
+      if (!characterId) return;
+      await storeUpdateDaysElapsed(characterId, days);
+    },
+
+    updateNextWakeUpParagraph: async (paragraph: number | undefined) => {
+      if (!characterId) return;
+      await storeUpdateNextWakeUpParagraph(characterId, paragraph);
     },
 
     refresh: async () => {

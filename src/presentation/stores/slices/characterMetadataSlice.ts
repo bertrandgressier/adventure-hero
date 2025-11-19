@@ -6,6 +6,8 @@ export type CharacterMetadataSlice = {
   updateNotes: (id: string, notes: string) => Promise<void>;
   goToParagraph: (id: string, paragraph: number) => Promise<void>;
   updateBook: (id: string, book: number) => Promise<void>;
+  updateDaysElapsed: (id: string, days: number) => Promise<void>;
+  updateNextWakeUpParagraph: (id: string, paragraph: number | undefined) => Promise<void>;
 };
 
 type StoreState = CharacterMetadataSlice & CharacterListSlice;
@@ -65,6 +67,36 @@ export const createCharacterMetadataSlice = (service: CharacterService) => {
 
       try {
         const updated = await service.goToParagraph(id, paragraph);
+        set((state) => ({
+          characters: { ...state.characters, [id]: updated },
+        }));
+      } catch (error) {
+        set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
+        throw error;
+      }
+    },
+
+    updateDaysElapsed: async (id: string, days: number) => {
+      const character = get().characters[id];
+      if (!character) return;
+
+      try {
+        const updated = await service.updateDaysElapsed(id, days);
+        set((state) => ({
+          characters: { ...state.characters, [id]: updated },
+        }));
+      } catch (error) {
+        set({ error: error instanceof Error ? error.message : 'Erreur de mise à jour' });
+        throw error;
+      }
+    },
+
+    updateNextWakeUpParagraph: async (id: string, paragraph: number | undefined) => {
+      const character = get().characters[id];
+      if (!character) return;
+
+      try {
+        const updated = await service.updateNextWakeUpParagraph(id, paragraph);
         set((state) => ({
           characters: { ...state.characters, [id]: updated },
         }));

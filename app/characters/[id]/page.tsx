@@ -9,6 +9,7 @@ import CombatInterface from '@/components/adventure/CombatInterface';
 import CombatEndModal from '@/components/adventure/CombatEndModal';
 import CharacterStats from '@/src/presentation/components/CharacterStats';
 import CharacterProgress from '@/src/presentation/components/CharacterProgress';
+import CharacterTimeTracking from '@/src/presentation/components/CharacterTimeTracking';
 import CharacterWeapon from '@/src/presentation/components/CharacterWeapon';
 import CharacterInventory from '@/src/presentation/components/CharacterInventory';
 import CharacterNotes from '@/src/presentation/components/CharacterNotes';
@@ -238,6 +239,11 @@ export default function CharacterDetail() {
 
         {/* Progress Section */}
         <CharacterProgress characterId={id} />
+
+        {/* Time Tracking Section (Tome 2 only) */}
+        {character.book === 2 && (
+          <CharacterTimeTracking characterId={id} />
+        )}
 
         {/* Weapon Section */}
         <CharacterWeapon

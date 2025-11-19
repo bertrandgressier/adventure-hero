@@ -13,7 +13,7 @@
 
 import { BOURSE_ITEM_NAME } from '@/src/domain/value-objects/Inventory';
 
-export const CURRENT_VERSION = 7;
+export const CURRENT_VERSION = 8;
 
 /**
  * Migration interface
@@ -53,6 +53,10 @@ export interface Migration {
  * Migration v6 → v7: Fix reputation for book 2
  * - Ensure reputation is 0 (not undefined) for book 2
  * - Keep null for other books
+ * 
+ * Migration v7 → v8: Add days elapsed and next wake up paragraph for Tome 2
+ * - Add daysElapsed (default 0) and nextWakeUpParagraph (default undefined)
+ * - Only used for Tome 2 time tracking
  */
 export const migrations: Migration[] = [
   {
@@ -135,6 +139,21 @@ export const migrations: Migration[] = [
           reputation: fixedReputation,
         },
         version: 7,
+      };
+    },
+  },
+  {
+    version: 8,
+    migrate: (data) => {
+      // Add days elapsed and next wake up paragraph for progress tracking (Tome 2)
+      return {
+        ...data,
+        progress: {
+          ...data.progress,
+          daysElapsed: data.progress?.daysElapsed ?? 0,
+          nextWakeUpParagraph: data.progress?.nextWakeUpParagraph,
+        },
+        version: 8,
       };
     },
   },

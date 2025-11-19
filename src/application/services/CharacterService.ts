@@ -295,4 +295,36 @@ export class CharacterService {
     
     return updated;
   }
+
+  /**
+   * Met à jour les jours écoulés (Tome 2)
+   */
+  async updateDaysElapsed(id: string, days: number): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new CharacterNotFoundError(id);
+    }
+
+    const updated = character.updateDaysElapsed(days);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
+
+  /**
+   * Met à jour le paragraphe de prochain réveil (Tome 2)
+   */
+  async updateNextWakeUpParagraph(id: string, paragraph: number | undefined): Promise<Character> {
+    const character = await this.repository.findById(id);
+    if (!character) {
+      throw new CharacterNotFoundError(id);
+    }
+
+    const updated = character.updateNextWakeUpParagraph(paragraph);
+    
+    await this.repository.save(updated);
+    
+    return updated;
+  }
 }
