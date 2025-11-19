@@ -24,8 +24,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
     // Créer
     const created = await service.createCharacter({
       name: 'Gandalf',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 7,
         chance: 5,
@@ -49,8 +50,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
     // Créer
     const character = await service.createCharacter({
       name: 'Aragorn',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'narrative',
       stats: {
         dexterite: 8,
         chance: 6,
@@ -75,8 +77,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait persister les dégâts', async () => {
     const character = await service.createCharacter({
       name: 'Legolas',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'narrative',
       stats: {
         dexterite: 9,
         chance: 7,
@@ -97,8 +100,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait persister les soins', async () => {
     const character = await service.createCharacter({
       name: 'Gimli',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 6,
         chance: 4,
@@ -119,8 +123,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait persister l\'équipement d\'arme', async () => {
     const character = await service.createCharacter({
       name: 'Boromir',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 7,
         chance: 5,
@@ -147,8 +152,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait persister l\'ajout d\'objets', async () => {
     const character = await service.createCharacter({
       name: 'Sam',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'narrative',
       stats: {
         dexterite: 5,
         chance: 8,
@@ -175,16 +181,18 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
     const retrieved = await service.getCharacter(character.id);
     const items = retrieved?.getInventory().items || [];
     
-    expect(items).toHaveLength(2);
-    expect(items[0].name).toBe('Corde');
-    expect(items[1].name).toBe('Potion');
+    expect(items).toHaveLength(3);
+    expect(items[0].name).toBe('Bourse');
+    expect(items[1].name).toBe('Corde');
+    expect(items[2].name).toBe('Potion');
   });
 
   it('devrait persister le changement de paragraphe', async () => {
     const character = await service.createCharacter({
       name: 'Frodo',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 6,
         chance: 9,
@@ -209,8 +217,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait persister les notes', async () => {
     const character = await service.createCharacter({
       name: 'Bilbo',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'narrative',
       stats: {
         dexterite: 6,
         chance: 9,
@@ -232,8 +241,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
     // Créer 3 personnages
     await service.createCharacter({
       name: 'Gandalf',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 7,
         chance: 5,
@@ -245,8 +255,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
 
     await service.createCharacter({
       name: 'Aragorn',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'narrative',
       stats: {
         dexterite: 8,
         chance: 6,
@@ -258,8 +269,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
 
     await service.createCharacter({
       name: 'Legolas',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'discretion',
+      gameMode: 'narrative',
       stats: {
         dexterite: 9,
         chance: 7,
@@ -284,8 +296,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait dupliquer un personnage avec persistance', async () => {
     const original = await service.createCharacter({
       name: 'Gandalf',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 7,
         chance: 5,
@@ -323,8 +336,9 @@ describe('Integration: CharacterService + IndexedDBRepository', () => {
   it('devrait supprimer un personnage', async () => {
     const character = await service.createCharacter({
       name: 'Test Delete',
-      book: 'La Harpe des Quatre Saisons',
+      book: 1,
       talent: 'instinct',
+      gameMode: 'narrative',
       stats: {
         dexterite: 5,
         chance: 5,

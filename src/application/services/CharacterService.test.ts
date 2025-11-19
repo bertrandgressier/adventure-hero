@@ -368,35 +368,9 @@ describe('CharacterService', () => {
       });
 
       const items = updated.getInventory().items;
-      expect(items).toHaveLength(1);
-      expect(items[0].name).toBe('Potion de soin');
-    });
-  });
-
-  describe('toggleItemPossession()', () => {
-    it('devrait basculer la possession d\'un objet', async () => {
-      const character = await service.createCharacter({
-        name: 'Gandalf',
-        book: 'La Harpe des Quatre Saisons',
-        talent: 'instinct',
-        gameMode: 'simplified',
-        stats: {
-          dexterite: 7,
-          chance: 5,
-          chanceInitiale: 5,
-          pointsDeVieMax: 32,
-          pointsDeVieActuels: 32,
-        },
-      });
-
-      await service.addItemToInventory(character.id, {
-        name: 'Potion',
-        possessed: true,
-      });
-
-      const toggled = await service.toggleItemPossession(character.id, 0);
-
-      expect(toggled.getInventory().items[0].possessed).toBe(false);
+      expect(items).toHaveLength(2);
+      expect(items[0].name).toBe('Bourse');
+      expect(items[1].name).toBe('Potion de soin');
     });
   });
 
@@ -421,9 +395,10 @@ describe('CharacterService', () => {
         possessed: true,
       });
 
-      const removed = await service.removeItemFromInventory(character.id, 0);
+      const removed = await service.removeItemFromInventory(character.id, 1);
 
-      expect(removed.getInventory().items).toHaveLength(0);
+      expect(removed.getInventory().items).toHaveLength(1);
+      expect(removed.getInventory().items[0].name).toBe('Bourse');
     });
   });
 

@@ -20,6 +20,9 @@ export interface InventoryData {
   items: InventoryItem[];
 }
 
+export const MAX_ITEMS = 14;
+export const BOURSE_ITEM_NAME = 'Bourse';
+
 export class Inventory {
   constructor(
     public readonly boulons: number,
@@ -103,6 +106,10 @@ export class Inventory {
    * Ajoute un objet à l'inventaire
    */
   addItem(item: InventoryItem): Inventory {
+    if (this.items.length >= MAX_ITEMS) {
+      throw new Error(`Inventaire plein (${MAX_ITEMS} objets maximum)`);
+    }
+
     return new Inventory(
       this.boulons,
       this.weapon,
@@ -117,30 +124,16 @@ export class Inventory {
     if (index < 0 || index >= this.items.length) {
       throw new Error('Index d\'objet invalide');
     }
+
+    const itemToRemove = this.items[index];
+    if (itemToRemove.name === BOURSE_ITEM_NAME) {
+      throw new Error('Impossible de jeter la bourse');
+    }
     
     return new Inventory(
       this.boulons,
       this.weapon,
       this.items.filter((_, i) => i !== index)
-    );
-  }
-
-  /**
-   * Change l'état de possession d'un objet
-   */
-  toggleItemPossession(index: number): Inventory {
-    if (index < 0 || index >= this.items.length) {
-      throw new Error('Index d\'objet invalide');
-    }
-    
-    const updatedItems = this.items.map((item, i) =>
-      i === index ? { ...item, possessed: !item.possessed } : item
-    );
-    
-    return new Inventory(
-      this.boulons,
-      this.weapon,
-      updatedItems
     );
   }
 

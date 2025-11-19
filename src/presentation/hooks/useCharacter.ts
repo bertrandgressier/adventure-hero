@@ -18,7 +18,6 @@ interface UseCharacterResult {
   equipWeapon: (weapon: Weapon | null) => Promise<void>;
   addItem: (item: string) => Promise<void>;
   removeItem: (itemIndex: number) => Promise<void>;
-  toggleItem: (itemIndex: number) => Promise<void>;
   addBoulons: (amount: number) => Promise<void>;
   removeBoulons: (amount: number) => Promise<void>;
   goToParagraph: (paragraph: number) => Promise<void>;
@@ -48,7 +47,6 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
   const storeEquipWeapon = useCharacterStore((state) => state.equipWeapon);
   const storeAddItem = useCharacterStore((state) => state.addItem);
   const storeRemoveItem = useCharacterStore((state) => state.removeItem);
-  const storeToggleItem = useCharacterStore((state) => state.toggleItem);
   const storeAddBoulons = useCharacterStore((state) => state.addBoulons);
   const storeRemoveBoulons = useCharacterStore((state) => state.removeBoulons);
   const storeGoToParagraph = useCharacterStore((state) => state.goToParagraph);
@@ -106,11 +104,6 @@ export function useCharacter(characterId: string | null): UseCharacterResult {
     removeItem: async (itemIndex: number) => {
       if (!characterId) return;
       await storeRemoveItem(characterId, itemIndex);
-    },
-
-    toggleItem: async (itemIndex: number) => {
-      if (!characterId) return;
-      await storeToggleItem(characterId, itemIndex);
     },
 
     addBoulons: async (amount: number) => {

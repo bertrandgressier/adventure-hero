@@ -241,8 +241,8 @@ describe('Character', () => {
         type: 'item',
       });
 
-      expect(withItem.getInventory().items).toHaveLength(1);
-      expect(withItem.getInventory().items[0].name).toBe('Potion de soin');
+      expect(withItem.getInventory().items).toHaveLength(2);
+      expect(withItem.getInventory().items[1].name).toBe('Potion de soin');
     });
 
     it('devrait retirer un objet', () => {
@@ -262,10 +262,10 @@ describe('Character', () => {
         .addItem({ name: 'Potion de soin', possessed: true })
         .addItem({ name: 'Corde', possessed: true });
 
-      const removed = character.removeItem(0);
+      const removed = character.removeItem(1);
 
-      expect(removed.getInventory().items).toHaveLength(1);
-      expect(removed.getInventory().items[0].name).toBe('Corde');
+      expect(removed.getInventory().items).toHaveLength(2);
+      expect(removed.getInventory().items[1].name).toBe('Corde');
     });
   });
 

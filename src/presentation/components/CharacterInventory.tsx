@@ -1,6 +1,8 @@
 'use client';
 
+import { Trash2 } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
+import { MAX_ITEMS, BOURSE_ITEM_NAME } from '@/src/domain/value-objects/Inventory';
 
 interface CharacterInventoryProps {
   characterId: string;
@@ -8,35 +10,19 @@ interface CharacterInventoryProps {
   onOpenAddItemModal?: () => void;
 }
 
-/**
- * Composant refactorisé pour gérer l'inventaire.
- * 
- * Avant: Logique directement dans le composant avec duplication updatedAt
- * Après: Utilise addItem() et removeItem() du hook useCharacter
- * 
- * Gère:
- * - Liste d'objets avec checkbox "possédé"
- * - Ajout/suppression d'objets
- * - Affichage avec styles conditionnels
- */
-export default function CharacterInventory({ 
+export default function CharacterInventory({
   characterId,
   onUpdate,
-  onOpenAddItemModal
+  onOpenAddItemModal,
 }: CharacterInventoryProps) {
-  const { character, isLoading, error, removeItem, toggleItem } = useCharacter(characterId);
-
-  const handleToggleItem = async (index: number) => {
-    await toggleItem(index);
-    onUpdate?.();
-  };
+  const { character, isLoading, error, removeItem } = useCharacter(characterId);
 
   const handleDeleteItem = async (index: number) => {
     if (!character) return;
-    
+
     const items = character.getInventory().items;
     const item = items[index];
-    
+
     if (!confirm(`Supprimer "${item.name}" de l'inventaire ?`)) {
       return;
     }
@@ -71,17 +57,28 @@ export default function CharacterInventory({
 
   const inventory = character.getInventory();
   const items = inventory.items;
+  const isFull = items.length >= MAX_ITEMS;
 
   return (
     <div className="bg-card glow-border rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light">
-          Inventaire
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light">
+            Inventaire
+          </h2>
+          <span className={`text-sm font-mono ${isFull ? 'text-red-400' : 'text-muted-light'}`}>
+            ({items.length}/{MAX_ITEMS})
+          </span>
+        </div>
         <button
           onClick={onOpenAddItemModal}
-          className="text-primary hover:text-yellow-300 text-2xl transition-colors bg-primary/10 hover:bg-primary/20 rounded-lg px-3 py-1"
-          title="Ajouter un objet"
+          disabled={isFull}
+          className={`text-2xl transition-colors rounded-lg px-3 py-1 ${
+            isFull 
+              ? 'text-muted-light bg-muted cursor-not-allowed opacity-50' 
+              : 'text-primary hover:text-yellow-300 bg-primary/10 hover:bg-primary/20'
+          }`}
+          title={isFull ? "Inventaire plein" : "Ajouter un objet"}
         >
           ➕
         </button>
@@ -95,26 +92,21 @@ export default function CharacterInventory({
               key={index}
               className="flex items-center gap-3 bg-background rounded-lg p-3 group hover:bg-background/80 transition-colors"
             >
-              <input
-                type="checkbox"
-                checked={item.possessed}
-                onChange={() => handleToggleItem(index)}
-                className="w-5 h-5 rounded border-2 border-primary/30 bg-card checked:bg-primary checked:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
-              />
-              <span
-                className={`flex-1 font-[var(--font-merriweather)] ${
-                  item.possessed ? 'text-light' : 'text-muted-light line-through'
-                }`}
-              >
+              <span className="flex-1 font-[var(--font-merriweather)] text-light">
                 {item.name}
+                {item.type === 'special' && (
+                  <span className="ml-2 text-xs uppercase tracking-wider text-muted-light">Spécial</span>
+                )}
               </span>
-              <button
-                onClick={() => handleDeleteItem(index)}
-                className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-all text-sm"
-                title="Supprimer"
-              >
-                🗑️
-              </button>
+              {item.name !== BOURSE_ITEM_NAME && (
+                <button
+                  onClick={() => handleDeleteItem(index)}
+                  className="opacity-0 group-hover:opacity-100 text-muted-light hover:text-red-400 transition-all"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
             </div>
           ))}
         </div>

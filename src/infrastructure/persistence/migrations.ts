@@ -11,7 +11,9 @@
  * 4. Test in data-migration.test.ts
  */
 
-export const CURRENT_VERSION = 5;
+import { BOURSE_ITEM_NAME } from '@/src/domain/value-objects/Inventory';
+
+export const CURRENT_VERSION = 6;
 
 /**
  * Migration interface
@@ -89,6 +91,25 @@ export const migrations: Migration[] = [
       },
       version: 5,
     }),
+  },
+  {
+    version: 6,
+    migrate: (data) => {
+      const items = data.inventory?.items || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const hasBourse = items.some((item: any) => item.name === BOURSE_ITEM_NAME);
+      
+      return {
+        ...data,
+        inventory: {
+          ...data.inventory,
+          items: hasBourse 
+            ? items 
+            : [{ name: BOURSE_ITEM_NAME, possessed: true }, ...items],
+        },
+        version: 6,
+      };
+    },
   },
   // Future migrations here
 ];

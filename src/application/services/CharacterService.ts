@@ -210,22 +210,6 @@ export class CharacterService {
   }
 
   /**
-   * Basculer la possession d'un objet
-   */
-  async toggleItemPossession(id: string, itemIndex: number): Promise<Character> {
-    const character = await this.repository.findById(id);
-    if (!character) {
-      throw new CharacterNotFoundError(id);
-    }
-
-    const updated = character.toggleItemPossession(itemIndex);
-    
-    await this.repository.save(updated);
-    
-    return updated;
-  }
-
-  /**
    * Supprimer un objet de l'inventaire
    */
   async removeItemFromInventory(id: string, itemIndex: number): Promise<Character> {

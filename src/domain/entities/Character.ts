@@ -1,5 +1,5 @@
 import { Stats, StatsData } from '../value-objects/Stats';
-import { Inventory, InventoryData } from '../value-objects/Inventory';
+import { Inventory, InventoryData, BOURSE_ITEM_NAME } from '../value-objects/Inventory';
 
 /**
  * Game Mode Types
@@ -328,28 +328,6 @@ export class Character {
   }
 
   /**
-   * Change l'état de possession d'un objet
-   */
-  toggleItemPossession(index: number): Character {
-    const updatedInventory = this.inventory.toggleItemPossession(index);
-    
-    return new Character(
-      this.id,
-      this._name,
-      this.book,
-      this.talent,
-      this.gameMode,
-      this.version,
-      this.createdAt,
-      new Date().toISOString(),
-      this.stats,
-      updatedInventory,
-      this.progress,
-      this._notes
-    );
-  }
-
-  /**
    * Ajoute des boulons
    */
   addBoulons(amount: number): Character {
@@ -543,11 +521,11 @@ export class Character {
       data.book,
       data.talent,
       data.gameMode,
-      5, // CURRENT_VERSION
+      6, // CURRENT_VERSION
       now,
       now,
       Stats.fromData(statsData),
-      new Inventory(0, undefined, []),
+      new Inventory(0, undefined, [{ name: BOURSE_ITEM_NAME, possessed: true }]),
       new Progress(1, [1], now),
       ''
     );

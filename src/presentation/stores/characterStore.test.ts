@@ -45,7 +45,6 @@ describe('CharacterStore', () => {
       // Actions d'inventaire
       expect(typeof state.equipWeapon).toBe('function');
       expect(typeof state.addItem).toBe('function');
-      expect(typeof state.toggleItem).toBe('function');
       expect(typeof state.removeItem).toBe('function');
       expect(typeof state.addBoulons).toBe('function');
       expect(typeof state.removeBoulons).toBe('function');

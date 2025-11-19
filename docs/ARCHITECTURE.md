@@ -304,7 +304,7 @@ Save Updated Character → Show End Modal
 1. **characterListSlice** : État + chargement (`characters`, `isLoading`, `hasInitialLoad`, `loadAll`, `loadOne`)
 2. **characterMutationSlice** : CRUD (`createCharacter`, `deleteCharacter`)
 3. **characterStatsSlice** : Stats (`updateStats`, `applyDamage`, `heal`)
-4. **characterInventorySlice** : Inventaire (`equipWeapon`, `addItem`, `toggleItem`, `addBoulons`)
+4. **characterInventorySlice** : Inventaire (`equipWeapon`, `addItem`, `removeItem`, `addBoulons`)
 5. **characterMetadataSlice** : Métadonnées (`updateName`, `updateNotes`, `goToParagraph`)
 
 ### Tests

@@ -120,7 +120,7 @@ src/presentation/stores/
     characterListSlice.ts     # État + chargement (characters, isLoading, error)
     characterMutationSlice.ts # CRUD (create, delete)
     characterStatsSlice.ts    # Stats (updateStats, applyDamage, heal)
-    characterInventorySlice.ts # Inventaire (equipWeapon, addItem, toggleItem)
+    characterInventorySlice.ts # Inventaire (equipWeapon, addItem, removeItem)
     characterMetadataSlice.ts # Métadonnées (updateName, updateNotes, goToParagraph)
 ```
 
