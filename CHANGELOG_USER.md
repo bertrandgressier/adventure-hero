@@ -12,6 +12,18 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ---
 
+## Version 2.2.1
+*19 novembre 2025*
+
+### 🐛 Corrections de bugs
+
+• correct user changelog generation regex for header levels
+• improve character list design for mobile
+• improve visual distinction for critical health and death states
+• update character detail stats to match home screen design
+
+---
+
 ## Version 2.2.0
 *19 novembre 2025*
 

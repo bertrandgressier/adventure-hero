@@ -1,3 +1,13 @@
+## [2.2.1](https://github.com/bertrandgressier/adventure-tome/compare/v2.2.0...v2.2.1) (2025-11-19)
+
+
+### Bug Fixes
+
+* correct user changelog generation regex for header levels ([433c57e](https://github.com/bertrandgressier/adventure-tome/commit/433c57e42ec629026eb1896016c07307f5402843))
+* **home:** improve character list design for mobile ([1afc8e4](https://github.com/bertrandgressier/adventure-tome/commit/1afc8e4f1490db3af2215fec4ad80507d02420cc))
+* **ui:** improve visual distinction for critical health and death states ([f09f706](https://github.com/bertrandgressier/adventure-tome/commit/f09f70630f6a74ff947dff5a1c6ed0eeb4e32430))
+* **ui:** update character detail stats to match home screen design ([95049e1](https://github.com/bertrandgressier/adventure-tome/commit/95049e159883ac6715bff015bf1bf52138fe5f4c))
+
 # [2.2.0](https://github.com/bertrandgressier/adventure-tome/compare/v2.1.0...v2.2.0) (2025-11-19)
 
 
