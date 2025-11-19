@@ -123,13 +123,13 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
                 <BookTag book={characterData.book} />
               </button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
               <DialogHeader>
-                <DialogTitle className="font-[var(--font-uncial)] text-2xl text-center mb-4">
+                <DialogTitle className="font-[var(--font-uncial)] text-xl sm:text-2xl text-center mb-2 sm:mb-4">
                   Changer de livre
                 </DialogTitle>
               </DialogHeader>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2 sm:gap-3">
                 {BOOKS.map((bookId) => (
                   <button
                     key={bookId}
@@ -137,15 +137,15 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
                       updateBook(bookId);
                       setIsBookDialogOpen(false);
                     }}
-                    className={`p-4 rounded-lg border-2 transition-all text-left ${
+                    className={`p-3 sm:p-4 rounded-lg border-2 transition-all text-left ${
                       characterData.book === bookId
                         ? 'border-primary bg-primary/10'
                         : 'border-transparent hover:border-primary/50 bg-card'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <BookTag book={bookId} />
-                      <span className="font-[var(--font-merriweather)] text-sm text-light">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                      <BookTag book={bookId} className="flex-shrink-0" />
+                      <span className="font-[var(--font-merriweather)] text-xs sm:text-sm text-light leading-tight">
                         {BOOK_TITLES[bookId]}
                       </span>
                     </div>
