@@ -15,6 +15,7 @@ import CharacterNotes from '@/src/presentation/components/CharacterNotes';
 import DiceRoller from '@/components/character/DiceRoller';
 import AddWeaponModal from '@/components/character/AddWeaponModal';
 import AddItemModal from '@/components/character/AddItemModal';
+import { GameModeBadge } from '@/components/ui/game-mode-badge';
 
 export default function CharacterDetail() {
   const router = useRouter();
@@ -200,9 +201,13 @@ export default function CharacterDetail() {
                 {character.name}
               </h1>
             )}
-            <p className="font-[var(--font-merriweather)] text-muted-light">
-              Talent : <span className="text-primary">{character.talent}</span>
-            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="font-[var(--font-merriweather)] text-muted-light">
+                Talent : <span className="text-primary">{character.talent}</span>
+              </p>
+              <span className="text-muted-light">•</span>
+              <GameModeBadge gameMode={character.gameMode} showLabel />
+            </div>
           </div>
         </div>
 

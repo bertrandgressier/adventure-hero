@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Copy, Trash2, Swords, Hand, Clover, Heart } from 'lucide-react';
 import { useCharacterStore } from '@/src/presentation/providers/character-store-provider';
 import { BookTag } from '@/components/ui/book-tag';
+import { GameModeBadge } from '@/components/ui/game-mode-badge';
 import { Button } from '@/components/ui/button';
 import type { Character } from '@/src/domain/entities/Character';
 
@@ -124,6 +125,7 @@ export default function CharactersPage() {
                         </span>
                       )}
                       <BookTag book={characterData.book} />
+                      <GameModeBadge gameMode={characterData.gameMode} />
                       <span className="whitespace-nowrap">
                         • <span className="font-[var(--font-geist-mono)] text-primary">§{progress.currentParagraph}</span>
                       </span>
