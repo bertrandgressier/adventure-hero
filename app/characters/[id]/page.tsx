@@ -233,7 +233,6 @@ export default function CharacterDetail() {
 
         {/* Stats Section */}
         <div className="bg-card glow-border rounded-lg p-6">
-          <h2 className="font-[var(--font-uncial)] text-xl tracking-wide text-light mb-4">Caractéristiques</h2>
           <CharacterStats characterId={id} />
         </div>
 
