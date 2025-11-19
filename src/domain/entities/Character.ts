@@ -531,16 +531,22 @@ export class Character {
     const now = new Date().toISOString();
     const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
+    // Initialiser la réputation à 0 pour le tome 2 si non fournie
+    const statsData = { ...data.stats };
+    if (data.book === 2 && statsData.reputation === undefined) {
+      statsData.reputation = 0;
+    }
+
     return new Character(
       id,
       data.name.trim(),
       data.book,
       data.talent,
       data.gameMode,
-      4, // CURRENT_VERSION
+      5, // CURRENT_VERSION
       now,
       now,
-      Stats.fromData(data.stats),
+      Stats.fromData(statsData),
       new Inventory(0, undefined, []),
       new Progress(1, [1], now),
       ''

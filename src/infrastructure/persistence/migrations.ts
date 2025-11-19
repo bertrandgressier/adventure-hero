@@ -11,7 +11,7 @@
  * 4. Test in data-migration.test.ts
  */
 
-export const CURRENT_VERSION = 4;
+export const CURRENT_VERSION = 5;
 
 /**
  * Migration interface
@@ -39,6 +39,10 @@ export interface Migration {
  * - "La Confrérie de NUADA" -> 2
  * - "Les Entrailles du temps" -> 3
  * - Default to 1 if unknown
+ * 
+ * Migration v4 → v5: Add reputation field to stats
+ * - New stat for tome 2
+ * - Default to 0 if book is 2, else null
  */
 export const migrations: Migration[] = [
   {
@@ -74,6 +78,17 @@ export const migrations: Migration[] = [
         version: 4,
       };
     },
+  },
+  {
+    version: 5,
+    migrate: (data) => ({
+      ...data,
+      stats: {
+        ...data.stats,
+        reputation: data.stats.reputation ?? (data.book === 2 ? 0 : null),
+      },
+      version: 5,
+    }),
   },
   // Future migrations here
 ];

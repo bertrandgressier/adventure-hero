@@ -145,7 +145,7 @@ describe('Migration des données - Compatibilité', () => {
 
     // VÉRIFICATION: gameMode et version
     expect(data.gameMode).toBe('simplified');
-    expect(data.version).toBe(4);
+    expect(data.version).toBe(5);
 
     // VÉRIFICATION: Structure stats
     expect(data.stats).toHaveProperty('dexterite');
@@ -393,7 +393,7 @@ describe('Migration des données - Compatibilité', () => {
     
     // VÉRIFICATION: book converti en number
     expect(character.book).toBe(1); // "La Harpe des Quatre Saisons" → 1
-    expect(character.version).toBe(4); // Version mise à jour
+    expect(character.version).toBe(5); // Version mise à jour
     
     // Test avec autres titres
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

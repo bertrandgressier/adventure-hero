@@ -3,6 +3,7 @@
 import { Hand, Clover, Heart, Shield } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
+import { ReputationControl } from '@/components/adventure/ReputationControl';
 
 interface CharacterStatsProps {
   characterId: string;
@@ -56,6 +57,7 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
   const stats = character.getStatsObject();
   const statsData = stats.toData();
   const showConstitution = character.book > 1;
+  const showReputation = character.book === 2;
 
   // Styles dynamiques pour les PV actuels
   const getPvStyles = () => {
@@ -131,6 +133,16 @@ export default function CharacterStats({ characterId, onUpdate }: CharacterStats
           icon={<Clover className="size-4" />}
         />
       </div>
+
+      {/* Ligne 3 : Réputation (Tome 2 uniquement) */}
+      {showReputation && statsData.reputation !== undefined && (
+        <div className="mt-2 bg-card/50 p-3 rounded-lg border border-border/50">
+          <ReputationControl
+            value={statsData.reputation}
+            onChange={(value) => handleUpdate({ reputation: value })}
+          />
+        </div>
+      )}
     </div>
   );
 }

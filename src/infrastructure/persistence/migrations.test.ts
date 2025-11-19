@@ -202,6 +202,68 @@ describe('migrateCharacter', () => {
         expect(migrated.version).toBe(4);
       });
     });
+
+    describe('v4 → v5: Add reputation field', () => {
+      it('should add reputation 0 for book 2', () => {
+        const v4Data = {
+          id: '123-abc',
+          name: 'Aragorn',
+          book: 2,
+          gameMode: 'mortal',
+          version: 4,
+          stats: { dexterite: 7, constitution: null, chance: 5, chanceInitiale: 5, pointsDeVieMax: 32, pointsDeVieActuels: 32 },
+          inventory: { boulons: 0, items: [] },
+          progress: { currentParagraph: 1, history: [1], lastSaved: '2024-01-01T00:00:00.000Z' },
+          notes: '',
+        };
+
+        const v5Migration = migrations.find(m => m.version === 5);
+        const migrated = v5Migration!.migrate(v4Data);
+
+        expect(migrated.version).toBe(5);
+        expect(migrated.stats.reputation).toBe(0);
+      });
+
+      it('should add reputation null for book 1', () => {
+        const v4Data = {
+          id: '456-def',
+          name: 'Legolas',
+          book: 1,
+          gameMode: 'narrative',
+          version: 4,
+          stats: { dexterite: 7, constitution: null, chance: 5, chanceInitiale: 5, pointsDeVieMax: 32, pointsDeVieActuels: 32 },
+          inventory: { boulons: 0, items: [] },
+          progress: { currentParagraph: 1, history: [1], lastSaved: '2024-01-01T00:00:00.000Z' },
+          notes: '',
+        };
+
+        const v5Migration = migrations.find(m => m.version === 5);
+        const migrated = v5Migration!.migrate(v4Data);
+
+        expect(migrated.version).toBe(5);
+        expect(migrated.stats.reputation).toBe(null);
+      });
+
+      it('should preserve existing reputation', () => {
+        const v4DataWithReputation = {
+          id: '789-ghi',
+          name: 'Gimli',
+          book: 2,
+          gameMode: 'simplified',
+          version: 4,
+          stats: { dexterite: 7, constitution: null, reputation: 3, chance: 5, chanceInitiale: 5, pointsDeVieMax: 32, pointsDeVieActuels: 32 },
+          inventory: { boulons: 0, items: [] },
+          progress: { currentParagraph: 1, history: [1], lastSaved: '2024-01-01T00:00:00.000Z' },
+          notes: '',
+        };
+
+        const v5Migration = migrations.find(m => m.version === 5);
+        const migrated = v5Migration!.migrate(v4DataWithReputation);
+
+        expect(migrated.stats.reputation).toBe(3);
+        expect(migrated.version).toBe(5);
+      });
+    });
   });
 
   describe('full migration chain', () => {
@@ -238,6 +300,7 @@ describe('migrateCharacter', () => {
       expect(migrated.gameMode).toBe('mortal'); // From v1→v2
       expect(migrated.stats.constitution).toBe(null); // From v2→v3
       expect(migrated.book).toBe(1); // From v3→v4
+      expect(migrated.stats.reputation).toBe(null); // From v4→v5 (book 1)
       expect(migrated.name).toBe('Aragorn'); // Preserved
       expect(migrated.stats.dexterite).toBe(7); // Preserved
     });
