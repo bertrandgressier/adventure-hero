@@ -25,14 +25,19 @@ const version = process.argv[2];
 const changelogPath = path.join(__dirname, '..', 'CHANGELOG.md');
 const changelog = fs.readFileSync(changelogPath, 'utf-8');
 
-// Extraire la section de la dernière version
-const versionMatch = changelog.match(/## \[([\d.]+)\][\s\S]*?(?=## \[|$)/);
+// Extraire la section de la version spécifique
+// Supporte les titres H1 (#) et H2 (##) générés par semantic-release
+const escapedVersion = version.replace(/\./g, '\\.');
+// Utilisation de (?:^|\n) au lieu du flag 'm' pour éviter que $ ne matche la fin de ligne
+const versionRegex = new RegExp(`(?:^|\\n)#+ \\[${escapedVersion}\\][\\s\\S]*?(?=\\n#+ \\[|$)`);
+const versionMatch = changelog.match(versionRegex);
+
 if (!versionMatch) {
-  console.log('Aucune version trouvée dans CHANGELOG.md');
+  console.log(`Version ${version} non trouvée dans CHANGELOG.md`);
   process.exit(0);
 }
 
-const versionSection = versionMatch[0];
+const versionSection = versionMatch[0].trim();
 
 // Filtrer les types de commits user-friendly
 const userChanges = {
