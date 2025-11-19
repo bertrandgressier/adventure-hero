@@ -92,24 +92,28 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
               className={`h-full transition-all duration-300 ${
                 daysElapsed === 4 
                   ? 'bg-gradient-to-r from-red-600 to-red-800' 
-                  : 'bg-gradient-to-r from-primary to-amber-600'
+                  : daysElapsed > 0
+                  ? 'bg-gradient-to-r from-primary to-amber-600'
+                  : 'bg-transparent'
               }`}
               style={{ width: `${(daysElapsed / 4) * 100}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-evenly px-4">
-              {[1, 2, 3, 4].map((day) => (
+              {[0, 1, 2, 3, 4].map((day) => (
                 <button
                   key={day}
                   onClick={() => handleUpdateDays(day)}
                   className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center hover:scale-110 active:scale-95 ${
-                    day <= daysElapsed
+                    day <= daysElapsed && day > 0
                       ? 'border-primary-foreground bg-primary-foreground/20 shadow-md hover:bg-primary-foreground/40'
+                      : day === 0 && daysElapsed === 0
+                      ? 'border-green-500 bg-green-500/20 shadow-md hover:bg-green-500/40'
                       : 'border-muted-light/40 bg-background/50 hover:border-primary/50 hover:bg-primary/10'
                   }`}
-                  title={`Définir à ${day} jour${day > 1 ? 's' : ''}`}
+                  title={day === 0 ? 'Remettre à zéro' : `Définir à ${day} jour${day > 1 ? 's' : ''}`}
                 >
                   <span className={`text-xs font-bold ${
-                    day <= daysElapsed 
+                    (day <= daysElapsed && day > 0) || (day === 0 && daysElapsed === 0)
                       ? 'text-primary-foreground' 
                       : 'text-muted-light'
                   }`}>
@@ -120,7 +124,7 @@ export default function CharacterTimeTracking({ characterId, onUpdate }: Charact
             </div>
           </div>
           <p className="text-xs text-muted-light mt-1 italic">
-            Cliquez sur un jour pour définir le nombre de jours écoulés
+            Cliquez sur un jour pour définir le nombre de jours écoulés (0 pour remettre à zéro)
           </p>
         </div>
 
