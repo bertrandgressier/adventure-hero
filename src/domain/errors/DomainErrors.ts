@@ -7,7 +7,7 @@ export class DomainError extends Error {
 
 export class CharacterNotFoundError extends DomainError {
   constructor(id: string) {
-    super(`Character with id ${id} not found`);
+    super(`Le personnage avec l'ID ${id} n'existe pas`);
     this.name = 'CharacterNotFoundError';
   }
 }
