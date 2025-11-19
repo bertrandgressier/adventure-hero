@@ -1,3 +1,20 @@
+# [2.1.0](https://github.com/bertrandgressier/adventure-tome/compare/v2.0.0...v2.1.0) (2025-11-19)
+
+
+### Bug Fixes
+
+* apply code review recommendations ([a96bbbd](https://github.com/bertrandgressier/adventure-tome/commit/a96bbbdb7aa60de34ac76591e043f0da8e3e6bdd))
+* **characters:** use store for creation to ensure list update and improve redirect ([7d9e4ef](https://github.com/bertrandgressier/adventure-tome/commit/7d9e4ef63340c0ed7369c246b58368af8080ecc8))
+* correct broken emojis in README ([47ffef7](https://github.com/bertrandgressier/adventure-tome/commit/47ffef70415fde0fba58dbfc9a0429f5e5182f21))
+* translate error messages to French ([2df913c](https://github.com/bertrandgressier/adventure-tome/commit/2df913c36a2576541ae71ec718ffb804bebdb9b4))
+* **ui:** remove redundant wrapper around boulons stat field ([eba2aa0](https://github.com/bertrandgressier/adventure-tome/commit/eba2aa0e120df333fe4dd696d07ec41b125263a6))
+
+
+### Features
+
+* **ci:** enhance codecov integration with badge, graph and config ([8ce6199](https://github.com/bertrandgressier/adventure-tome/commit/8ce6199ca63eecf29f30496d47eedbcdf46626f5))
+* **ui:** allow changing book from paragraph section with dialog ([218e638](https://github.com/bertrandgressier/adventure-tome/commit/218e638c16dec14e3d512c10fc168656b4054468))
+
 # [2.0.0](https://github.com/bertrandgressier/adventure-tome/compare/v1.7.0...v2.0.0) (2025-11-18)
 
 
