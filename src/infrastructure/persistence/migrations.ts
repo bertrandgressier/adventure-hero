@@ -19,6 +19,7 @@ export const CURRENT_VERSION = 4;
  */
 export interface Migration {
   version: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   migrate: (data: any) => any;
 }
 
@@ -89,6 +90,7 @@ export const migrations: Migration[] = [
  * const migrated = migrateCharacter(legacyData);
  * // migrated = { id: '123', name: 'Aragorn', gameMode: 'mortal', version: 4, book: 1, stats: { constitution: null, ... } }
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function migrateCharacter(data: any): any {
   const currentVersion = data.version ?? 1; // Default to v1 if no version field
   

@@ -15,6 +15,7 @@ import { migrateCharacter } from '@/src/infrastructure/persistence/migrations';
 describe('Migration des données - Compatibilité', () => {
   it('devrait lire les données legacy sans perte', () => {
     // Données existantes dans IndexedDB (format legacy)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const legacyData: any = {
       id: 'abc-123',
       name: 'Gandalf le Gris',
@@ -357,6 +358,7 @@ describe('Migration des données - Compatibilité', () => {
 
   it('devrait migrer les données v3 (book string) vers v4 (book number)', () => {
     // Données v3 avec book en string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const v3Data: any = {
       id: 'v3-migration-123',
       name: 'Personnage Legacy',
@@ -394,17 +396,20 @@ describe('Migration des données - Compatibilité', () => {
     expect(character.version).toBe(4); // Version mise à jour
     
     // Test avec autres titres
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const v3DataBook2: any = { ...v3Data, book: 'La Confrérie de NUADA', id: 'v3-2' };
     const migratedData2 = migrateCharacter(v3DataBook2);
     const characterBook2 = Character.fromData(migratedData2);
     expect(characterBook2.book).toBe(2);
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const v3DataBook3: any = { ...v3Data, book: 'Les Entrailles du temps', id: 'v3-3' };
     const migratedData3 = migrateCharacter(v3DataBook3);
     const characterBook3 = Character.fromData(migratedData3);
     expect(characterBook3.book).toBe(3);
     
     // Test avec un titre inconnu (fallback à 1)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const v3DataUnknown: any = { ...v3Data, book: 'Livre Inconnu', id: 'v3-unknown' };
     const migratedDataUnknown = migrateCharacter(v3DataUnknown);
     const characterUnknown = Character.fromData(migratedDataUnknown);
