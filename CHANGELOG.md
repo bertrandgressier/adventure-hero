@@ -1,3 +1,11 @@
+# [2.2.0](https://github.com/bertrandgressier/adventure-tome/compare/v2.1.0...v2.2.0) (2025-11-19)
+
+
+### Features
+
+* add character notebook feature with persistence ([7c3a27e](https://github.com/bertrandgressier/adventure-tome/commit/7c3a27ecb012b2b4b49d163b2939e7f8e9419987))
+* improve user changelog generation and link ([525a24d](https://github.com/bertrandgressier/adventure-tome/commit/525a24d9c467361a2dd9e5a53d1acf827d4c04d1))
+
 # [2.1.0](https://github.com/bertrandgressier/adventure-tome/compare/v2.0.0...v2.1.0) (2025-11-19)
 
 

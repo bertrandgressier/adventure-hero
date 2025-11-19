@@ -12,6 +12,15 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 
 ---
 
+## Version 2.2.0
+*19 novembre 2025*
+
+### 🐛 Corrections de bugs
+
+• retirer autoFocus du formulaire de combat pour mobile
+
+---
+
 ## Version 2.1.0
 *19 novembre 2025*
 
