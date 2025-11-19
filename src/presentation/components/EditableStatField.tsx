@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface EditableStatFieldProps {
   label: string;
@@ -9,6 +10,8 @@ interface EditableStatFieldProps {
   min?: number;
   colorClass?: string;
   title?: string;
+  icon?: React.ReactNode;
+  containerClassName?: string;
 }
 
 /**
@@ -25,6 +28,8 @@ export default function EditableStatField({
   min = 0,
   colorClass = 'text-primary',
   title = 'Cliquer pour modifier',
+  icon,
+  containerClassName,
 }: EditableStatFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -74,8 +79,43 @@ export default function EditableStatField({
     if (e.key === 'Escape') cancel();
   };
 
+  if (icon) {
+    return (
+      <div className={cn("bg-background border border-primary/20 rounded-lg p-2 text-center flex flex-col items-center justify-center min-h-[80px]", containerClassName)}>
+        <div className="flex items-center gap-1.5 text-muted-light mb-1">
+          {icon}
+          <span className="text-[10px] uppercase font-bold tracking-wider">{label}</span>
+        </div>
+        
+        {isEditing ? (
+          <div className="flex items-center justify-center gap-1">
+            <input
+              ref={inputRef}
+              type="number"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="w-12 bg-card border border-primary/50 rounded px-1 py-0.5 text-center font-[var(--font-geist-mono)] text-xl text-primary focus:outline-none focus:border-primary"
+              min={min}
+            />
+            <button onClick={save} className="text-green-400 hover:text-green-300 text-lg">✓</button>
+            <button onClick={cancel} className="text-red-400 hover:text-red-300 text-lg">✕</button>
+          </div>
+        ) : (
+          <div
+            onClick={startEdit}
+            className={`font-[var(--font-geist-mono)] text-2xl font-bold hover:text-yellow-300 cursor-pointer transition-colors ${colorClass}`}
+            title={title}
+          >
+            {value}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-background glow-border rounded-lg p-4 text-center">
+    <div className={cn("bg-background glow-border rounded-lg p-4 text-center", containerClassName)}>
       <div className="font-[var(--font-merriweather)] text-sm text-muted-light mb-2">
         {label}
       </div>

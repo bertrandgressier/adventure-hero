@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Coins } from 'lucide-react';
 import { useCharacter } from '@/src/presentation/hooks/useCharacter';
 import EditableStatField from '@/src/presentation/components/EditableStatField';
 import { BookTag, type BookTitle } from '@/components/ui/book-tag';
@@ -162,10 +163,11 @@ export default function CharacterProgress({ characterId, onUpdate }: CharacterPr
 
       {/* Boulons */}
       <EditableStatField
-        label="Boulons 🪙"
+        label="BOULONS"
         value={inventoryData.boulons}
         onSave={handleUpdateBoulons}
         min={0}
+        icon={<Coins className="size-4" />}
       />
     </div>
   );
