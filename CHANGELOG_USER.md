@@ -15,9 +15,10 @@ Pour les détails techniques complets, consultez le [CHANGELOG.md](./CHANGELOG.m
 ## Version 2.2.0
 *19 novembre 2025*
 
-### 🐛 Corrections de bugs
+### ✨ Nouvelles fonctionnalités
 
-• retirer autoFocus du formulaire de combat pour mobile
+• add character notebook feature with persistence
+• improve user changelog generation and link
 
 ---
 
